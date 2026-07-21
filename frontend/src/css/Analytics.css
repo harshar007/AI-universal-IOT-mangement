@@ -1,0 +1,444 @@
+/* Summary Grid */
+.analytics-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .analytics-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.summary-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-md);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1.1;
+  margin: 0.15rem 0;
+}
+
+.stat-meta {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Charts Grid */
+.charts-grid-layout {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .charts-grid-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-container-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.25rem !important;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-md);
+}
+
+.chart-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 0.75rem;
+}
+
+.chart-title-block {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chart-title-block h3 {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.chart-timeframe {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* SVG Line Chart Style */
+.svg-chart-wrapper {
+  width: 100%;
+  padding-top: 0.5rem;
+}
+
+.svg-line-chart {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.chart-axis-text {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  fill: var(--text-secondary);
+}
+
+.chart-path-line {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw-chart 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes draw-chart {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.chart-dot {
+  cursor: pointer;
+  transition: r var(--transition-fast), fill var(--transition-fast);
+}
+
+.chart-dot:hover {
+  r: 7px;
+  fill: var(--accent-cyan);
+}
+
+/* Donut Chart Style */
+.donut-chart-panel {
+  justify-content: space-between;
+}
+
+.donut-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.svg-donut-wrapper {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.svg-donut-chart {
+  position: absolute;
+  inset: 0;
+  transform: rotate(0deg);
+  transition: transform var(--transition-slow);
+}
+
+.donut-center-text {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 5;
+}
+
+.donut-num {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.donut-unit {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Legend styled using Shades of Google Blue to align with two-color requirement */
+.donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.legend-swatch.cyan {
+  background: var(--accent-cyan);
+}
+
+.legend-swatch.violet {
+  background: rgba(26, 115, 232, 0.6);
+}
+
+.legend-swatch.orange {
+  background: rgba(26, 115, 232, 0.3);
+}
+
+.legend-name {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* Anomalies Log section */
+.anomalies-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-md);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 0.75rem;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.section-title h3 {
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+.badge-count {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.65rem;
+  background: rgba(26, 115, 232, 0.08);
+  color: var(--accent-cyan);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(26, 115, 232, 0.2);
+}
+
+.anomalies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.anomaly-item {
+  display: grid;
+  grid-template-columns: 140px 1fr 120px;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.85rem 1.25rem !important;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  border-left-width: 4px !important;
+  transition: all var(--transition-fast);
+}
+
+@media (max-width: 800px) {
+  .anomaly-item {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .anomaly-action-side {
+    justify-content: flex-start;
+  }
+}
+
+.anomaly-item:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--glass-border-hover);
+}
+
+.anomaly-item.resolved {
+  opacity: 0.55;
+  border-left-color: var(--glass-border) !important;
+}
+
+.anomaly-item.border-critical {
+  border-left-color: var(--accent-red);
+}
+
+.anomaly-item.border-warning {
+  border-left-color: var(--accent-yellow);
+}
+
+.anomaly-item.border-info {
+  border-left-color: var(--accent-cyan);
+}
+
+.anomaly-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.anomaly-time {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.anomaly-badge-severity {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.anomaly-badge-severity.critical {
+  background: rgba(217, 48, 37, 0.08);
+  color: var(--accent-red);
+}
+
+.anomaly-badge-severity.warning {
+  background: rgba(249, 171, 0, 0.08);
+  color: var(--accent-yellow);
+}
+
+.anomaly-badge-severity.info {
+  background: rgba(26, 115, 232, 0.08);
+  color: var(--accent-cyan);
+}
+
+.anomaly-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.anomaly-device {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.anomaly-issue {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 0.15rem;
+}
+
+.anomaly-action-side {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.anomaly-resolve-btn {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: var(--bg-primary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.anomaly-resolve-btn:hover {
+  background: rgba(26, 115, 232, 0.08);
+  color: var(--accent-cyan);
+  border-color: var(--accent-cyan);
+}
+
+.resolved-status {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--accent-cyan);
+}
+
+/* Mobile Viewport Adaptations */
+@media (max-width: 768px) {
+  .chart-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .chart-timeframe {
+    align-self: flex-start;
+  }
+
+  .donut-content-wrapper {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .anomaly-item {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    padding: 1rem !important;
+  }
+
+  .anomaly-meta {
+    flex-wrap: wrap;
+  }
+
+  .anomaly-action-side {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .anomaly-resolve-btn {
+    width: 100%;
+    text-align: center;
+  }
+}

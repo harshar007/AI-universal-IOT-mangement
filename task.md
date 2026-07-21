@@ -1,0 +1,202 @@
+read  the task.md  before every task update the what u have done 
+don't run npm run dev and npm run build 
+### Progress Update
+- [x] Fixed MQTT Protocol Gateway & Command Routing Docker Setup
+  - [x] Changed `iot-gateway` build context to root and updated `Dockerfile` to copy `./backend` dependency files.
+  - [x] Configured missing `GATEWAY_URL` inside `backend` container environment to forward API commands successfully.
+- [x] Consolidated Device REST API Endpoints on Main Backend (Port 5000)
+  - [x] Provisioned IoT tables and migrations inside main backend [db.js](file:///p:/New%20folder/backend/config/db.js)
+  - [x] Implemented device controllers with command/OTA forwarding inside [deviceController.js](file:///p:/New%20folder/backend/controllers/deviceController.js)
+  - [x] Isolated device REST routes into a separate file [deviceRoutes.js](file:///p:/New%20folder/backend/routes/deviceRoutes.js) and mounted it in [server.js](file:///p:/New%20folder/backend/server.js)
+  - [x] Removed device HTTP endpoints from gateway and added cache-refresh lookup in [deviceRegistry.js](file:///p:/New%20folder/iot-gateway/src/devices/deviceRegistry.js)
+  - [x] Cleaned up proxy configurations in [vite.config.js](file:///p:/New%20folder/frontend/vite.config.js) and [nginx.conf](file:///p:/New%20folder/frontend/nginx.conf)
+- [x] Implemented Database and State Scoping Per Logged-In User
+  - [x] Added `user_id` column to PostgreSQL `iot_devices` table inside [db.js](file:///p:/New%20folder/iot-gateway/src/config/db.js)
+  - [x] Filtered device listings and registry queries by owner `userId` inside [deviceRegistry.js](file:///p:/New%20folder/iot-gateway/src/devices/deviceRegistry.js)
+  - [x] Restructured [App.jsx](file:///p:/New%20folder/frontend/src/App.jsx) to load/save user-scoped storage states and sync remote devices on page load
+- [x] Fixed Real-Time Status Broadcasts on Device Connections/Disconnections
+  - [x] Imported `websocketServer` inside Aedes [broker.js](file:///p:/New%20folder/iot-gateway/src/mqtt/broker.js)
+  - [x] Added websocket status broadcasts to instantly update client dashboard cards when devices connect or disconnect from MQTT broker
+- [x] Integrated Direct 'Copy Auth' Button on Devices Cards in Directory
+  - [x] Enabled `secret_key` queries in `getAllDevices` inside [deviceRegistry.js](file:///p:/New%20folder/iot-gateway/src/devices/deviceRegistry.js)
+  - [x] Restored and verified the IoT Gateway location block proxy configuration in [nginx.conf](file:///p:/New%20folder/frontend/nginx.conf)
+  - [x] Synced the `secretKey` from database queries into React states during mounting and auto-registration in [App.jsx](file:///p:/New%20folder/frontend/src/App.jsx)
+  - [x] Added card-level `[Copy Auth]` inline actions with card-specific "Copied!" notifications inside [Devices.jsx](file:///p:/New%20folder/frontend/src/pages/Devices.jsx)
+- [x] Integrated Secret Key Regeneration Option in Devices Directory
+- [x] Implemented Dynamic Dashboard Widget Customization (Remove & Restore)
+  - [x] Programmed widget visibility states and `localStorage` layout persistence in [Dashboard.jsx](file:///p:/New%20folder/frontend/src/pages/Dashboard.jsx)
+  - [x] Added header close buttons (`X`) to hide all main widgets (Metrics, Climate, Lights, Camera, Toggles)
+  - [x] Integrated a bottom Customizer restoration banner to toggle hidden widgets back or reset the layout
+  - [x] Styled close controls and customizer bar in [Dashboard.css](file:///p:/New%20folder/frontend/src/css/Dashboard.css)
+- [x] Integrated Claymorphism Design System Across Site
+  - [x] Refactored [index.css](file:///p:/New%20folder/frontend/src/index.css) `.glass-panel` class to convert standard dashboard panels into 3D claymorphic panels with rounded corners and double shadows
+  - [x] Styled inputs as sunken clay pockets and buttons as puffy raised blocks in [Login.css](file:///p:/New%20folder/frontend/src/css/Login.css)
+- [x] Overhauled Entire Application UI Theme to Light Green & White
+  - [x] Re-mapped `--accent-cyan` and its associated shadows in [variables.css](file:///p:/New%20folder/frontend/src/css/variables.css) to emerald/mint green (`#10b981` / `#059669`) for both light and dark modes
+  - [x] Set default theme state to `light` in [App.jsx](file:///p:/New%20folder/frontend/src/App.jsx) and auto-migrated stored local preferences
+  - [x] Updated widget color parameters in [NexusCustomizer.css](file:///p:/New%20folder/frontend/src/css/NexusCustomizer.css) and [BlynkCustomizer.css](file:///p:/New%20folder/frontend/src/css/BlynkCustomizer.css) to match the green theme
+- [x] Optimized Landing Redirects & Transition Snappiness
+  - [x] Configured [App.jsx](file:///p:/New%20folder/frontend/src/App.jsx) to bypass the initial 1.5-second loader for unauthenticated users, sending them straight to the Login page
+  - [x] Reduced login successful redirect delay in [Login.jsx](file:///p:/New%20folder/frontend/src/pages/Login.jsx) to 500ms and optimized route loader timer to 400ms
+- [x] Fixed Netlify Routing & Deployment Build Configuration
+  - [x] Created root-level [netlify.toml](file:///p:/New%20folder/netlify.toml) to guide Netlify's build process (`base = "frontend"`, `publish = "dist"`, `command = "npm run build"`) and configure wildcard rewrite routes
+- [x] Redesigned Login & Sign Up UI in Professional Light Green & White Theme
+  - [x] Refactored [Login.jsx](file:///p:/New%20folder/frontend/src/pages/Login.jsx) to replace the 3D flip card layout with tabbed navigation, brand headers, and prefix-icon inputs
+  - [x] Overhauled [Login.css](file:///p:/New%20folder/frontend/src/css/Login.css) using a glassmorphic card design with focused green glows and pulsing animations
+- [x] Created ESP8266 Connection & Setup Guide
+  - [x] Formulated detailed step-by-step instructions in [esp8266_connection_guide.txt](file:///p:/New%20folder/esp8266_connection_guide.txt) including Arduino IDE configuration, device registration, Blynk-style Nexus driver code, and raw PubSubClient MQTT boilerplate
+- [x] Integrated Nexus C++ Library Core Concept & Blynk-style Customizable Workflows into AI Assistant
+  - [x] Configured [chat.prompt.js](file:///p:/New%20folder/ai-backend/src/chatbot/chat.prompt.js) to establish the Nexus IoT Assistant persona and explain the Blynk-style customizable widget architecture and virtual pin mappings, removing home appliance control devices
+  - [x] Programmed [chat.service.js](file:///p:/New%20folder/ai-backend/src/chatbot/chat.service.js) offline fallback routes with C++ code examples (`NexusTimer`, `NexusLCD`, `NexusLED`, `NEXUS_WRITE`) and customization instructions, deleting smart-home control rules
+  - [x] Updated [AiController.jsx](file:///p:/New%20folder/frontend/src/pages/AiController.jsx) to reflect Nexus branding, Blynk-style developer customization greetings, and replaced the AI Recommendations sidebar widget with a C++ Quick Reference card panel
+- [x] Configured Netlify Redirects & Rewrite Rules for Backend Proxying
+  - [x] Created [_redirects](file:///p:/New%20folder/frontend/public/_redirects) to proxy `/api/*` and `/api/chat/*` to remote backend servers and support Single Page Application (SPA) routing fallback
+  - [x] Created [netlify.toml](file:///p:/New%20folder/frontend/netlify.toml) for Git-integrated deployment compatibility
+- [x] Resolved missing `agent-base` dependency in `ai-backend` by copying the module into `node_modules/agent-base`
+- [x] Realigned Frontend API Proxy (Reverted to Remote IP: 79.143.179.156:5000)
+  - [x] Restored `/api` target in [vite.config.js](file:///p:/New%20folder/frontend/vite.config.js) to `http://79.143.179.156:5000`
+  - [x] Restored `/api` location `proxy_pass` in [nginx.conf](file:///p:/New%20folder/frontend/nginx.conf) to `http://79.143.179.156:5000/api/`
+- [x] Secured Dashboard Routing & Fixed Flash Issue
+  - [x] Replaced asynchronous `useEffect` route guard with a synchronous render-time redirect check in `App.jsx`
+  - [x] Prevented the `Navbar` and `Dashboard` from flashing on page load when unauthenticated
+  - [x] Enforced that the application directly loads the signup/login page as the initial screen when no token is present
+- [x] Database Reset Reference
+  - [x] Documented SQL reset queries and provided helper script execution procedures
+- [x] Integrating Galahhad's Uiverse.io theme switch toggle
+  - [x] Analyzed existing codebase, files, and located current theme switch in `Navbar.jsx` and `Navbar.css`
+  - [x] Add Galahhad's theme switch CSS code to `Navbar.css` (customizing sizes and styles to fit sidebar layout)
+  - [x] Implement theme switch JSX structure in `Navbar.jsx` and tie it with `theme` state and `onToggleTheme` handler, correcting all HTML attributes (like `class` to `className`, and SVG attributes) to ensure valid React JSX.
+- [x] Integrating the custom site logo
+  - [x] Located `/logo.png` in the public directory
+  - [x] Replaced the generic Lucide `Radio` icon in the sidebar with the custom site logo `<img>` in `Navbar.jsx`
+  - [x] Configured CSS styling in `Navbar.css` to properly contain, align, and render the custom logo image transparently and cleanly
+- [x] Integrating the custom Uiverse.io chat container for AI chat
+  - [x] Defined theme-responsive CSS variables in `AiController.css` supporting both light and dark modes
+  - [x] Replaced old chat panel markup in `AiController.jsx` with Uiverse-style `container`, `nav-bar`, `close` button, `messages-area`, `sender-area`, and input elements
+  - [x] Connected the `close` button to reset chat history and terminal logs
+  - [x] Formatted messages to alternate styling classes (`one` / `two`) based on the item index
+- [x] Integrating the custom Uiverse.io login page with PostgreSQL integration
+  - [x] Created `Login.jsx` page component with interactive form states, submission loader, and error/success alerts
+  - [x] Created `Login.css` styling, adapting Uiverse styled-components layout to standard responsive vanilla CSS compatible with both light and dark themes
+  - [x] Embedded a detailed schema definition for PostgreSQL database setup and a secure Node.js Express route controller with parameterized SQL and bcrypt password verification inside the `Login.jsx` comments
+  - [x] Integrated `/login` route in `App.jsx` and added conditional rendering logic to hide the sidebar `Navbar` when on the login page
+- [x] Setting up structured Express / PostgreSQL backend integration
+  - [x] Created organized backend layout folders (`backend/config/`, `backend/controllers/`, `backend/routes/`)
+  - [x] Implemented database pool configuration and automatic `users` table provisioning query in `backend/config/db.js`
+  - [x] Implemented user login and registration controller flows in `backend/controllers/authController.js`
+  - [x] Connected routes middleware and binds in `backend/routes/authRoutes.js`
+  - [x] Set up Express app listener and error catch handlers in `backend/server.js`
+  - [x] Configured backend environment credentials in `backend/.env` (updated PostgreSQL password) and scripts inside `backend/package.json`
+  - [x] Configured `/api` endpoint routing proxy inside `frontend/vite.config.js` to route backend queries securely
+- [x] Dockerizing the frontend application
+  - [x] Created `Dockerfile` using a multi-stage build (Node.js for compiling assets and Nginx for serving them)
+  - [x] Created `nginx.conf` configured with HTML5 fallback routing for React Router
+  - [x] Created `.dockerignore` to optimize build context and ignore node_modules/dist directories
+- [x] Dockerizing the backend application
+  - [x] Created `Dockerfile` for Node.js Express server using a clean Alpine base image
+  - [x] Created `.dockerignore` to keep node_modules and credentials from leaking into images
+- [x] Docker Orchestration
+  - [x] Created a root `docker-compose.yml` to orchestrate postgres database, backend, and frontend
+  - [x] Configured DB healthchecks to ensure correct startup sequence
+  - [x] Wired Nginx proxying so frontend and backend communicate seamlessly on the same port
+- [x] Prioritized Login Page & Session Security
+  - [x] Added token-based React Router Guard checks to `App.jsx` to redirect unauthenticated users to `/login` first
+  - [x] Removed redundant "Return to Dashboard" link in `Login.jsx` to prevent loop redirects when unauthenticated
+  - [x] Added a Logout button in the Sidebar `Navbar` to clear authentication token and session
+  - [x] Styled Logout button in `Navbar.css` to match dashboard color design guidelines
+- [x] Password Visibility Toggle (Password Exposers)
+  - [x] Fixed password visibility toggle buttons from automatically flipping/toggling the login card by unnesting `flip-card__inner` from `<label className="switch">` in [Login.jsx](file:///p:/New%20folder/frontend/src/pages/Login.jsx)
+  - [x] Linked the checkbox input (`id="card-toggle"`) with the switch label (`htmlFor="card-toggle"`) to preserve card flipping when interacting with the toggle control
+  - [x] Updated sibling combinator selectors inside [Login.css](file:///p:/New%20folder/frontend/src/css/Login.css) to correctly style the slider, card-side text, and flip card under the new HTML nesting hierarchy
+  - [x] Verified via browser subagent that eye icons show/hide passwords as expected without triggering any card flips
+- [x] Wildcard Route Fallback and Navigation Fix
+  - [x] Added `Navigate` component to route definitions in `App.jsx`
+  - [x] Implemented catch-all wildcard `*` route in `App.jsx` to prevent blank page when accessing incorrect URLs (like `/loginpage`)
+- [x] Database Administration & pgAdmin Guide
+  - [x] Read database connection credentials from `.env` and `docker-compose.yml` configuration files
+  - [x] Created a step-by-step connection guide in [pgadmin_connection_guide.txt](file:///p:/New%20folder/pgadmin_connection_guide.txt) containing exact connection details and registration instructions for pgAdmin 4
+- [x] AI Chatbot Subsystem Isolation
+  - [x] Created `ai-backend` directory with dedicated modular structure (`src/routes`, `src/chatbot`, `src/analysis`, `src/automation`, `src/middleware`, `src/config`)
+  - [x] Implemented isolated Express server in `ai-backend/src/server.js` running on port 5006
+  - [x] Added REST API endpoints (`/api/chat/message`, `/api/chat/conversation`, `/api/chat/history`, `/api/chat/history` DELETE) with thin route handlers delegating to the service layer
+  - [x] Placed all Ollama API calls exclusively inside `ollama.client.js` and all business processing in `chat.service.js` with prompt configuration in `chat.prompt.js`
+  - [x] Designed session-based, in-memory conversation state history tracking in `conversation.manager.js`
+  - [x] Programmed a robust pattern/regex-based offline fallback parser in the service layer to maintain out-of-the-box UI operations without active Ollama instances
+  - [x] Configured HTTP proxies in Vite (`vite.config.js`) and Nginx (`nginx.conf`) to redirect `/api/chat/*` requests to the isolated AI chatbot service
+  - [x] Orchestrated the microservice container in `docker-compose.yml` with host-gateway resolution for local Ollama instances
+  - [x] Connected the frontend React `AiController.jsx` to consume the new isolated endpoints dynamically
+- [x] AI Controller Terminal Clean-up & Brand Logo Integration
+  - [x] Removed the AI Bus Parser logs terminal panel and its associated `terminalLogs` state from [AiController.jsx](file:///p:/New%20folder/frontend/src/pages/AiController.jsx)
+  - [x] Added a high-aesthetic brand logo panel matching the Nexus IoT cyber style in [AiController.jsx](file:///p:/New%20folder/frontend/src/pages/AiController.jsx)
+  - [x] Implemented theme-compatible CSS rules for `.logo-panel` (with center-alignment, pulsing neon glow animations, and responsive styles) in [AiController.css](file:///p:/New%20folder/frontend/src/css/AiController.css)
+- [x] Generalized AI Chatbot System Prompt
+  - [x] Modified [chat.prompt.js](file:///p:/New%20folder/ai-backend/src/chatbot/chat.prompt.js) system prompt instruction to allow the Ollama LLM to answer general knowledge, technical, and conversational questions directly, instead of forcing a device-only restriction.
+  - [x] Simplified the entire system prompt template to improve Llama-3 / TinyLlama instruction-following and prevent refusal/hallucination responses.
+  - [x] Updated fallback logic in [chat.service.js](file:///p:/New%20folder/ai-backend/src/chatbot/chat.service.js) to show a friendly, informational offline message when Ollama is unreachable.
+- [x] Corrected Nginx Proxy Configuration
+  - [x] Changed `proxy_pass` target for `/api/` in [nginx.conf](file:///p:/New%20folder/frontend/nginx.conf) from `http://79.143.179.156:5000/health` to `http://79.143.179.156:5000/api/;` to route API requests to the Contabo backend server correctly instead of returning the health check endpoint.
+- [x] Fixed Email Input Validation Error
+  - [x] Trimmed login and signup email inputs on change in [Login.jsx](file:///p:/New%20folder/frontend/src/pages/Login.jsx) to prevent native HTML5 validation errors ("A part following '@' should not contain the symbol ' '") when copy-pasting or auto-filling email addresses with trailing spaces.
+  - [x] Added fallback trims in login/signup form submit handlers for safety.
+- [x] Implemented Glassmorphic UI Polish & Nexus Custom AI Power Customizer Page
+  - [x] Replaced cartoon buttons (heavy borders, offset shadows) with clean glassmorphic buttons featuring transparent white backgrounds, subtle borders, and cyan glow hover states in [index.css](file:///p:/New%20folder/frontend/src/index.css)
+  - [x] Created [NexusCustomizer.jsx](file:///p:/New%20folder/frontend/src/pages/NexusCustomizer.jsx) and its associated styling [NexusCustomizer.css](file:///p:/New%20folder/frontend/src/css/NexusCustomizer.css) to simulate a custom device dashboard inside a glassmorphic smartphone preview frame
+  - [x] Wired real-time React state syncing so that custom slider values and button state toggles in the Nexus Customizer propagate instantly to the main Dashboard and Analytics tabs
+  - [x] Added a widget toolbox and modular config settings (min/max range, title label, accent glow colors, width size, virtual stream binding) supporting Button, Slider, Radial Gauge, Chart, LED, Value, and Monospace Terminal widgets
+  - [x] Integrated navigation routing in [App.jsx](file:///p:/New%20folder/frontend/src/App.jsx) and [Navbar.jsx](file:///p:/New%20folder/frontend/src/components/Navbar.jsx) and linked direct configuration shortcuts to all device cards in [Devices.jsx](file:///p:/New%20folder/frontend/src/pages/Devices.jsx) and [Dashboard.jsx](file:///p:/New%20folder/frontend/src/pages/Dashboard.jsx)
+  - [x] Added dynamic device renaming ("name whatever I want" feature) allowing users to rename any device in real-time and have the changes propagate instantly to the Devices Directory and Dashboard dial labels
+  - [x] Integrated `localStorage` state persistence for the `devices` list so that custom device names, power toggles, and slider settings are fully retained across page refreshes
+- [x] Polished Typography to Elegant Serif & Geometric Style
+  - [x] Imported the transitional serif **Playfair Display** and geometric **Outfit** font families from Google Fonts in [index.html](file:///p:/New%20folder/frontend/index.html)
+  - [x] Configured variables in [variables.css](file:///p:/New%20folder/frontend/src/css/variables.css) to map headings and branding to Playfair Display, and body text to Outfit
+  - [x] Styled headings, brand text, and sidebar labels in [index.css](file:///p:/New%20folder/frontend/src/index.css) and [Navbar.css](file:///p:/New%20folder/frontend/src/css/Navbar.css) with regular and semi-bold weights of Playfair Display for a luxurious, artistic tech dashboard layout, while keeping numbers and body descriptions in readable, lightweight Outfit text
+- [x] Upgraded Typography to Premium SaaS combination (Manrope & Inter)
+  - [x] Imported **Manrope** (for headings) and **Inter** (for body text) from Google Fonts in [index.html](file:///p:/New%20folder/frontend/index.html)
+  - [x] Updated CSS font-family variables in [variables.css](file:///p:/New%20folder/frontend/src/css/variables.css) to point to Manrope and Inter
+  - [x] Set headings (`h1` through `h6`) and brand name to use `font-weight: 700` in [index.css](file:///p:/New%20folder/frontend/src/index.css) and [Navbar.css](file:///p:/New%20folder/frontend/src/css/Navbar.css)
+  - [x] Configured default body text to use `font-weight: 400` in [index.css](file:///p:/New%20folder/frontend/src/index.css)
+- [x] Phase 3: IoT Gateway, C++ Library, and Customizer Upgrades
+  - [x] Created `library/` folder containing the C++ library files (`NexusSimpleEsp32.h`, `NexusSimpleEsp8266.h`, `NexusSimple.h`, `NexusSimple.cpp`, `NexusTimer.h`, `NexusLCD.h`, `NexusLED.h`) and bundled it to `frontend/public/nexus-iot-library.zip`
+  - [x] Implemented separate ON and OFF buttons in `NexusCustomizer.jsx` and `BlynkCustomizer.jsx` with custom styling and state updates
+  - [x] Added dynamic download cards for the C++ Driver library in both customizers
+  - [x] Developed the `iot-gateway/` microservice using the exact requested layout with an embedded MQTT broker (Aedes), MQTT subscribers/publishers, WebSockets, device registration/authentication, telemetry ingestion, rules engine automations, heartbeats, and status monitoring
+  - [x] Containerized the `iot-gateway` service using Docker and integrated it in `docker-compose.yml`
+  - [x] Created a device simulator `mock_device.js` to verify all 12 gateway communication functions successfully
+- [x] Phase 3 Documentation Page:
+  - [x] Created [Docs.jsx](file:///p:/New%20folder/frontend/src/pages/Docs.jsx) with comprehensive installation walkthroughs, ESP32/ESP8266 C++ boilerplate code tabs, gateway REST API references, and MQTT topic schemas
+  - [x] Created [Docs.css](file:///p:/New%20folder/frontend/src/css/Docs.css) with glassmorphic styles, custom command line copy modules, responsive sidebar navigation, and method badges
+  - [x] Integrated `/docs` route guard checks inside [App.jsx](file:///p:/New%20folder/frontend/src/App.jsx) and linked to sidebar navigation in [Navbar.jsx](file:///p:/New%20folder/frontend/src/components/Navbar.jsx) `NexusSimple.h`, `NexusSimple.cpp`, `NexusTimer.h`, `NexusLCD.h`, `NexusLED.h`) and bundled it to `frontend/public/nexus-iot-library.zip`
+  - [x] Implemented separate ON and OFF buttons in `NexusCustomizer.jsx` and `BlynkCustomizer.jsx` with custom styling and state updates
+  - [x] Added dynamic download cards for the C++ Driver library in both customizers
+  - [x] Developed the `iot-gateway/` microservice using the exact requested layout with an embedded MQTT broker (Aedes), MQTT subscribers/publishers, WebSockets, device registration/authentication, telemetry ingestion, rules engine automations, heartbeats, and status monitoring
+  - [x] Containerized the `iot-gateway` service using Docker and integrated it in `docker-compose.yml`
+  - [x] Created a device simulator `mock_device.js` to verify all 12 gateway communication functions successfully
+- [x] Phase 3 Documentation Page:
+  - [x] Created [Docs.jsx](file:///p:/New%20folder/frontend/src/pages/Docs.jsx) with comprehensive installation walkthroughs, ESP32/ESP8266 C++ boilerplate code tabs, gateway REST API references, and MQTT topic schemas
+  - [x] Created [Docs.css](file:///p:/New%20folder/frontend/src/css/Docs.css) with glassmorphic styles, custom command line copy modules, responsive sidebar navigation, and method badges
+  - [x] Integrated `/docs` route guard checks inside [App.jsx](file:///p:/New%20folder/frontend/src/App.jsx) and linked to sidebar navigation in [Navbar.jsx](file:///p:/New%20folder/frontend/src/components/Navbar.jsx)
+- [x] Integrated Clean Architecture Air Quality & Sensor Alert System (Express.js & React.js)
+  - [x] Created domain entities `AirQuality.js` and `SensorData.js` along with `AlertRules.js` evaluation engine
+  - [x] Implemented application layer usecases `ViewSensorData.js` and `SendAlert.js`
+  - [x] Added database provisioning for alert rules and logs history tables in PostgreSQL pool
+  - [x] Implemented infrastructure layer repository `SensorRepository.js` and `AlertNotifier.js` dispatching real-time notifications
+  - [x] Configured presentation controllers and REST endpoints under `/api/sensors/*` in main backend
+  - [x] Integrated real-time rules execution using `SendAlert` use case in IoT Gateway telemetry receiver
+  - [x] Created frontend dashboard console `/sensors` with dials, active rules manager, and scrolling logs list
+  - [x] Coded ESP8266 C++ driver sketch `EspCleanSensors.ino` interfacing with DHT11 & MQ135 sensors and publishing JSON payloads over MQTT
+- [x] Fixed frontend Docker build peer dependency issue
+  - [x] Added `--legacy-peer-deps` flag to `npm ci` in [Dockerfile](file:///c:/Users/ajaysaagar%20developer/Desktop/final%20year%20project/frontend/Dockerfile) to bypass conflict between React 19 and lucide-react.
+- [x] Realigned frontend API endpoints and configs to run entirely on localhost
+  - [x] Updated Vite API proxy target to `http://localhost:5000` in [vite.config.js](file:///c:/Users/ajaysaagar%20developer/Desktop/final%20year%20project/frontend/vite.config.js)
+  - [x] Updated Nginx `/api` proxy target to local backend service container in [nginx.conf](file:///c:/Users/ajaysaagar%20developer/Desktop/final%20year%20project/frontend/nginx.conf)
+  - [x] Replaced remote IP references with localhost in [Docs.jsx](file:///c:/Users/ajaysaagar%20developer/Desktop/final%20year%20project/frontend/src/pages/Docs.jsx)
+  - [x] Cleaned up modal stale error state leaks in [Devices.jsx](file:///c:/Users/ajaysaagar%20developer/Desktop/final%20year%20project/frontend/src/pages/Devices.jsx)
+- [x] Fixed docker runtime crash loops for backend and iot-gateway services
+  - [x] Added `ENV NODE_PATH=/usr/src/app/node_modules` in [Dockerfile](file:///c:/Users/ajaysaagar%20developer/Desktop/final%20year%20project/iot-gateway/Dockerfile) to allow backend Clean Architecture sibling imports to resolve node_modules.
+  - [x] Added missing `axios` dependency in [package.json](file:///c:/Users/ajaysaagar%20developer/Desktop/final%20year%20project/backend/package.json) to resolve backend startup crash.
+  - [x] Changed `RUN npm ci` to `RUN npm install` in [Dockerfile](file:///c:/Users/ajaysaagar%20developer/Desktop/final%20year%20project/backend/Dockerfile) to allow lockfile-free local package installation with new dependencies.
+- [x] Overhauled Dashboard into a Developer Monospace Console
+  - [x] Created systemLogs state to capture real-time updates and passed it to Dashboard in [App.jsx](file:///c:/Users/ajaysaagar%20developer/Desktop/final%20year%20project/frontend/src/App.jsx)
+  - [x] Redesigned [Dashboard.jsx](file:///c:/Users/ajaysaagar%20developer/Desktop/final%20year%20project/frontend/src/pages/Dashboard.jsx) with a scrolling cyber terminal view showing message logs and telemetry.
+  - [x] Added terminal color themes and channel list grids in [Dashboard.css](file:///c:/Users/ajaysaagar%20developer/Desktop/final%20year%20project/frontend/src/css/Dashboard.css)
+  - [x] Fixed local WebSocket URL in [App.jsx](file:///c:/Users/ajaysaagar%20developer/Desktop/final%20year%20project/frontend/src/App.jsx) to resolve to local port 5002 instead of the remote IP.

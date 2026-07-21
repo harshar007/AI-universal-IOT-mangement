@@ -1,0 +1,8 @@
+# Proxy AI Chat requests to the remote AI backend
+/api/chat/*  http://79.143.179.156:5006/api/chat/:splat  200
+
+# Proxy standard API requests to the remote main backend
+/api/*       http://79.143.179.156:5000/api/:splat       200
+
+# Fallback rule for React Router (Single Page Application)
+/*           /index.html                                 200

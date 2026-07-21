@@ -1,0 +1,27 @@
+# Root Netlify Configuration for Monorepo
+# Tells Netlify to run the build process inside the /frontend directory
+
+[build]
+  base = "frontend"
+  publish = "dist"
+  command = "npm run build"
+
+# Proxy AI Chat requests to the remote AI backend
+[[redirects]]
+  from = "/api/chat/*"
+  to = "http://79.143.179.156:5006/api/chat/:splat"
+  status = 200
+  force = true
+
+# Proxy standard API requests to the remote main backend
+[[redirects]]
+  from = "/api/*"
+  to = "http://79.143.179.156:5000/api/:splat"
+  status = 200
+  force = true
+
+# Fallback rule for React Router (Single Page Application routing)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

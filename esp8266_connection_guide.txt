@@ -1,0 +1,293 @@
+================================================================================
+NEXUS IoT GATEWAY - ESP8266 CONNECTION & SETUP GUIDE
+================================================================================
+This document provides a step-by-step guide to connect your ESP8266 node
+to the local Nexus IoT Gateway using both the custom Nexus C++ driver library
+and a standard MQTT client (PubSubClient).
+
+---
+
+STEP 1: PREPARE THE ARDUINO IDE ENVIRONMENT
+================================================================================
+1. Download and install the Arduino IDE (v1.8.x or v2.x) from:
+   https://www.arduino.cc/en/software
+
+2. Add ESP8266 Board Manager URL:
+   - Open Arduino IDE.
+   - Go to File > Preferences.
+   - In "Additional Boards Manager URLs", paste the following URL:
+     http://arduino.esp8266.com/stable/package_esp8266com_index.json
+   - Click OK.
+
+3. Install the ESP8266 Boards:
+   - Go to Tools > Board > Boards Manager...
+   - Search for "esp8266".
+   - Install the latest version of the "esp8266" by ESP8266 Community.
+
+4. Select your board:
+   - Go to Tools > Board > ESP8266 Boards > Select your module (e.g., "NodeMCU 1.0 (ESP-12E Module)" or "Generic ESP8266 Module").
+   - Set the appropriate COM port in Tools > Port.
+
+
+---
+
+STEP 2: REGISTER YOUR ESP8266 DEVICE
+================================================================================
+Each device needs a unique "deviceId" and must acquire an Authentication Token
+(Secret Key) to connect.
+
+Option A: Via the Web Dashboard
+1. Open the Nexus Dashboard in your browser (default: http://localhost:80).
+2. Go to the "Devices Directory" page.
+3. Click "Create New Device" or "Register Device".
+4. Set Device ID (e.g., "esp8266-sensor-1") and Name.
+5. Copy the generated "Secret Key" / "Auth Token".
+
+Option B: Via Curl Command
+Send an HTTP POST request to the Gateway API (port 5002) to register:
+  curl -X POST http://localhost:5002/api/devices/register \
+    -H "Content-Type: application/json" \
+    -d '{"deviceId": "esp8266-sensor-1", "name": "ESP8266 Sensor Node"}'
+
+Save the returned "secretKey" (Auth Token). It will be your password.
+
+
+---
+
+STEP 3: CHOOSE YOUR CONNECTION METHOD
+================================================================================
+
+METHOD A: USING THE NEXUS C++ DRIVER LIBRARY (BLYNK-STYLE)
+--------------------------------------------------------------------------------
+This uses the proprietary Nexus IoT client library, which features automated
+heartbeats, easy Blynk-style virtual pin mapping, and event handlers.
+
+1. Download the ZIP file `nexus-iot-library.zip` from your Docs dashboard.
+2. In Arduino IDE, go to Sketch > Include Library > Add .ZIP Library...
+3. Select the downloaded `nexus-iot-library.zip` to install it.
+4. Copy, configure, and upload the code below to your ESP8266:
+
+---------------------------- ESP8266 NEXUS CODE --------------------------------
+#include <ESP8266WiFi.h>
+#include <NexusSimpleEsp8266.h>
+#include <NexusTimer.h>
+
+// Enter Your Auth Credentials & WiFi configuration
+char auth[] = "YOUR_DEVICE_SECRET_KEY"; // From registration step
+char ssid[] = "YOUR_WIFI_SSID";
+char pass[] = "YOUR_WIFI_PASSWORD";
+
+NexusTimer timer;
+
+// Read from Dashboard Switch / Slider (Virtual Pin V2)
+NEXUS_WRITE(V2) {
+  int switchState = param.asInt();
+  digitalWrite(LED_BUILTIN, switchState == 1 ? LOW : HIGH); // LOW is ON on most ESP8266 built-in LEDs
+  Serial.print("V2 pin state changed to: ");
+  Serial.println(switchState);
+}
+
+// Periodic Function: Push Telemetry
+void sendSensorData() {
+  float humidity = 45.2; // Replace with actual sensor readings (e.g. DHT11/DHT22)
+  Nexus.virtualWrite(V4, humidity); // Push humidity to Gauge/Chart on Virtual Pin V4
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(LED_BUILTIN, OUTPUT);
+
+  // Initialize Connection to Gateway
+  Nexus.begin(auth, ssid, pass);
+
+  // Schedule telemetry updates every 5 seconds
+  timer.setInterval(5000L, sendSensorData);
+}
+
+void loop() {
+  Nexus.run();  // Maintains MQTT connectivity and dispatches messages
+  timer.run();  // Keeps scheduler running
+}
+--------------------------------------------------------------------------------
+
+
+METHOD B: USING STANDARD MQTT (PUBSUBCLIENT + ARDUINOJSON)
+--------------------------------------------------------------------------------
+If you prefer not to install the custom Nexus ZIP library, you can use the
+standard and widely available PubSubClient library.
+
+1. Install "PubSubClient" and "ArduinoJson" libraries:
+   - Go to Tools > Manage Libraries...
+   - Search for "PubSubClient" (by Nick O'Leary) and install.
+   - Search for "ArduinoJson" (by Benoit Blanchon) and install.
+2. Copy, configure, and upload the code below:
+
+-------------------------- ESP8266 STANDARD MQTT CODE --------------------------
+#include <ESP8266WiFi.h>
+#include <PubSubClient.h>
+#include <ArduinoJson.h>
+
+// Configuration Settings
+const char* ssid = "YOUR_WIFI_SSID";
+const char* password = "YOUR_WIFI_PASSWORD";
+const char* mqtt_server = "YOUR_GATEWAY_IP_ADDRESS"; // e.g. "192.168.1.100"
+const int mqtt_port = 1883;
+
+// Device Credentials (from registration)
+const char* deviceId = "esp8266-sensor-1";
+const char* secretKey = "YOUR_DEVICE_SECRET_KEY";
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+unsigned long lastMsg = 0;
+
+// MQTT Topic definitions
+char telemetryTopic[64];
+char statusTopic[64];
+char commandTopic[64];
+char heartbeatTopic[64];
+
+void setup_wifi() {
+  delay(10);
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+}
+
+void callback(char* topic, byte* payload, unsigned int length) {
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  
+  // Parse payload
+  String messageTemp;
+  for (int i = 0; i < length; i++) {
+    messageTemp += (char)payload[i];
+  }
+  Serial.println(messageTemp);
+
+  // Parse Command JSON
+  StaticJsonDocument<256> doc;
+  DeserializationError error = deserializeJson(doc, messageTemp);
+
+  if (error) {
+    Serial.print("deserializeJson() failed: ");
+    Serial.println(error.c_str());
+    return;
+  }
+
+  // Example Action handling (e.g. command payload: {"action":"toggle", "value":1})
+  if (doc.containsKey("action")) {
+    const char* action = doc["action"];
+    int value = doc["value"];
+    
+    Serial.print("Action: ");
+    Serial.println(action);
+    
+    if (strcmp(action, "toggle") == 0 || strcmp(action, "switch") == 0) {
+      digitalWrite(LED_BUILTIN, value == 1 ? LOW : HIGH); // Control LED
+      
+      // Send response message back to gateway
+      char responseTopic[64];
+      snprintf(responseTopic, sizeof(responseTopic), "iot/device/%s/response", deviceId);
+      client.publish(responseTopic, "Command executed successfully");
+    }
+  }
+}
+
+void reconnect() {
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    
+    // Connect using deviceId as Client ID, and secretKey as MQTT Password (username can be deviceId)
+    if (client.connect(deviceId, deviceId, secretKey, statusTopic, 1, true, "offline")) {
+      Serial.println("connected");
+      
+      // Once connected, publish online status
+      client.publish(statusTopic, "online", true);
+      
+      // Subscribe to command topic
+      client.subscribe(commandTopic);
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      delay(5000);
+    }
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(LED_BUILTIN, OUTPUT);
+  
+  // Generate MQTT Topics dynamically
+  snprintf(telemetryTopic, sizeof(telemetryTopic), "iot/device/%s/telemetry", deviceId);
+  snprintf(statusTopic, sizeof(statusTopic), "iot/device/%s/status", deviceId);
+  snprintf(commandTopic, sizeof(commandTopic), "iot/device/%s/command", deviceId);
+  snprintf(heartbeatTopic, sizeof(heartbeatTopic), "iot/device/%s/heartbeat", deviceId);
+
+  setup_wifi();
+  client.setServer(mqtt_server, mqtt_port);
+  client.setCallback(callback);
+}
+
+void loop() {
+  if (!client.connected()) {
+    reconnect();
+  }
+  client.loop();
+
+  // Periodically send telemetry data every 10 seconds
+  unsigned long now = millis();
+  if (now - lastMsg > 10000) {
+    lastMsg = now;
+    
+    // Create and send telemetry JSON payload: {"streamKey": "humidity", "value": 45.2}
+    StaticJsonDocument<128> doc;
+    doc["streamKey"] = "humidity";
+    doc["value"] = 45.2;
+
+    char buffer[128];
+    serializeJson(doc, buffer);
+    
+    client.publish(telemetryTopic, buffer);
+    Serial.print("Published telemetry: ");
+    Serial.println(buffer);
+    
+    // Send Keep-Alive Heartbeat
+    client.publish(heartbeatTopic, "ping");
+  }
+}
+--------------------------------------------------------------------------------
+
+
+---
+
+STEP 4: VERIFY AND MONITOR
+================================================================================
+1. Open the Serial Monitor in the Arduino IDE (baud rate: 115200).
+2. Check that the ESP8266 connects to your Wi-Fi and says "MQTT connection... connected".
+3. Check the Gateway Server Logs in Docker:
+   - You should see logs like:
+     "MQTT Message Received: topic=iot/device/esp8266-sensor-1/status, message=online"
+     "MQTT Message Received: topic=iot/device/esp8266-sensor-1/telemetry, message=..."
+4. Navigate to the Nexus Web Dashboard:
+   - Open your dashboard, locate the registered device.
+   - It should display its status as "ONLINE".
+   - Create widgets bound to virtual pins (e.g. V2 for a toggle, V4 for a gauge) and test sending commands or viewing live telemetry.
+
+================================================================================
