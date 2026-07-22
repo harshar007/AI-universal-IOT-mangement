@@ -14,6 +14,9 @@ const reset = async () => {
 
     console.log('--- Resetting IoT DB ---');
     const iClient = await iotPool.connect();
+    await iClient.query('DROP TABLE IF EXISTS user_ai_settings CASCADE;');
+    await iClient.query('DROP TABLE IF EXISTS user_widgets CASCADE;');
+    await iClient.query('DROP TABLE IF EXISTS chat_messages CASCADE;');
     await iClient.query('DROP TABLE IF EXISTS iot_alerts_history CASCADE;');
     await iClient.query('DROP TABLE IF EXISTS iot_alert_rules CASCADE;');
     await iClient.query('DROP TABLE IF EXISTS iot_logs CASCADE;');

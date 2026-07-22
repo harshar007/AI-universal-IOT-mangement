@@ -61,31 +61,32 @@ class SensorRepository {
     return { sensorData, airQuality };
   }
 
-  async getActiveRules() {
+  async getActiveRules(userId = null) {
+    if (!userId) return [];
     const queryText = `
-      SELECT id, sensor_type as "sensorType", operator, value, is_enabled as "isEnabled", target_recipient as "targetRecipient"
+      SELECT id, sensor_type as "sensorType", operator, value, is_enabled as "isEnabled", target_recipient as "targetRecipient", user_id as "userId"
       FROM iot_alert_rules
-      WHERE is_enabled = true
+      WHERE is_enabled = true AND user_id = $1
     `;
     try {
-      const res = await iotPool.query(queryText);
+      const res = await iotPool.query(queryText, [String(userId)]);
       return res.rows;
     } catch (err) {
       // Fallback default rules if table doesn't exist yet
       return [
-        { id: 1, sensorType: 'TEMPERATURE', operator: 'GREATER_THAN', value: 30, isEnabled: true, targetRecipient: 'admin@nexus.io' },
-        { id: 2, sensorType: 'AIR_QUALITY', operator: 'GREATER_THAN', value: 800, isEnabled: true, targetRecipient: 'admin@nexus.io' }
+        { id: 1, sensorType: 'TEMPERATURE', operator: 'GREATER_THAN', value: 30, isEnabled: true, targetRecipient: 'admin@nexus.io', userId },
+        { id: 2, sensorType: 'AIR_QUALITY', operator: 'GREATER_THAN', value: 800, isEnabled: true, targetRecipient: 'admin@nexus.io', userId }
       ];
     }
   }
 
-  async saveAlertLog(alert) {
+  async saveAlertLog(alert, userId = null) {
     const queryText = `
-      INSERT INTO iot_alerts_history (rule_id, sensor_type, operator, threshold, current_value, message)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO iot_alerts_history (rule_id, sensor_type, operator, threshold, current_value, message, user_id)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
     `;
     try {
-      await iotPool.query(queryText, [alert.ruleId, alert.sensorType, alert.operator, alert.threshold, alert.currentValue, alert.message]);
+      await iotPool.query(queryText, [alert.ruleId, alert.sensorType, alert.operator, alert.threshold, alert.currentValue, alert.message, userId ? String(userId) : null]);
     } catch (err) {
       console.error('Failed to log alert history:', err.message);
     }

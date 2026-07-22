@@ -112,13 +112,10 @@ const updateDeviceStatus = async (deviceId, status) => {
 };
 
 const getAllDevices = async (userId = null) => {
+  if (!userId) return [];
   try {
-    const queryText = userId
-      ? 'SELECT id, name, secret_key, status, last_heartbeat FROM iot_devices WHERE user_id = $1 OR user_id IS NULL'
-      : 'SELECT id, name, secret_key, status, last_heartbeat FROM iot_devices';
-    const queryParams = userId ? [userId] : [];
-
-    const res = await db.query(queryText, queryParams);
+    const queryText = 'SELECT id, name, secret_key, status, last_heartbeat FROM iot_devices WHERE user_id = $1';
+    const res = await db.query(queryText, [String(userId)]);
     if (res.rows.length > 0) {
       return res.rows.map(row => ({
         id: row.id,
@@ -132,7 +129,7 @@ const getAllDevices = async (userId = null) => {
     // Fall back to cache values
   }
   return Array.from(cache.values())
-    .filter(dev => !userId || dev.userId === userId || !dev.userId)
+    .filter(dev => String(dev.userId) === String(userId))
     .map(dev => ({
       id: dev.id,
       name: dev.name,

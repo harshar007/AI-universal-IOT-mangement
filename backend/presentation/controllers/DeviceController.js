@@ -38,7 +38,7 @@ class DeviceController {
 
   async verifyDeviceOwner(deviceId, userId) {
     const device = await this.deviceRepository.findById(deviceId);
-    if (device && device.userId && String(device.userId) !== String(userId)) {
+    if (!device || String(device.userId) !== String(userId)) {
       const error = new Error('Forbidden: You do not own this device');
       error.status = 403;
       throw error;

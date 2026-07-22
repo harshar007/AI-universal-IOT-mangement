@@ -6,6 +6,7 @@ import {
   Layers, ToggleLeft, Compass, AlertCircle, HelpCircle, Activity, 
   Sliders, Battery, Wifi, Maximize2, Minimize2
 } from 'lucide-react';
+import axios from 'axios';
 import '../css/NexusCustomizer.css';
 
 // Initial default widgets for pre-defined devices
@@ -82,6 +83,21 @@ export default function NexusCustomizer({ devices, onToggleDevice, onChangeDevic
     return INITIAL_WIDGETS;
   });
 
+  // Load custom widgets layout from server on mount
+  useEffect(() => {
+    const fetchWidgets = async () => {
+      try {
+        const res = await axios.get('/api/widgets');
+        if (res.data && res.data.widgetsMap) {
+          setWidgetsMap(res.data.widgetsMap);
+        }
+      } catch (err) {
+        console.warn('Failed to load custom widgets from server, using local defaults:', err.message);
+      }
+    };
+    fetchWidgets();
+  }, []);
+
   // Current Device's widgets
   const baseId = selectedDeviceId ? selectedDeviceId.replace(/^user_[^_]+_/, '') : '';
   const deviceWidgets = widgetsMap[selectedDeviceId] || INITIAL_WIDGETS[baseId] || [
@@ -150,10 +166,15 @@ export default function NexusCustomizer({ devices, onToggleDevice, onChangeDevic
     }
   }, [activeDevice?.value, activeDevice?.powerDraw, activeDevice?.powerState, activeDevice?.id]);
 
-  // Save layout map to localstorage when edited
-  const saveWidgetsMap = (newMap) => {
+  // Save layout map to localstorage and server when edited
+  const saveWidgetsMap = async (newMap) => {
     setWidgetsMap(newMap);
     localStorage.setItem('nexus_custom_widgets', JSON.stringify(newMap));
+    try {
+      await axios.post('/api/widgets', { widgetsMap: newMap });
+    } catch (err) {
+      console.error('Failed to save custom widgets to server:', err.message);
+    }
   };
 
   // Add a new widget to current device

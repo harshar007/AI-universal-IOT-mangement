@@ -128,6 +128,7 @@ const initDB = async () => {
     await iotClient.query(`
       CREATE TABLE IF NOT EXISTS iot_alert_rules (
         id SERIAL PRIMARY KEY,
+        user_id VARCHAR(50),
         sensor_type VARCHAR(50) NOT NULL,
         operator VARCHAR(20) NOT NULL,
         value NUMERIC NOT NULL,
@@ -136,12 +137,14 @@ const initDB = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+    await iotClient.query('ALTER TABLE iot_alert_rules ADD COLUMN IF NOT EXISTS user_id VARCHAR(50);');
     console.log('IoT DB Table "iot_alert_rules" verified/created.');
 
     // iot_alerts_history table
     await iotClient.query(`
       CREATE TABLE IF NOT EXISTS iot_alerts_history (
         id SERIAL PRIMARY KEY,
+        user_id VARCHAR(50),
         rule_id INT,
         sensor_type VARCHAR(50) NOT NULL,
         operator VARCHAR(20) NOT NULL,
@@ -151,7 +154,44 @@ const initDB = async () => {
         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+    await iotClient.query('ALTER TABLE iot_alerts_history ADD COLUMN IF NOT EXISTS user_id VARCHAR(50);');
     console.log('IoT DB Table "iot_alerts_history" verified/created.');
+
+    // user_ai_settings table
+    await iotClient.query(`
+      CREATE TABLE IF NOT EXISTS user_ai_settings (
+        user_id VARCHAR(50) PRIMARY KEY,
+        is_enabled BOOLEAN DEFAULT TRUE,
+        current_profile VARCHAR(20) DEFAULT 'SAFETY',
+        device_ai_settings JSONB DEFAULT '{}'::jsonb,
+        recent_decisions JSONB DEFAULT '[]'::jsonb,
+        last_evaluated_at TIMESTAMP
+      );
+    `);
+    console.log('IoT DB Table "user_ai_settings" verified/created.');
+
+    // user_widgets table
+    await iotClient.query(`
+      CREATE TABLE IF NOT EXISTS user_widgets (
+        user_id VARCHAR(50) PRIMARY KEY,
+        widgets_map JSONB DEFAULT '{}'::jsonb,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('IoT DB Table "user_widgets" verified/created.');
+
+    // chat_messages table
+    await iotClient.query(`
+      CREATE TABLE IF NOT EXISTS chat_messages (
+        id SERIAL PRIMARY KEY,
+        user_id VARCHAR(50) NOT NULL,
+        sender VARCHAR(20) NOT NULL,
+        text TEXT NOT NULL,
+        commands JSONB DEFAULT '[]'::jsonb,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log('IoT DB Table "chat_messages" verified/created.');
 
     // Seed default rules if empty
     const countRulesRes = await iotClient.query('SELECT COUNT(*) FROM iot_alert_rules');

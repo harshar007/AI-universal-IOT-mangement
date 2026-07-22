@@ -3,7 +3,7 @@ class AlertNotifier {
     this.websocketServer = websocketServer;
   }
 
-  async notify(alert) {
+  async notify(alert, userId = null) {
     console.warn(`[CRITICAL ALERT] ${alert.sensorType} breached threshold! Value: ${alert.currentValue}. ${alert.message}`);
 
     // If websocketServer is available (e.g. within gateway or shared process), broadcast it
@@ -12,7 +12,7 @@ class AlertNotifier {
         event: 'alert_triggered',
         alert,
         timestamp: new Date().toISOString()
-      });
+      }, userId);
     }
   }
 }

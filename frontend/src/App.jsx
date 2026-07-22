@@ -306,13 +306,34 @@ function AppContent({ theme, toggleTheme }) {
     return () => clearInterval(interval);
   }, []);
 
+  // Periodic AI Autonomous Engine Evaluation Loop
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const aiInterval = setInterval(async () => {
+      try {
+        const res = await axios.post('/api/ai/automation/evaluate', { devices });
+        if (res.data && res.data.executedDecisions && res.data.executedDecisions.length > 0) {
+          const time = new Date().toLocaleTimeString();
+          res.data.executedDecisions.forEach(dec => {
+            setSystemLogs(prev => [...prev, `[${time}] [AI AGENT] ${dec.deviceName} -> ${dec.action}: ${dec.reason}`].slice(-50));
+          });
+        }
+      } catch (err) {
+        // AI evaluation fallback
+      }
+    }, 10000);
+
+    return () => clearInterval(aiInterval);
+  }, [devices, isAuthenticated]);
+
   // WebSocket Connection to the deployed IoT Gateway
   useEffect(() => {
     if (!isAuthenticated) return;
 
+    const activeToken = localStorage.getItem('authToken');
     const wsAddress = window.location.protocol === 'https:' 
-      ? 'wss://' + window.location.hostname + ':5002' 
-      : 'ws://' + window.location.hostname + ':5002';
+      ? `wss://${window.location.hostname}:5002?token=${activeToken}` 
+      : `ws://${window.location.hostname}:5002?token=${activeToken}`;
     console.log('Connecting to IoT Gateway WebSocket:', wsAddress);
     
     let ws = null;

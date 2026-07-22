@@ -1,23 +1,28 @@
 const ollamaClient = require('./ollama.client');
 const chatPrompt = require('./chat.prompt');
-const conversationManager = require('./conversation.manager');
+const { pool } = require('../config/db');
 
-const processMessage = async (conversationId, userText) => {
-  const { messages, conversationId: actualId } = conversationManager.getConversation(conversationId);
-  
-  // Format history for Ollama chat
+const processMessage = async (userId, userText) => {
+  // Format history for Ollama chat by querying DB
+  const queryText = `
+    SELECT id, sender, text 
+    FROM chat_messages 
+    WHERE user_id = $1 
+    ORDER BY timestamp ASC
+  `;
+  const dbRes = await pool.query(queryText, [String(userId)]);
+  const messages = dbRes.rows;
+
   const ollamaMessages = [
     { role: 'system', content: chatPrompt.getSystemPrompt() }
   ];
   
   // Add conversation history
   messages.forEach(msg => {
-    if (msg.id !== 'init') {
-      ollamaMessages.push({
-        role: msg.sender === 'user' ? 'user' : 'assistant',
-        content: msg.text
-      });
-    }
+    ollamaMessages.push({
+      role: msg.sender === 'user' ? 'user' : 'assistant',
+      content: msg.text
+    });
   });
   
   // Add latest user message
@@ -38,27 +43,32 @@ const processMessage = async (conversationId, userText) => {
     chatResponse = getFallbackResponse(userText);
   }
   
-  // Save messages to conversation manager
-  const userMsg = {
-    id: Date.now().toString(),
-    sender: 'user',
-    text: userText,
-    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-  };
-  conversationManager.addMessage(actualId, userMsg);
+  // Save user message to database
+  await pool.query(
+    'INSERT INTO chat_messages (user_id, sender, text, commands) VALUES ($1, $2, $3, $4)',
+    [String(userId), 'user', userText, '[]']
+  );
+  
+  // Save AI message to database
+  const replyText = chatResponse.reply || chatResponse.text || 'I processed your command.';
+  const commandsJson = JSON.stringify(chatResponse.commands || []);
+  const insertRes = await pool.query(
+    'INSERT INTO chat_messages (user_id, sender, text, commands) VALUES ($1, $2, $3, $4) RETURNING id, timestamp',
+    [String(userId), 'ai', replyText, commandsJson]
+  );
+  const newRow = insertRes.rows[0];
   
   const aiMsg = {
-    id: (Date.now() + 1).toString(),
+    id: String(newRow.id),
     sender: 'ai',
-    text: chatResponse.reply || chatResponse.text || 'I processed your command.',
-    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    text: replyText,
+    timestamp: new Date(newRow.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     commands: chatResponse.commands || [],
     logs: chatResponse.logs || []
   };
-  conversationManager.addMessage(actualId, aiMsg);
   
   return {
-    conversationId: actualId,
+    conversationId: String(userId),
     message: aiMsg
   };
 };
@@ -165,7 +175,7 @@ Using \`delay()\` in your microcontroller code freezes execution, causing MQTT k
 
 NexusTimer timer;
 
-// Define a function to read sensors periodically
+// Define a function to read sensors safely
 void sendSensorData() {
   float humidity = readHumidity();
   Nexus.virtualWrite(V4, humidity);

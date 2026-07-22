@@ -5,6 +5,8 @@ const { initDB, userPool, iotPool } = require('./config/db');
 const authRoutes = require('./presentation/routes/authRoutes');
 const deviceRoutes = require('./presentation/routes/deviceRoutes');
 const sensorRoutes = require('./presentation/routes/sensorRoutes');
+const aiRoutes = require('./presentation/routes/aiRoutes');
+const widgetRoutes = require('./presentation/routes/widgetRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,6 +24,8 @@ initDB();
 app.use('/api', authRoutes);
 app.use('/api/devices', deviceRoutes);
 app.use('/api/sensors', sensorRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/widgets', widgetRoutes);
 
 // Health check endpoint verifying dual databases
 app.get('/health', async (req, res) => {

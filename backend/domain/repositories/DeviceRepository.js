@@ -29,11 +29,9 @@ class DeviceRepository {
   }
 
   async findAllByUserId(userId = null) {
-    const queryText = userId
-      ? 'SELECT * FROM iot_devices WHERE user_id = $1 OR user_id IS NULL'
-      : 'SELECT * FROM iot_devices';
-    const queryParams = userId ? [userId] : [];
-    const result = await iotPool.query(queryText, queryParams);
+    if (!userId) return [];
+    const queryText = 'SELECT * FROM iot_devices WHERE user_id = $1';
+    const result = await iotPool.query(queryText, [String(userId)]);
     return result.rows.map(row => new Device(row.id, row.name, row.secret_key, row.status, row.last_heartbeat, row.user_id));
   }
 

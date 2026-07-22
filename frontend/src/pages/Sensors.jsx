@@ -62,7 +62,10 @@ export default function Sensors() {
     const interval = setInterval(fetchData, 4000);
 
     // Establish direct WebSocket listener for real-time alerts and telemetry broadcasts
-    const wsAddress = 'wss://79.143.179.156:5002';
+    const activeToken = localStorage.getItem('authToken');
+    const wsAddress = window.location.protocol === 'https:' 
+      ? `wss://${window.location.hostname}:5002?token=${activeToken}` 
+      : `ws://${window.location.hostname}:5002?token=${activeToken}`;
     let ws = new WebSocket(wsAddress);
 
     ws.onmessage = (event) => {

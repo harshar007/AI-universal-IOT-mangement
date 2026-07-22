@@ -6,9 +6,11 @@ const websocketServer = require('../sockets/websocketServer');
 // Clean Architecture integration
 const SendAlert = require('../../../backend/application/usecases/SendAlert');
 const SensorRepository = require('../../../backend/domain/repositories/SensorRepository');
+const DeviceRepository = require('../../../backend/domain/repositories/DeviceRepository');
 const AlertNotifier = require('../../../backend/infrastructure/notifiers/AlertNotifier');
 
 const sensorRepository = new SensorRepository();
+const deviceRepository = new DeviceRepository();
 const alertNotifier = new AlertNotifier(websocketServer);
 const sendAlertUseCase = new SendAlert(sensorRepository, alertNotifier);
 
@@ -24,23 +26,34 @@ const saveTelemetry = async (deviceId, streamKey, value) => {
     logger.error('Failed to write telemetry to database: ' + err.message);
   }
 
-  // 1. Broadcast the update via WebSocket to connected dashboard clients
+  // Look up device details to find the owner userId
+  let ownerId = null;
+  try {
+    const device = await deviceRepository.findById(deviceId);
+    if (device) {
+      ownerId = device.userId;
+    }
+  } catch (err) {
+    logger.error('Failed to lookup device owner: ' + err.message);
+  }
+
+  // 1. Broadcast the update via WebSocket to connected dashboard clients matching ownerId
   websocketServer.broadcast({
     event: 'telemetry',
     deviceId,
     streamKey,
     value,
     timestamp: new Date().toISOString()
-  });
+  }, ownerId);
 
   // 2. Clean Architecture: Fetch latest entities and run SendAlert Usecase
   try {
     const { sensorData, airQuality } = await sensorRepository.getLatestTelemetry(deviceId);
-    const breachedAlerts = await sendAlertUseCase.execute(sensorData, airQuality);
+    const breachedAlerts = await sendAlertUseCase.execute(sensorData, airQuality, ownerId);
     
     // Save any triggered alerts to history
     for (const alert of breachedAlerts) {
-      await sensorRepository.saveAlertLog(alert);
+      await sensorRepository.saveAlertLog(alert, ownerId);
     }
   } catch (err) {
     logger.error('Clean Architecture rules check failed: ' + err.message);
