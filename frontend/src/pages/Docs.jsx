@@ -18,7 +18,7 @@ export default function Docs() {
   };
 
   const codeSnippets = {
-    dockerRun: `docker-compose up --build`,
+    dockerRun: `docker compose up --build`,
     registerDevice: `curl -X POST http://localhost:5002/api/devices/register \\
   -H "Content-Type: application/json" \\
   -d '{"deviceId": "living-room-ac", "name": "Living Room AC"}'`,

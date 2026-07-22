@@ -7,6 +7,7 @@ const deviceRoutes = require('./presentation/routes/deviceRoutes');
 const sensorRoutes = require('./presentation/routes/sensorRoutes');
 const aiRoutes = require('./presentation/routes/aiRoutes');
 const widgetRoutes = require('./presentation/routes/widgetRoutes');
+const adminRoutes = require('./presentation/routes/adminRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -26,6 +27,7 @@ app.use('/api/devices', deviceRoutes);
 app.use('/api/sensors', sensorRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/widgets', widgetRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check endpoint verifying dual databases
 app.get('/health', async (req, res) => {

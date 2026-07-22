@@ -1,0 +1,291 @@
+/* =========================================================================
+   NEXUS VIRTUAL PIN MANAGER STYLESHEET (VANILLA CSS)
+   ========================================================================= */
+
+.vpm-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  animation: fadeIn 0.4s ease-out;
+  min-height: calc(100vh - 100px);
+}
+
+.vpm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  box-sizing: border-box;
+}
+
+.header-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-icon-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--glass-highlight);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+}
+
+.cyan-glow {
+  color: var(--accent-cyan);
+  filter: drop-shadow(0 0 6px var(--accent-cyan));
+}
+
+.vpm-title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+
+.vpm-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.header-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent-cyan-glow);
+  border: 1px solid var(--accent-cyan);
+  color: var(--accent-cyan);
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* Grid layout */
+.vpm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* Pin Card */
+.pin-card {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+  min-height: 200px;
+  transition: all var(--transition-normal);
+}
+
+.pin-card.bound {
+  border-left: 4px solid var(--accent-cyan);
+}
+
+.pin-card.unbound {
+  border-left: 4px solid var(--glass-border);
+  opacity: 0.75;
+}
+
+.pin-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pin-badge {
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.pin-status-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.pin-status-label.active {
+  background: var(--accent-cyan-glow);
+  color: var(--accent-cyan);
+  border: 1px solid var(--accent-cyan);
+}
+
+.pin-status-label.idle {
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  border: 1px solid var(--glass-border);
+}
+
+.pin-card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.bound-device {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.bound-label {
+  margin: 4px 0 0 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.pin-value-display {
+  margin: 16px 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.value-num {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--accent-cyan);
+}
+
+/* Control elements */
+.pin-control-action {
+  margin-top: auto;
+}
+
+.toggle-switch-btn {
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.toggle-switch-btn.on {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--accent-red);
+  color: var(--accent-red);
+}
+
+.toggle-switch-btn.on:hover {
+  background: rgba(239, 68, 68, 0.18);
+  box-shadow: var(--shadow-glow-red);
+}
+
+.toggle-switch-btn.off {
+  background: var(--accent-cyan-glow);
+  border: 1px solid var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+.toggle-switch-btn.off:hover {
+  background: rgba(16, 185, 129, 0.25);
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+.slider-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vpm-slider-input {
+  width: 100%;
+  accent-color: var(--accent-cyan);
+  cursor: ew-resize;
+  background: var(--bg-secondary);
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+}
+
+.slider-ranges {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.sensor-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+}
+
+.live-pulse {
+  color: var(--accent-green);
+  animation: pulse 1.8s infinite;
+}
+
+/* Unbound State */
+.unbound-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 20px 0;
+}
+
+.unbound-text {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.4;
+}
+
+@media (max-width: 600px) {
+  .vpm-page-container {
+    padding: 16px;
+  }
+  .vpm-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px;
+  }
+  .vpm-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .header-info {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+  .vpm-title {
+    font-size: 1.35rem;
+  }
+  .pin-card {
+    min-height: auto;
+  }
+}

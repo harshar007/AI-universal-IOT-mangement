@@ -200,3 +200,16 @@ don't run npm run dev and npm run build
   - [x] Redesigned [Dashboard.jsx](file:///c:/Users/ajaysaagar%20developer/Desktop/final%20year%20project/frontend/src/pages/Dashboard.jsx) with a scrolling cyber terminal view showing message logs and telemetry.
   - [x] Added terminal color themes and channel list grids in [Dashboard.css](file:///c:/Users/ajaysaagar%20developer/Desktop/final%20year%20project/frontend/src/css/Dashboard.css)
   - [x] Fixed local WebSocket URL in [App.jsx](file:///c:/Users/ajaysaagar%20developer/Desktop/final%20year%20project/frontend/src/App.jsx) to resolve to local port 5002 instead of the remote IP.
+- [x] Seeded static Admin account, Synchronized Role signatures, and created Admin Panel portal
+  - [x] Seeded `admin@nexus.io` with admin roles on startup inside `db.js`.
+  - [x] Synchronized JWT signed roles in `LoginUser.js`.
+  - [x] Coded `AdminController.js` and `adminRoutes.js` to manage diagnostics, users detail edits, and retrieve security audit logs.
+  - [x] Built the responsive glassmorphic `AdminPanel.jsx` dashboard.
+- [x] Audited User Data Isolation & Implemented Virtual Pin Manager and MQTT Live Monitor
+  - [x] Confirmed that all device, telemetry, sensor, and chat history API queries are isolated by user ID.
+  - [x] Implemented `VirtualPinManager.jsx` showing V0-V15 pin states with manual write override support.
+  - [x] Implemented `MqttMonitor.jsx` live debug terminal and interactive MQTT signal generator.
+  - [x] Added sidebar links in `Navbar.jsx` and registered router guards in `App.jsx`.
+- [x] Mobile Layout Optimizations & Documentation Command Fixes
+  - [x] Corrected legacy `docker-compose` commands to modern `docker compose` across files.
+  - [x] Optimized stylesheets (`VirtualPinManager.css`, `MqttMonitor.css`, `AdminPanel.css`) with media queries to fit mobile screen widths.

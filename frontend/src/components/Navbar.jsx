@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Cpu, Layers, Activity, Radio, Sun, Moon, LogOut, Smartphone, BookOpen, Users, Edit2, X, User } from 'lucide-react';
+import { LayoutDashboard, Cpu, Layers, Activity, Radio, Sun, Moon, LogOut, Smartphone, BookOpen, Users, Edit2, X, User, Shield, Sliders, Terminal } from 'lucide-react';
 import axios from 'axios';
 import '../css/Navbar.css';
 
@@ -211,6 +211,24 @@ export default function Navbar({ theme, onToggleTheme, user, onUpdateUser, onLog
           </NavLink>
 
           <NavLink
+            to="/virtual-pins"
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            onClick={() => setIsOpen(false)}
+          >
+            <Sliders className="nav-icon" size={20} />
+            <span>Virtual Pins</span>
+          </NavLink>
+
+          <NavLink
+            to="/mqtt-monitor"
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            onClick={() => setIsOpen(false)}
+          >
+            <Terminal className="nav-icon" size={20} />
+            <span>MQTT Live Monitor</span>
+          </NavLink>
+
+          <NavLink
             to="/analytics"
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
             onClick={() => setIsOpen(false)}
@@ -245,6 +263,17 @@ export default function Navbar({ theme, onToggleTheme, user, onUpdateUser, onLog
             <Users className="nav-icon" size={20} />
             <span>Project Team</span>
           </NavLink>
+
+          {user && user.role === 'ADMIN' && (
+            <NavLink
+              to="/admin"
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+              onClick={() => setIsOpen(false)}
+            >
+              <Shield className="nav-icon" size={20} />
+              <span>Admin Control</span>
+            </NavLink>
+          )}
 
           <button
             onClick={handleLogout}

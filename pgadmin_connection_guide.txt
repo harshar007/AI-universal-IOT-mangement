@@ -62,6 +62,6 @@ STEP 5: View Your Tables & Data
 
 ================================================================================
 Note: If your database is running inside Docker, ensure your Docker containers 
-are running (via `docker-compose up` or your Docker Desktop interface) so that 
+are running (via `docker compose up` or your Docker Desktop interface) so that 
 port 5432 is active on localhost.
 ================================================================================

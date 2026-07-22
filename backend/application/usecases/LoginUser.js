@@ -27,7 +27,7 @@ class LoginUser {
     }
 
     const token = jwt.sign(
-      { userId: user.id, email: user.email, name: user.name },
+      { userId: user.id, email: user.email, name: user.name, role: user.role },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
@@ -38,7 +38,8 @@ class LoginUser {
         id: user.id,
         name: user.name,
         email: user.email,
-        profilePic: user.profilePic
+        profilePic: user.profilePic,
+        role: user.role
       }
     };
   }

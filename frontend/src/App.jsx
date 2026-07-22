@@ -10,6 +10,9 @@ import NexusCustomizer from './pages/NexusCustomizer.jsx';
 import Docs from './pages/Docs.jsx';
 import Developers from './pages/Developers.jsx';
 import Sensors from './pages/Sensors.jsx';
+import AdminPanel from './pages/AdminPanel.jsx';
+import VirtualPinManager from './pages/VirtualPinManager.jsx';
+import MqttMonitor from './pages/MqttMonitor.jsx';
 import axios from 'axios';
 
 
@@ -356,7 +359,7 @@ function AppContent({ theme, toggleTheme }) {
 
           if (data.event === 'telemetry') {
             const { deviceId, streamKey, value } = data;
-            setSystemLogs(prev => [...prev, `[${time}] [telemetry] ${deviceId}.${streamKey} -> ${value}`].slice(-50));
+            setSystemLogs(prev => [...prev, `[${time}] [TELEMETRY] topic: iot/device/${deviceId}/telemetry | payload: { "streamKey": "${streamKey}", "value": ${value} }`].slice(-100));
             setDevices(prev =>
               prev.map(d => {
                 if (d.id === deviceId) {
@@ -375,21 +378,31 @@ function AppContent({ theme, toggleTheme }) {
 
           if (data.event === 'status') {
             const { deviceId, status } = data;
-            setSystemLogs(prev => [...prev, `[${time}] [status] ${deviceId} is now ${status.toUpperCase()}`].slice(-50));
+            setSystemLogs(prev => [...prev, `[${time}] [STATUS] topic: iot/device/${deviceId}/status | payload: { "status": "${status}" }`].slice(-100));
             setDevices(prev =>
               prev.map(d => d.id === deviceId ? { ...d, status, lastUpdated: 'Just now' } : d)
             );
           }
 
-          if (data.event === 'command') {
+          if (data.event === 'command' || data.event === 'command_dispatched') {
             const { deviceId, action, value } = data;
-            setSystemLogs(prev => [...prev, `[${time}] [command] dispatch -> ${deviceId} (action: ${action}, val: ${value})`].slice(-50));
-            if (action === 'toggle' || action === 'switch') {
+            setSystemLogs(prev => [...prev, `[${time}] [COMMAND] topic: iot/device/${deviceId}/command | payload: { "action": "${action}", "value": ${value} }`].slice(-100));
+            if (action === 'toggle' || action === 'switch' || action === 'command') {
               const state = value === 1 || value === 'true' || value === true;
               setDevices(prev =>
                 prev.map(d => d.id === deviceId ? { ...d, powerState: state, lastUpdated: 'Just now' } : d)
               );
             }
+          }
+
+          if (data.event === 'log') {
+            const { deviceId, message, level } = data;
+            setSystemLogs(prev => [...prev, `[${time}] [LOGS] topic: iot/device/${deviceId}/logs | payload: { "level": "${level}", "message": "${message}" }`].slice(-100));
+          }
+
+          if (data.event === 'heartbeat') {
+            const { deviceId } = data;
+            setSystemLogs(prev => [...prev, `[${time}] [HEARTBEAT] topic: iot/device/${deviceId}/heartbeat | payload: { "status": "ping" }`].slice(-100));
           }
         } catch (err) {
           console.error('Error parsing WebSocket message:', err);
@@ -684,6 +697,38 @@ function AppContent({ theme, toggleTheme }) {
           <Route
             path="/developers"
             element={<Developers />}
+          />
+          <Route
+            path="/admin"
+            element={
+              user && user.role === 'ADMIN' ? (
+                <AdminPanel />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            }
+          />
+          <Route
+            path="/virtual-pins"
+            element={
+              <VirtualPinManager
+                devices={devices}
+                onToggleDevice={handleToggleDevice}
+                onChangeDeviceValue={handleChangeDeviceValue}
+              />
+            }
+          />
+          <Route
+            path="/mqtt-monitor"
+            element={
+              <MqttMonitor
+                systemLogs={systemLogs}
+                setSystemLogs={setSystemLogs}
+                devices={devices}
+                onToggleDevice={handleToggleDevice}
+                onChangeDeviceValue={handleChangeDeviceValue}
+              />
+            }
           />
           {/* Wildcard fallback to prevent blank screens for invalid routes */}
           <Route

@@ -74,7 +74,19 @@ const initDB = async () => {
         PRIMARY KEY (organization_id, user_id)
       );
     `);
-    console.log('User DB Tables "organizations" and "organization_members" verified/created.');
+    // Seed default admin if not existing
+    const adminEmail = 'admin@nexus.io';
+    const checkAdminRes = await userClient.query('SELECT id FROM users WHERE email = $1', [adminEmail]);
+    if (checkAdminRes.rows.length === 0) {
+      const bcrypt = require('bcryptjs');
+      const adminPass = 'admin123';
+      const adminPassHash = await bcrypt.hash(adminPass, 10);
+      await userClient.query(`
+        INSERT INTO users (name, email, password_hash, role)
+        VALUES ($1, $2, $3, $4)
+      `, ['System Administrator', adminEmail, adminPassHash, 'ADMIN']);
+      console.log('Seeded default Admin user: admin@nexus.io');
+    }
 
     userClient.release();
 
