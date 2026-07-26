@@ -53,9 +53,9 @@ don't run npm run dev and npm run build
   - [x] Created [_redirects](file:///p:/New%20folder/frontend/public/_redirects) to proxy `/api/*` and `/api/chat/*` to remote backend servers and support Single Page Application (SPA) routing fallback
   - [x] Created [netlify.toml](file:///p:/New%20folder/frontend/netlify.toml) for Git-integrated deployment compatibility
 - [x] Resolved missing `agent-base` dependency in `ai-backend` by copying the module into `node_modules/agent-base`
-- [x] Realigned Frontend API Proxy (Reverted to Remote IP: 79.143.179.156:5000)
-  - [x] Restored `/api` target in [vite.config.js](file:///p:/New%20folder/frontend/vite.config.js) to `http://79.143.179.156:5000`
-  - [x] Restored `/api` location `proxy_pass` in [nginx.conf](file:///p:/New%20folder/frontend/nginx.conf) to `http://79.143.179.156:5000/api/`
+- [x] Realigned Frontend API Proxy (Reverted to Remote IP: YOUR_VPS_IP:5000)
+  - [x] Restored `/api` target in [vite.config.js](file:///p:/New%20folder/frontend/vite.config.js) to `http://YOUR_VPS_IP:5000`
+  - [x] Restored `/api` location `proxy_pass` in [nginx.conf](file:///p:/New%20folder/frontend/nginx.conf) to `http://YOUR_VPS_IP:5000/api/`
 - [x] Secured Dashboard Routing & Fixed Flash Issue
   - [x] Replaced asynchronous `useEffect` route guard with a synchronous render-time redirect check in `App.jsx`
   - [x] Prevented the `Navbar` and `Dashboard` from flashing on page load when unauthenticated
@@ -134,7 +134,7 @@ don't run npm run dev and npm run build
   - [x] Simplified the entire system prompt template to improve Llama-3 / TinyLlama instruction-following and prevent refusal/hallucination responses.
   - [x] Updated fallback logic in [chat.service.js](file:///p:/New%20folder/ai-backend/src/chatbot/chat.service.js) to show a friendly, informational offline message when Ollama is unreachable.
 - [x] Corrected Nginx Proxy Configuration
-  - [x] Changed `proxy_pass` target for `/api/` in [nginx.conf](file:///p:/New%20folder/frontend/nginx.conf) from `http://79.143.179.156:5000/health` to `http://79.143.179.156:5000/api/;` to route API requests to the Contabo backend server correctly instead of returning the health check endpoint.
+  - [x] Changed `proxy_pass` target for `/api/` in [nginx.conf](file:///p:/New%20folder/frontend/nginx.conf) from `http://YOUR_VPS_IP:5000/health` to `http://YOUR_VPS_IP:5000/api/;` to route API requests to the Contabo backend server correctly instead of returning the health check endpoint.
 - [x] Fixed Email Input Validation Error
   - [x] Trimmed login and signup email inputs on change in [Login.jsx](file:///p:/New%20folder/frontend/src/pages/Login.jsx) to prevent native HTML5 validation errors ("A part following '@' should not contain the symbol ' '") when copy-pasting or auto-filling email addresses with trailing spaces.
   - [x] Added fallback trims in login/signup form submit handlers for safety.

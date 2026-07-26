@@ -5,14 +5,14 @@
 // ==========================================================
 // 1. CONFIGURATION: Update these settings
 // ==========================================================
-const char* ssid = "Asianet-HARSHAR";
-const char* password = "9025084494";
-const char* mqtt_server = "79.143.179.156";
+const char* ssid = "YOUR_WIFI_SSID";
+const char* password = "YOUR_WIFI_PASSWORD";
+const char* mqtt_server = "YOUR_SERVER_IP";
 const int mqtt_port = 1883;
 
-const char* mqtt_client_id = "esp8266";
+const char* mqtt_client_id = "esp8266_node";
 const char* mqtt_user = "esp8266";
-const char* mqtt_password = "d5e9095985b726c0efc292b6e7557e7accc2f3c5b63541d0";
+const char* mqtt_password = "YOUR_MQTT_PASSWORD";
 
 // ==========================================================
 // MQTT Clients and Topics

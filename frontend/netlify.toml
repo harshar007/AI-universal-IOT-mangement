@@ -1,12 +1,12 @@
 [[redirects]]
   from = "/api/chat/*"
-  to = "http://79.143.179.156:5006/api/chat/:splat"
+  to = "http://YOUR_VPS_IP:5006/api/chat/:splat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/*"
-  to = "http://79.143.179.156:5000/api/:splat"
+  to = "http://YOUR_VPS_IP:5000/api/:splat"
   status = 200
   force = true
 

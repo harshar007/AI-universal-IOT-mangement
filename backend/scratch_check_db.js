@@ -3,12 +3,12 @@ const { Client } = require('pg');
 const run = async () => {
   // Test connection with password prabha0312
   const client1 = new Client({
-    connectionString: 'postgres://postgres:prabha0312@79.143.179.156:5432/postgres'
+    connectionString: 'postgres://postgres:prabha0312@YOUR_SERVER_IP:5432/postgres'
   });
   
   // Test connection with password postgres
   const client2 = new Client({
-    connectionString: 'postgres://postgres:postgres@79.143.179.156:5432/postgres'
+    connectionString: 'postgres://postgres:postgres@YOUR_SERVER_IP:5432/postgres'
   });
 
   console.log('Attempting client 1 (password prabha0312)...');
