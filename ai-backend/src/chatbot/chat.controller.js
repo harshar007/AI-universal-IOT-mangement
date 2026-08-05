@@ -50,7 +50,7 @@ const getHistory = async (req, res) => {
 
     // If no messages exist, seed the default AI message
     if (messages.length === 0) {
-      const welcomeText = 'Nexus Autonomous AI Controller is active. I am continuously monitoring telemetry streams across your IoT devices. You can configure AI automation profiles above or command me directly using natural language below!';
+      const welcomeText = 'Nunnarri Autonomous AI Controller is active. I am continuously monitoring telemetry streams across your IoT devices. You can configure AI automation profiles above or command me directly using natural language below!';
       const insertText = `
         INSERT INTO chat_messages (user_id, sender, text, commands)
         VALUES ($1, 'ai', $2, '[]'::jsonb)

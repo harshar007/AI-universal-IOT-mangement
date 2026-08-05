@@ -12,7 +12,7 @@ class ConversationManager {
       {
         id: 'init',
         sender: 'ai',
-        text: 'Nexus IoT AI Core online. I am monitoring 8 active channels. You can issue commands to adjust temperature, optimize energy consumption, or request diagnostics.',
+        text: 'Nunnarri IoT AI Core online. I am monitoring 8 active channels. You can issue commands to adjust temperature, optimize energy consumption, or request diagnostics.',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
     ]);
@@ -27,7 +27,7 @@ class ConversationManager {
         {
           id: 'init',
           sender: 'ai',
-          text: 'Nexus IoT AI Core online. I am monitoring 8 active channels. You can issue commands to adjust temperature, optimize energy consumption, or request diagnostics.',
+          text: 'Nunnarri IoT AI Core online. I am monitoring 8 active channels. You can issue commands to adjust temperature, optimize energy consumption, or request diagnostics.',
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
       ]);
@@ -49,7 +49,7 @@ class ConversationManager {
         {
           id: 'init',
           sender: 'ai',
-          text: 'Nexus IoT AI Core online. I am monitoring 8 active channels. You can issue commands to adjust temperature, optimize energy consumption, or request diagnostics.',
+          text: 'Nunnarri IoT AI Core online. I am monitoring 8 active channels. You can issue commands to adjust temperature, optimize energy consumption, or request diagnostics.',
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
       ]);

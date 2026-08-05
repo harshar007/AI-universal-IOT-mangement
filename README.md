@@ -1,4 +1,4 @@
-# ⚡ NEXUS: The Sovereign IoT & AI Digital Brain
+# ⚡ நுண்ணறி (Nunnarri): Smart Intelligence IoT Platform
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?logo=docker&logoColor=white)](docker-compose.yml)
@@ -8,17 +8,31 @@
 [![MQTT](https://img.shields.io/badge/MQTT-1883-660066?logo=eclipse-mosquitto&logoColor=white)](https://mqtt.org)
 [![Ollama AI](https://img.shields.io/badge/AI-Ollama%2FTinyLlama-FF6F00?logo=ollama&logoColor=white)](https://ollama.ai)
 
-> **Nexus** is an open-source, full-stack, enterprise-grade IoT Management & Local AI Intelligence Platform. It bridges raw physical hardware telemetry (ESP8266/ESP32), sub-millisecond MQTT communication, dual-database memory architectures, and localized Large Language Models (LLMs) into a unified, autonomous cyber-physical operating system.
+---
+
+<p align="center">
+  <img src="file:///home/harshar/.gemini/antigravity-ide/brain/daf70038-5241-47f4-b776-0f2e0583c3fe/media__1785945830666.jpg" alt="நுண்ணறி (Nunnarri) Smart Intelligence IoT Platform Banner" width="500" style="border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);" />
+</p>
+
+<div align="center">
+
+### **நுண்ணறி • Nunnarri**
+#### **இணைப்பு • அறிவு • கட்டுப்பாடு** *(Connectivity • Intelligence • Control)*
+#### **Smart Intelligence Cyber-Physical Platform & AI Core**
+
+</div>
+
+> **நுண்ணறி (Nunnarri)** is an open-source, full-stack, enterprise-grade **Smart Intelligence IoT Management & Local AI Platform**. The name **நுண்ணறி** (*Nunnarri*) signifies **Smart Intelligence** — bridging raw physical hardware telemetry (ESP8266/ESP32), sub-millisecond MQTT communication, dual-database memory architectures, and localized Large Language Models (LLMs) into a unified, autonomous cyber-physical operating system.
 
 ---
 
 ## 🎨 Dashboard & Graphical User Interface
 
-![Nexus IoT & AI Control Center UI](file:///home/harshar/.gemini/antigravity-ide/brain/4685b3c1-d3d6-4418-a123-ee193906e98b/nexus_dashboard_ui_mockup_1785068560811.png)
+![Nunnarri IoT & AI Control Center UI](file:///home/harshar/.gemini/antigravity-ide/brain/4685b3c1-d3d6-4418-a123-ee193906e98b/nexus_dashboard_ui_mockup_1785068560811.png)
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────────┐
-│ 🧠 NEXUS CONTROL CENTER HUD                                      [ 14 Active ]  [ OPTIMAL ] │
+│ 🧠 NUNNARRI CONTROL CENTER HUD                                   [ 14 Active ]  [ OPTIMAL ] │
 ├──────────────────────────────┬────────────────────────────────────────┬─────────────────────┤
 │ 🤖 LOCAL AI CORTEX (Ollama)  │ 📊 TELEMETRY GAUGES & REAL-TIME LOGS   │ 🎛️ VIRTUAL PIN HUD  │
 │                              │                                        │                     │
@@ -35,22 +49,22 @@
 
 ---
 
-## 🌌 Why Build the Future with IoT & AI? The Vision Behind Nexus
+## 🌌 Why Build the Future with IoT & AI? The Vision Behind Nunnarri (நுண்ணறி)
 
 > [!IMPORTANT]
-> **The Next Tech Frontier**: We are transitioning from the era of static software to the era of **Autonomous Cyber-Physical Intelligence**. Standalone hardware is blind without software, and software is disconnected without physical sensors. **Nexus unites physical sensors with artificial cognitive reasoning.**
+> **The Next Tech Frontier**: We are transitioning from the era of static software to the era of **Autonomous Cyber-Physical Intelligence**. Standalone hardware is blind without software, and software is disconnected without physical sensors. **Nunnarri (Smart Intelligence) unites physical sensors with artificial cognitive reasoning.**
 
 ### 1. The Death of Dumb Hardware
-Traditional IoT platforms act as passive loggers—collecting data and relying on human operators to manually configure rules. **Nexus embeds local AI intelligence (Ollama LLM + Anomaly Engines)** directly into the loop, allowing systems to predict failures, adjust environment dynamics, and execute autonomous corrective actions.
+Traditional IoT platforms act as passive loggers—collecting data and relying on human operators to manually configure rules. **Nunnarri embeds local AI intelligence (Ollama LLM + Anomaly Engines)** directly into the loop, allowing systems to predict failures, adjust environment dynamics, and execute autonomous corrective actions.
 
 ### 2. Open-Source Data Sovereignty
-Proprietary cloud platforms lock your hardware into cloud subscriptions, data harvesting, and vendor deprecations. Nexus provides **100% data sovereignty**: your telemetry, user databases, and AI models run locally on your own hardware using Docker.
+Proprietary cloud platforms lock your hardware into cloud subscriptions, data harvesting, and vendor deprecations. Nunnarri provides **100% data sovereignty**: your telemetry, user databases, and AI models run locally on your own hardware using Docker.
 
 ---
 
-## 🧠 Deep-Dive Architectural Analogy: Elon Musk’s Neural Architecture vs. Nexus
+## 🧠 Deep-Dive Architectural Analogy: Elon Musk’s Neural Architecture vs. Nunnarri
 
-Elon Musk’s vision (Neuralink & Tesla FSD) focuses on high-bandwidth bio-digital interfaces—merging biological neural networks with synthetic AI processors. **Nexus brings this exact neural architecture to the physical world of IoT.**
+Elon Musk’s vision (Neuralink & Tesla FSD) focuses on high-bandwidth bio-digital interfaces—merging biological neural networks with synthetic AI processors. **Nunnarri brings this exact neural architecture to the physical world of IoT.**
 
 ```mermaid
 graph TD
@@ -83,7 +97,7 @@ graph TD
 
 ### Detailed Structural Comparison Table
 
-| Neural Component (Biological / Neuralink) | Nexus Platform Component | Detailed Functional Metaphor |
+| Neural Component (Biological / Neuralink) | Nunnarri Platform Component | Detailed Functional Metaphor |
 | :--- | :--- | :--- |
 | **Prefrontal Cognitive Cortex** | `ai-backend` (Ollama LLM + Anomaly Detection) | **Executive Reasoning**: Processes natural language queries ("Why is energy consumption high?"), analyzes telemetry anomalies, and plans actions. |
 | **Central Nervous System & Spinal Cord** | `iot-gateway` (MQTT 1883 + WebSockets 5002) | **High-Bandwidth Pulse Channel**: Transmits sub-millisecond nerve impulses bi-directionally between sensors and the central processing core. |
@@ -99,7 +113,7 @@ graph TD
 - ⚡ **Sub-Millisecond Telemetry Ingestion**: Embedded MQTT broker (`1883`) and WebSocket gateway (`5002`) for real-time telemetry streaming.
 - 📌 **Blynk-Style Virtual Pin Architecture**: Bind hardware inputs/outputs (`V0` to `V255`) to interactive UI widgets seamlessly.
 - 🤖 **On-Premise Sovereign AI**: Integrated localized LLM (`Ollama` + `tinyllama`) for natural language commands and anomaly detection.
-- 🎨 **Dynamic Glassmorphism Dashboard**: Customizer pages (Nexus & Blynk customizers), Virtual Pin Manager, MQTT Live Monitor, and Admin Panel.
+- 🎨 **Dynamic Glassmorphism Dashboard**: Customizer pages (Nunnarri & Blynk customizers), Virtual Pin Manager, MQTT Live Monitor, and Admin Panel.
 - 🛡️ **Clean Microservices Security**: JWT authentication, RBAC admin privileges, dynamic device API key validation.
 - 🐳 **One-Command Docker Deployment**: Ready-to-go multi-container environment with automated health checks.
 
@@ -115,8 +129,8 @@ graph TD
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/nexus-iot-ai.git
-   cd nexus-iot-ai
+   git clone https://github.com/your-username/nunnarri-iot-ai.git
+   cd nunnarri-iot-ai
    ```
 
 2. **Launch all 6 microservices**:
@@ -148,9 +162,9 @@ const char* ssid         = "YOUR_WIFI_SSID";
 const char* password     = "YOUR_WIFI_PASSWORD";
 const char* mqtt_server  = "YOUR_DOCKER_HOST_IP"; 
 const int   mqtt_port    = 1883;
-const char* device_token = "NEXUS_DEVICE_API_KEY";
+const char* device_token = "NUNNARRI_DEVICE_API_KEY";
 
-// Telemetry Topic: nexus/devices/{device_id}/telemetry
+// Telemetry Topic: nunnarri/devices/{device_id}/telemetry
 // JSON Payload: {"vPin": "V1", "value": 24.5}
 ```
 

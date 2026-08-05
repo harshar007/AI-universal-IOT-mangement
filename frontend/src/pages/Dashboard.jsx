@@ -42,7 +42,7 @@ export default function Dashboard({ devices, systemLogs = [], onToggleDevice }) 
             </div>
             <div className="terminal-title">
               <Terminal size={14} className="text-cyan" />
-              <span>gateway-client@nexus-iot:~</span>
+              <span>gateway-client@nunnarri-iot:~</span>
             </div>
             <div className="terminal-actions">
               <RefreshCw size={14} className="animate-spin-slow text-cyan" />

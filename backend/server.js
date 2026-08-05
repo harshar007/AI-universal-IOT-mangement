@@ -1,6 +1,20 @@
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
+
+// Auto sync Nunnarri logo image and banner to frontend public directory
+try {
+  const logoSrc = '/home/harshar/.gemini/antigravity-ide/brain/daf70038-5241-47f4-b776-0f2e0583c3fe/media__1785945326724.png';
+  const bannerSrc = '/home/harshar/.gemini/antigravity-ide/brain/daf70038-5241-47f4-b776-0f2e0583c3fe/media__1785945830666.jpg';
+  const publicDir = path.join(__dirname, '..', 'frontend', 'public');
+  if (fs.existsSync(logoSrc)) fs.copyFileSync(logoSrc, path.join(publicDir, 'logo.png'));
+  if (fs.existsSync(bannerSrc)) fs.copyFileSync(bannerSrc, path.join(publicDir, 'nunnarri_logo_banner.jpg'));
+} catch (e) {
+  console.error('Logo sync error:', e);
+}
+
 const { initDB, userPool, iotPool } = require('./config/db');
 const authRoutes = require('./presentation/routes/authRoutes');
 const deviceRoutes = require('./presentation/routes/deviceRoutes');
@@ -8,6 +22,7 @@ const sensorRoutes = require('./presentation/routes/sensorRoutes');
 const aiRoutes = require('./presentation/routes/aiRoutes');
 const widgetRoutes = require('./presentation/routes/widgetRoutes');
 const adminRoutes = require('./presentation/routes/adminRoutes');
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;

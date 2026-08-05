@@ -148,7 +148,7 @@ void loop() {
             </div>
             <h2>1. Platform Overview</h2>
             <p>
-              The <strong>Nexus IoT Platform</strong> is a premium, real-time developer workspace built on a Blynk-style virtual pin architecture. Unlike consumer smart home products that enforce a fixed screen template, Nexus provides developers full creative control:
+              The <strong>Nunnarri IoT Platform</strong> is a premium, real-time developer workspace built on a Blynk-style virtual pin architecture. Unlike consumer smart home products that enforce a fixed screen template, Nunnarri provides developers full creative control:
             </p>
             <div className="features-grid">
               <div className="feature-item">
@@ -179,7 +179,7 @@ void loop() {
           <section id="setup" className="docs-section glass-panel">
             <h2>2. Local Gateway Setup</h2>
             <p>
-              The Nexus platform runs inside isolated Docker microservices. You can spin up the complete stack, including the PostgreSQL database, Express authentication server, Ollama AI assistant backend, WebSockets, and the IoT communication gateway server, using Docker Compose.
+              The Nunnarri platform runs inside isolated Docker microservices. You can spin up the complete stack, including the PostgreSQL database, Express authentication server, Ollama AI assistant backend, WebSockets, and the IoT communication gateway server, using Docker Compose.
             </p>
 
             <div className="code-block-wrapper">
@@ -260,7 +260,7 @@ void loop() {
           <section id="cpp-install" className="docs-section glass-panel">
             <h2>4. C++ Driver Library</h2>
             <p>
-              The Nexus C++ library is a lightweight, event-driven driver for ESP32 and ESP8266 microcontrollers. It uses zero dynamic memory allocation after boot to prevent memory fragmentation on low-RAM chips.
+              The Nunnarri C++ library is a lightweight, event-driven driver for ESP32 and ESP8266 microcontrollers. It uses zero dynamic memory allocation after boot to prevent memory fragmentation on low-RAM chips.
             </p>
 
             <div className="library-card glass-panel border-cyan" style={{ background: 'rgba(0,243,255,0.02)', padding: '1.25rem', marginTop: '1rem' }}>
@@ -270,7 +270,7 @@ void loop() {
                     <Download size={24} className="text-cyan" />
                   </div>
                   <div>
-                    <h4 style={{ margin: 0 }}>Nexus IoT C++ Library Driver</h4>
+                    <h4 style={{ margin: 0 }}>Nunnarri IoT C++ Library Driver</h4>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Includes: NexusSimple, NexusTimer, NexusLCD, NexusLED (v1.0.0)</span>
                   </div>
                 </div>

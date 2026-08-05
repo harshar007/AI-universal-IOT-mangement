@@ -1,11 +1,24 @@
 const fs = require('fs');
 const path = require('path');
 
-const src = '/home/harshar/.gemini/antigravity-ide/brain/4685b3c1-d3d6-4418-a123-ee193906e98b/nexus_dashboard_ui_mockup_1785068560811.png';
+const srcIcon = '/home/harshar/.gemini/antigravity-ide/brain/daf70038-5241-47f4-b776-0f2e0583c3fe/media__1785945326724.png';
+const srcBanner = '/home/harshar/.gemini/antigravity-ide/brain/daf70038-5241-47f4-b776-0f2e0583c3fe/media__1785945830666.jpg';
+
 const docsDir = path.join(__dirname, 'docs');
-if (!fs.existsSync(docsDir)) {
-  fs.mkdirSync(docsDir, { recursive: true });
+const publicDir = path.join(__dirname, 'frontend', 'public');
+
+if (!fs.existsSync(docsDir)) fs.mkdirSync(docsDir, { recursive: true });
+if (!fs.existsSync(publicDir)) fs.mkdirSync(publicDir, { recursive: true });
+
+if (fs.existsSync(srcIcon)) {
+  fs.copyFileSync(srcIcon, path.join(publicDir, 'logo.png'));
+  fs.copyFileSync(srcIcon, path.join(docsDir, 'logo.png'));
 }
-const dest = path.join(docsDir, 'nexus_dashboard_ui_mockup.png');
-fs.copyFileSync(src, dest);
-console.log('Successfully copied image to:', dest);
+
+if (fs.existsSync(srcBanner)) {
+  fs.copyFileSync(srcBanner, path.join(publicDir, 'nunnarri_logo_banner.jpg'));
+  fs.copyFileSync(srcBanner, path.join(docsDir, 'nunnarri_logo_banner.jpg'));
+  console.log('Successfully copied Nunnarri banner image!');
+}
+
+

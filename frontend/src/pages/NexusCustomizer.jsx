@@ -136,7 +136,7 @@ export default function NexusCustomizer({ devices, onToggleDevice, onChangeDevic
     if (Math.random() > 0.4) {
       const now = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
       const randomLogs = [
-        `[${now}] Nexus AI monitor node: rssi -${Math.round(45 + Math.random()*25)}dBm`,
+        `[${now}] Nunnarri AI monitor node: rssi -${Math.round(45 + Math.random()*25)}dBm`,
         `[${now}] Dynamic telemetry update: value=${activeDevice.value}${activeDevice.unit || ''}`,
         `[${now}] Power metrics synchronized: load=${activeDevice.powerDraw}W`,
         `[${now}] AI Optimization heartbeat: active=TRUE`,
@@ -144,7 +144,7 @@ export default function NexusCustomizer({ devices, onToggleDevice, onChangeDevic
       ];
       const logLine = randomLogs[Math.floor(Math.random() * randomLogs.length)];
       setTerminalLogs(prev => {
-        const logs = prev[activeDevice.id] || [`[${now}] Nexus AI Core client connected.`];
+        const logs = prev[activeDevice.id] || [`[${now}] Nunnarri AI Core client connected.`];
         const updatedLogs = [...logs, logLine].slice(-6); // Keep last 6 lines
         return {
           ...prev,
@@ -319,7 +319,7 @@ export default function NexusCustomizer({ devices, onToggleDevice, onChangeDevic
       {/* Header Banner */}
       <header className="dashboard-header">
         <div>
-          <h1>Nexus Custom AI Power Customizer</h1>
+          <h1>Nunnarri Custom AI Power Customizer</h1>
           <p className="dashboard-subtitle">Build custom AI-powered device controllers and live dashboards</p>
         </div>
         <div style={{ display: 'flex', gap: '0.75rem' }}>
@@ -350,7 +350,7 @@ export default function NexusCustomizer({ devices, onToggleDevice, onChangeDevic
           <div className="phone-screen">
             <div className="phone-header">
               <div className="phone-title-block">
-                <span className="phone-app-name">Nexus Mobile AI</span>
+                <span className="phone-app-name">Nunnarri Mobile AI</span>
                 <span className="phone-device-name">{activeDevice ? activeDevice.name : 'No device connected'}</span>
               </div>
               <Radio size={18} className="text-cyan animate-pulse" />
@@ -667,7 +667,7 @@ export default function NexusCustomizer({ devices, onToggleDevice, onChangeDevic
               <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                 <Layers size={20} className="text-cyan" style={{ flexShrink: 0 }} />
                 <div>
-                  <strong style={{ color: 'var(--text-primary)', display: 'block', fontSize: '0.85rem' }}>Nexus IoT C++ Library</strong>
+                  <strong style={{ color: 'var(--text-primary)', display: 'block', fontSize: '0.85rem' }}>Nunnarri IoT C++ Library</strong>
                   <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>ESP32 & ESP8266 Driver (v1.0.0)</span>
                 </div>
               </div>
@@ -706,7 +706,7 @@ export default function NexusCustomizer({ devices, onToggleDevice, onChangeDevic
               <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
                 <HelpCircle size={18} className="text-cyan" style={{ flexShrink: 0, marginTop: '2px' }} />
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-                  <strong style={{ color: 'var(--text-primary)', display: 'block', marginBottom: '0.25rem' }}>Nexus Customizer Quick Guide:</strong>
+                  <strong style={{ color: 'var(--text-primary)', display: 'block', marginBottom: '0.25rem' }}>Nunnarri Customizer Quick Guide:</strong>
                   1. Choose a device to configure.<br />
                   2. Type any name in the **Rename Active Device** box to rename it.<br />
                   3. Toggle **Edit Dashboard Layout** to rearrange widgets or add new ones.<br />

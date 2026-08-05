@@ -39,7 +39,7 @@ export default function AiController({ devices = [], onToggleDevice, onChangeDev
     {
       id: 1,
       sender: 'ai',
-      text: 'Nexus Autonomous AI Controller is active. I am continuously monitoring telemetry streams across your IoT devices. You can configure AI automation profiles above or command me directly using natural language below!',
+      text: 'Nunnarri Autonomous AI Controller is active. I am continuously monitoring telemetry streams across your IoT devices. You can configure AI automation profiles above or command me directly using natural language below!',
       timestamp: '18:30'
     }
   ]);
@@ -477,7 +477,7 @@ export default function AiController({ devices = [], onToggleDevice, onChangeDev
                     <div className="message-header">
                       {msg.sender === 'ai' ? (
                         <span className="msg-sender-name ai-sender">
-                          <Bot size={13} /> Nexus AI
+                          <Bot size={13} /> Nunnarri AI
                         </span>
                       ) : (
                         <span className="msg-sender-name user-sender">

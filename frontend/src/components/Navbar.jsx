@@ -130,7 +130,7 @@ export default function Navbar({ theme, onToggleTheme, user, onUpdateUser, onLog
         </button>
         <div className="mobile-brand">
           <img src="/logo.png" alt="Logo" className="mobile-logo-image" />
-          <span className="mobile-brand-name">Nexus IoT</span>
+          <span className="mobile-brand-name">Nunnarri IoT</span>
         </div>
       </div>
 
@@ -146,7 +146,7 @@ export default function Navbar({ theme, onToggleTheme, user, onUpdateUser, onLog
             <div className="brand-logo-glow"></div>
           </div>
           <div className="brand-text">
-            <span className="brand-name">Nexus IoT</span>
+            <span className="brand-name">Nunnarri IoT</span>
             <span className="brand-tagline">AI Core Console</span>
           </div>
         </div>
@@ -207,7 +207,7 @@ export default function Navbar({ theme, onToggleTheme, user, onUpdateUser, onLog
             onClick={() => setIsOpen(false)}
           >
             <Smartphone className="nav-icon" size={20} />
-            <span>Nexus Customizer</span>
+            <span>Nunnarri Customizer</span>
           </NavLink>
 
           <NavLink

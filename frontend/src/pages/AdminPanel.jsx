@@ -817,7 +817,7 @@ export default function AdminPanel() {
                   value={newUserForm.email}
                   onChange={(e) => setNewUserForm(prev => ({ ...prev, email: e.target.value.trim() }))}
                   required 
-                  placeholder="name@nexus.io"
+                  placeholder="name@nunnarri.io"
                 />
               </div>
 
@@ -882,7 +882,7 @@ export default function AdminPanel() {
                   value={editUserForm.email}
                   onChange={(e) => setEditUserForm(prev => ({ ...prev, email: e.target.value.trim() }))}
                   required 
-                  placeholder="name@nexus.io"
+                  placeholder="name@nunnarri.io"
                 />
               </div>
 

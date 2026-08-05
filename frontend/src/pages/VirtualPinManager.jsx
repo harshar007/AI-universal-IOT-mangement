@@ -269,7 +269,7 @@ export default function VirtualPinManager({ devices, onToggleDevice, onChangeDev
                   </>
                 ) : (
                   <div className="unbound-state">
-                    <p className="unbound-text">Datastream pin is open. Bind this channel to widgets in the Blynk/Nexus Customizer to start receiving telemetry.</p>
+                    <p className="unbound-text">Datastream pin is open. Bind this channel to widgets in the Blynk/Nunnarri Customizer to start receiving telemetry.</p>
                   </div>
                 )}
               </div>

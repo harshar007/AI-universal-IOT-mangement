@@ -48,7 +48,7 @@ export default function Developers() {
       <header className="dashboard-header">
         <div>
           <h1>Project Team & Developers</h1>
-          <p className="dashboard-subtitle">Meet the minds behind the Nexus IoT Gateway Console</p>
+          <p className="dashboard-subtitle">Meet the minds behind the Nunnarri IoT Gateway Console</p>
         </div>
       </header>
 
@@ -60,9 +60,9 @@ export default function Developers() {
             <Award className="badge-icon text-cyan" size={24} />
             <span>Academic Final Year Project</span>
           </div>
-          <h2>Nexus IoT Gateway Console</h2>
+          <h2>Nunnarri IoT Gateway Console</h2>
           <p>
-            Nexus was designed and engineered as a comprehensive final year engineering project. It serves as a bridge 
+            Nunnarri was designed and engineered as a comprehensive final year engineering project. It serves as a bridge 
             connecting microcontrollers (like ESP8266 & ESP32) to standard web platforms via high-performance MQTT brokers 
             and real-time WebSocket streams, featuring Blynk-style virtual pin mapping, dynamic widgets, and auto-registration.
           </p>

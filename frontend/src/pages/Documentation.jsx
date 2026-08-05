@@ -7,7 +7,7 @@ export default function Documentation() {
     {
       id: 'overview',
       title: 'Project Overview',
-      content: `Nexus IoT Gateway Console is a full‑stack, cloud‑ready IoT platform that connects ESP8266/ESP32 micro‑controllers to a modern web console. It provides device registration, token regeneration, real‑time telemetry via MQTT, and an integrated LLM (TinyLlama) for natural‑language interaction.`
+      content: `Nunnarri IoT Gateway Console is a full‑stack, cloud‑ready IoT platform that connects ESP8266/ESP32 micro‑controllers to a modern web console. It provides device registration, token regeneration, real‑time telemetry via MQTT, and an integrated LLM (TinyLlama) for natural‑language interaction.`
     },
     {
       id: 'features',
@@ -70,7 +70,7 @@ export default function Documentation() {
   return (
     <div className="doc-container glass-panel">
       <header className="doc-header">
-        <h1 className="title"><Code size={24} className="text-cyan"/> Nexus IoT Gateway Console Documentation</h1>
+        <h1 className="title"><Code size={24} className="text-cyan"/> Nunnarri IoT Gateway Console Documentation</h1>
         <p className="subtitle">Comprehensive guide for developers, operators and contributors.</p>
       </header>
       {sections.map(sec => (

@@ -220,9 +220,9 @@ export default function Login({ onLoginSuccess }) {
         {/* Brand Header */}
         <div className="brand-header">
           <div className="logo-badge">
-            <img src="/logo.png" alt="Nexus IoT Logo" className="brand-logo" />
+            <img src="/logo.png" alt="Nunnarri IoT Logo" className="brand-logo" />
           </div>
-          <h1 className="brand-title">NEXUS</h1>
+          <h1 className="brand-title">NUNNARRI</h1>
           <p className="brand-subtitle">IoT Gateway Console</p>
         </div>
 

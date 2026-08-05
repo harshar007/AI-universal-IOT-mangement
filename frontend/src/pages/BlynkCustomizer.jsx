@@ -639,7 +639,7 @@ export default function BlynkCustomizer({ devices, onToggleDevice, onChangeDevic
               <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                 <Layers size={20} className="text-cyan" style={{ flexShrink: 0 }} />
                 <div>
-                  <strong style={{ color: 'var(--text-primary)', display: 'block', fontSize: '0.85rem' }}>Nexus IoT C++ Library</strong>
+                  <strong style={{ color: 'var(--text-primary)', display: 'block', fontSize: '0.85rem' }}>Nunnarri IoT C++ Library</strong>
                   <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>ESP32 & ESP8266 Driver (v1.0.0)</span>
                 </div>
               </div>

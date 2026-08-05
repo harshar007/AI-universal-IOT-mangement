@@ -228,7 +228,7 @@ function AppContent({ theme, toggleTheme }) {
   const [systemLogs, setSystemLogs] = useState(() => {
     const time = new Date().toLocaleTimeString();
     return [
-      `[${time}] Nexus System Shell v1.0.0 initializing...`,
+      `[${time}] Nunnarri System Shell v1.0.0 initializing...`,
       `[${time}] Connecting to PostgreSQL local database... Connected.`,
       `[${time}] Embedded Aedes MQTT Broker listening on port 1883...`,
       `[${time}] IoT Gateway WebSocket Server ready.`
@@ -456,7 +456,7 @@ function AppContent({ theme, toggleTheme }) {
                 id: g.id,
                 name: g.name || 'IoT Node',
                 category: category,
-                location: 'Nexus Core',
+                location: 'Nunnarri Core',
                 status: g.status || 'offline',
                 powerState: false,
                 value: 0,

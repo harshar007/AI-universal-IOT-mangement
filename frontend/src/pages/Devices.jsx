@@ -215,7 +215,7 @@ export default function Devices({ devices, onToggleDevice, onAddDevice, onDelete
                     <button
                       className="configure-device-btn"
                       onClick={() => navigate(`/nexus-customizer?deviceId=${device.id}`)}
-                      title="Configure Nexus Customizer"
+                      title="Configure Nunnarri Customizer"
                       style={{
                         padding: '6px',
                         width: '28px',
@@ -361,7 +361,7 @@ export default function Devices({ devices, onToggleDevice, onAddDevice, onDelete
                   <RefreshCw size={48} className="animate-spin text-cyan" />
                 </div>
                 <p className="success-message">
-                  Contacting the Nexus core gateway to generate a new secure authentication token...
+                  Contacting the Nunnarri core gateway to generate a new secure authentication token...
                 </p>
               </div>
             ) : registerResult ? (
@@ -371,8 +371,8 @@ export default function Devices({ devices, onToggleDevice, onAddDevice, onDelete
                 </div>
                 <p className="success-message">
                   {newDeviceName 
-                    ? "Your device has been successfully registered and provisioned in the Nexus core gateway!"
-                    : "Your device's secret key has been successfully regenerated and updated in the gateway database!"}
+                    ? "Your device has been successfully registered and provisioned in the Nunnarri core gateway!"
+                    : "Your device's secret key has been successfully regenerated and updated in the Nunnarri gateway database!"}
                 </p>
                 
                 <div className="credential-box glass-panel">
