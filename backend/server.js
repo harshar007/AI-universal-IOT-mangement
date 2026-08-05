@@ -7,10 +7,10 @@ require('dotenv').config();
 // Auto sync Nunnarri logo image and banner to frontend public directory
 try {
   const logoSrc = '/home/harshar/.gemini/antigravity-ide/brain/daf70038-5241-47f4-b776-0f2e0583c3fe/media__1785945326724.png';
-  const bannerSrc = '/home/harshar/.gemini/antigravity-ide/brain/daf70038-5241-47f4-b776-0f2e0583c3fe/media__1785945830666.jpg';
+  const bannerSrc = path.join(__dirname, '..', 'nunnari banner .png');
   const publicDir = path.join(__dirname, '..', 'frontend', 'public');
   if (fs.existsSync(logoSrc)) fs.copyFileSync(logoSrc, path.join(publicDir, 'logo.png'));
-  if (fs.existsSync(bannerSrc)) fs.copyFileSync(bannerSrc, path.join(publicDir, 'nunnarri_logo_banner.jpg'));
+  if (fs.existsSync(bannerSrc)) fs.copyFileSync(bannerSrc, path.join(publicDir, 'nunnari_banner.png'));
 } catch (e) {
   console.error('Logo sync error:', e);
 }

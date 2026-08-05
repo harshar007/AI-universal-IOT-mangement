@@ -11,7 +11,7 @@
 ---
 
 <p align="center">
-  <img src="file:///home/harshar/.gemini/antigravity-ide/brain/daf70038-5241-47f4-b776-0f2e0583c3fe/media__1785945830666.jpg" alt="நுண்ணறி (Nunnarri) Smart Intelligence IoT Platform Banner" width="500" style="border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);" />
+  <img src="file:///home/harshar/Downloads/full-main/nunnari%20banner%20.png" alt="நுண்ணறி (Nunnarri) Smart Intelligence IoT Platform Banner" width="500" style="border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);" />
 </p>
 
 <div align="center">
