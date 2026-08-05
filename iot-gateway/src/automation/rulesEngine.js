@@ -11,36 +11,36 @@ const evaluate = (deviceId, streamKey, value) => {
     commandDispatcher = require('../commands/commandDispatcher');
   }
 
-  // Automation Rule 1: Temperature Alert & Ventilation Control
-  if (deviceId === 'server-temp-sensor' && streamKey === 'value') {
+  // Automation Rule 1: ESP32-S3 High Thermal Alert & Relay Safety Trigger
+  if ((deviceId === 'esp32s3-sensor-node' || deviceId.includes('esp32')) && streamKey === 'value') {
     const temp = parseFloat(value);
     
-    if (temp > 26.0) {
-      logger.warn(`AUTOMATION RULE TRIGGERED: Server temp is high (${temp}°C). Turning on ventilation fan.`);
+    if (temp > 28.0) {
+      logger.warn(`AUTOMATION RULE TRIGGERED: ESP32-S3 core temp high (${temp}°C). Engaging ESP8266 relay board.`);
       
-      // Send command to turn ON the ventilation fan
-      commandDispatcher.dispatchCommand('ventilation-fan-01', 'toggle', true);
-      commandDispatcher.dispatchCommand('ventilation-fan-01', 'setValue', 95); // Set speed to 95%
+      // Send command to turn ON the relay board
+      commandDispatcher.dispatchCommand('esp8266-relay-board', 'toggle', true);
+      commandDispatcher.dispatchCommand('esp8266-relay-board', 'setValue', 100);
       
       // Broadcast automation trigger event
       websocketServer.broadcast({
         event: 'automation_triggered',
-        rule: 'High Temperature Ventilation Control',
-        description: `Server temperature (${temp}°C) exceeded 26°C. Activated ventilation-fan-01.`,
+        rule: 'High Thermal Relay Safety Control',
+        description: `ESP32 sensor node core temp (${temp}°C) exceeded 28°C threshold. Engaged esp8266-relay-board.`,
         timestamp: new Date().toISOString()
       });
     }
   }
 
-  // Automation Rule 2: Fridge Temp Monitoring
-  if (deviceId === 'kitchen-smart-fridge' && streamKey === 'value') {
-    const temp = parseFloat(value);
-    if (temp > 10.0) {
-      logger.warn(`AUTOMATION ALERT: Smart Fridge temperature is high (${temp}°C). Dispatching safety warnings.`);
+  // Automation Rule 2: ESP8266 NodeMCU Voltage Level Watchdog
+  if ((deviceId === 'esp8266-nodemcu-01' || deviceId.includes('esp8266')) && streamKey === 'battery') {
+    const batt = parseFloat(value);
+    if (batt < 20.0) {
+      logger.warn(`AUTOMATION ALERT: ESP8266 node battery low (${batt}%). Dispatching maintenance alert.`);
       websocketServer.broadcast({
         event: 'automation_alert',
-        rule: 'Fridge Temperature Threshold Exceeded',
-        description: `Smart fridge temperature is abnormally high (${temp}°C). Please check seal.`,
+        rule: 'ESP8266 Battery Safeguard Exceeded',
+        description: `ESP8266 telemetry node battery level critical (${batt}%).`,
         timestamp: new Date().toISOString()
       });
     }

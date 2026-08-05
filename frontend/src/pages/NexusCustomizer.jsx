@@ -9,52 +9,40 @@ import {
 import axios from 'axios';
 import '../css/NexusCustomizer.css';
 
-// Initial default widgets for pre-defined devices
+// Initial default widgets for pre-defined IoT boards
 const INITIAL_WIDGETS = {
-  'living-room-ac': [
-    { id: 'w-ac-power', type: 'toggle', title: 'A/C Power', stream: 'powerState', theme: 'cyan-theme', size: 'full-width' },
-    { id: 'w-ac-temp', type: 'slider', title: 'Target Temp', stream: 'value', min: 16, max: 30, theme: 'cyan-theme', size: 'full-width' },
-    { id: 'w-ac-load', type: 'gauge', title: 'Current Draw', stream: 'powerDraw', min: 0, max: 2000, unit: 'W', theme: 'violet-theme', size: 'full-width' },
-    { id: 'w-ac-log', type: 'terminal', title: 'System Logs', theme: 'green-theme', size: 'full-width' },
+  'esp32-main-board': [
+    { id: 'w-esp-power', type: 'toggle', title: 'Relay V0 Power', stream: 'powerState', theme: 'cyan-theme', size: 'full-width' },
+    { id: 'w-esp-pwm', type: 'slider', title: 'PWM Duty Cycle V1', stream: 'value', min: 0, max: 100, theme: 'cyan-theme', size: 'full-width' },
+    { id: 'w-esp-volt', type: 'gauge', title: 'Core Voltage', stream: 'powerDraw', min: 0, max: 5, unit: 'V', theme: 'violet-theme', size: 'full-width' },
+    { id: 'w-esp-log', type: 'terminal', title: 'ESP32 Serial Monitor', theme: 'green-theme', size: 'full-width' },
   ],
-  'server-temp-sensor': [
-    { id: 'w-sr-temp', type: 'gauge', title: 'Ambient Temp', stream: 'value', min: 10, max: 40, unit: '°C', theme: 'orange-theme', size: 'full-width' },
-    { id: 'w-sr-batt', type: 'value', title: 'Battery Level', stream: 'battery', unit: '%', theme: 'green-theme', size: 'half-width' },
-    { id: 'w-sr-conn', type: 'led', title: 'Signal Link', stream: 'status', theme: 'cyan-theme', size: 'half-width' },
-    { id: 'w-sr-chart', type: 'chart', title: 'Thermal Graph', stream: 'value', theme: 'orange-theme', size: 'full-width' },
-    { id: 'w-sr-log', type: 'terminal', title: 'Telemetry stream', theme: 'green-theme', size: 'full-width' },
+  'esp8266-nodemcu-01': [
+    { id: 'w-node-gauge', type: 'gauge', title: 'ADC Sensor V2', stream: 'value', min: 0, max: 100, unit: '%', theme: 'orange-theme', size: 'full-width' },
+    { id: 'w-node-batt', type: 'value', title: 'Battery Level', stream: 'battery', unit: '%', theme: 'green-theme', size: 'half-width' },
+    { id: 'w-node-conn', type: 'led', title: 'MQTT Link V3', stream: 'status', theme: 'cyan-theme', size: 'half-width' },
+    { id: 'w-node-chart', type: 'chart', title: 'Telemetry Stream', stream: 'value', theme: 'orange-theme', size: 'full-width' },
+    { id: 'w-node-log', type: 'terminal', title: 'NodeMCU Console', theme: 'green-theme', size: 'full-width' },
   ],
-  'server-humidity-sensor': [
-    { id: 'w-sh-gauge', type: 'gauge', title: 'Relative Humidity', stream: 'value', min: 0, max: 100, unit: '%', theme: 'cyan-theme', size: 'full-width' },
-    { id: 'w-sh-chart', type: 'chart', title: 'Humidity History', stream: 'value', theme: 'cyan-theme', size: 'full-width' },
+  'esp32s3-sensor-node': [
+    { id: 'w-s3-temp', type: 'gauge', title: 'Sensor Core Temp', stream: 'value', min: 0, max: 50, unit: '°C', theme: 'cyan-theme', size: 'full-width' },
+    { id: 'w-s3-chart', type: 'chart', title: 'Multi-Sensor Data', stream: 'value', theme: 'cyan-theme', size: 'full-width' },
   ],
-  'kitchen-smart-fridge': [
-    { id: 'w-fr-power', type: 'toggle', title: 'Fridge Power', stream: 'powerState', theme: 'green-theme', size: 'full-width' },
-    { id: 'w-fr-temp', type: 'gauge', title: 'Internal Temp', stream: 'value', min: -5, max: 15, unit: '°C', theme: 'cyan-theme', size: 'full-width' },
-    { id: 'w-fr-draw', type: 'value', title: 'Current Draw', stream: 'powerDraw', unit: 'W', theme: 'yellow-theme', size: 'half-width' },
-    { id: 'w-fr-led', type: 'led', title: 'Compressor State', stream: 'powerState', theme: 'green-theme', size: 'half-width' },
+  'esp8266-relay-board': [
+    { id: 'w-rl-r1', type: 'toggle', title: 'Relay 1 (V4)', stream: 'powerState', theme: 'green-theme', size: 'full-width' },
+    { id: 'w-rl-load', type: 'gauge', title: 'Current Draw', stream: 'value', min: 0, max: 100, unit: '%', theme: 'cyan-theme', size: 'full-width' },
+    { id: 'w-rl-draw', type: 'value', title: 'Active Load', stream: 'powerDraw', unit: 'W', theme: 'yellow-theme', size: 'half-width' },
+    { id: 'w-rl-led', type: 'led', title: 'Relay Status', stream: 'powerState', theme: 'green-theme', size: 'half-width' },
   ],
-  'main-power-grid': [
-    { id: 'w-pg-power', type: 'toggle', title: 'Grid Relays', stream: 'powerState', theme: 'red-theme', size: 'full-width' },
-    { id: 'w-pg-load', type: 'gauge', title: 'Current Load', stream: 'value', min: 0, max: 100, unit: '%', theme: 'orange-theme', size: 'full-width' },
-    { id: 'w-pg-draw', type: 'value', title: 'Active Power Draw', stream: 'powerDraw', unit: 'W', theme: 'red-theme', size: 'full-width' },
-    { id: 'w-pg-chart', type: 'chart', title: 'Power Grid Telemetry', stream: 'powerDraw', theme: 'yellow-theme', size: 'full-width' },
+  'esp32-cam-module': [
+    { id: 'w-cam-power', type: 'toggle', title: 'Stream Active V6', stream: 'powerState', theme: 'green-theme', size: 'full-width' },
+    { id: 'w-cam-fps', type: 'gauge', title: 'Framerate FPS', stream: 'value', min: 0, max: 60, unit: 'FPS', theme: 'cyan-theme', size: 'full-width' },
+    { id: 'w-cam-led', type: 'led', title: 'AI Detection LED', stream: 'powerState', theme: 'green-theme', size: 'full-width' },
   ],
-  'ventilation-fan-01': [
-    { id: 'w-fan-power', type: 'toggle', title: 'Fan Power', stream: 'powerState', theme: 'cyan-theme', size: 'full-width' },
-    { id: 'w-fan-speed', type: 'slider', title: 'RPM Speed %', stream: 'value', min: 0, max: 100, theme: 'cyan-theme', size: 'full-width' },
-    { id: 'w-fan-draw', type: 'gauge', title: 'Draw Load', stream: 'powerDraw', min: 0, max: 500, unit: 'W', theme: 'violet-theme', size: 'full-width' },
-  ],
-  'perimeter-camera-01': [
-    { id: 'w-cam-power', type: 'toggle', title: 'Scanners Active', stream: 'powerState', theme: 'green-theme', size: 'full-width' },
-    { id: 'w-cam-fps', type: 'gauge', title: 'Video Framerate', stream: 'value', min: 0, max: 60, unit: 'FPS', theme: 'cyan-theme', size: 'full-width' },
-    { id: 'w-cam-led', type: 'led', title: 'AI Detector Status', stream: 'powerState', theme: 'green-theme', size: 'full-width' },
-  ],
-  'backyard-lighting': [
-    { id: 'w-light-power', type: 'toggle', title: 'Floodlights Switch', stream: 'powerState', theme: 'yellow-theme', size: 'full-width' },
-    { id: 'w-light-bright', type: 'slider', title: 'Brightness Level', stream: 'value', min: 10, max: 100, theme: 'yellow-theme', size: 'full-width' },
-    { id: 'w-light-draw', type: 'value', title: 'Current Draw', stream: 'powerDraw', unit: 'W', theme: 'orange-theme', size: 'half-width' },
-    { id: 'w-light-picker', type: 'rgb', title: 'Custom Color Hue', theme: 'violet-theme', size: 'full-width' },
+  'stm32-esp01-custom': [
+    { id: 'w-stm-power', type: 'toggle', title: 'Bridge Relay V7', stream: 'powerState', theme: 'violet-theme', size: 'full-width' },
+    { id: 'w-stm-pwm', type: 'slider', title: 'UART Speed %', stream: 'value', min: 0, max: 100, theme: 'violet-theme', size: 'full-width' },
+    { id: 'w-stm-log', type: 'terminal', title: 'Firmware Logs', theme: 'green-theme', size: 'full-width' },
   ]
 };
 

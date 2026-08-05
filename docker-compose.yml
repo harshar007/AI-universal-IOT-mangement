@@ -2,7 +2,6 @@ services:
   # User Database Service (PostgreSQL)
   user-db:
     image: postgres:15-alpine
-    container_name: nexus-user-db
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -21,7 +20,6 @@ services:
   # IoT Database Service (PostgreSQL)
   iot-db:
     image: postgres:15-alpine
-    container_name: nexus-iot-db
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -42,7 +40,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: nexus-backend
     restart: always
     ports:
       - "5000:5000"
@@ -64,7 +61,6 @@ services:
     build:
       context: ./ai-backend
       dockerfile: Dockerfile
-    container_name: nexus-ai-backend
     restart: always
     ports:
       - "5006:5006"
@@ -82,7 +78,6 @@ services:
     build:
       context: .
       dockerfile: iot-gateway/Dockerfile
-    container_name: nexus-iot-gateway
     restart: always
     ports:
       - "5002:5002"
@@ -101,7 +96,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: nexus-frontend
     restart: always
     ports:
       - "80:80"

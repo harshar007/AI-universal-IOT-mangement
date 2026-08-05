@@ -21,93 +21,86 @@ export default function VirtualPinManager({ devices, onToggleDevice, onChangeDev
 
     const getDevice = (suffix) => devicesList.find(d => d.id.endsWith(suffix));
 
-    const ac = getDevice('living-room-ac');
-    if (ac) {
+    const espMain = getDevice('esp32-main-board') || devicesList[0];
+    if (espMain) {
       pins[0] = {
         pin: 'V0',
-        deviceId: ac.id,
-        deviceName: ac.name,
+        deviceId: espMain.id,
+        deviceName: espMain.name,
         streamKey: 'powerState',
-        streamLabel: 'Power State Relay',
-        value: ac.powerState ? 1 : 0,
+        streamLabel: 'ESP32 Relay V0 Power',
+        value: espMain.powerState ? 1 : 0,
         type: 'write',
         widgetType: 'Switch'
       };
       pins[1] = {
         pin: 'V1',
-        deviceId: ac.id,
-        deviceName: ac.name,
+        deviceId: espMain.id,
+        deviceName: espMain.name,
         streamKey: 'value',
-        streamLabel: 'Target Temperature',
-        value: ac.value,
+        streamLabel: 'PWM Duty Cycle V1',
+        value: espMain.value,
         type: 'write',
         widgetType: 'Slider',
-        min: 16,
-        max: 30,
-        unit: '°C'
-      };
-    }
-
-    const fridge = getDevice('kitchen-smart-fridge');
-    if (fridge) {
-      pins[2] = {
-        pin: 'V2',
-        deviceId: fridge.id,
-        deviceName: fridge.name,
-        streamKey: 'value',
-        streamLabel: 'Fridge Cooling Core',
-        value: fridge.value,
-        type: 'read',
-        widgetType: 'Gauge',
-        min: -5,
-        max: 15,
-        unit: '°C'
-      };
-    }
-
-    const serverTemp = getDevice('server-temp-sensor');
-    if (serverTemp) {
-      pins[3] = {
-        pin: 'V3',
-        deviceId: serverTemp.id,
-        deviceName: serverTemp.name,
-        streamKey: 'value',
-        streamLabel: 'Server Temp Reading',
-        value: serverTemp.value,
-        type: 'read',
-        widgetType: 'Gauge',
-        min: 10,
-        max: 50,
-        unit: '°C'
-      };
-    }
-
-    const serverHum = getDevice('server-humidity-sensor');
-    if (serverHum) {
-      pins[4] = {
-        pin: 'V4',
-        deviceId: serverHum.id,
-        deviceName: serverHum.name,
-        streamKey: 'value',
-        streamLabel: 'Humidity Reading',
-        value: serverHum.value,
-        type: 'read',
-        widgetType: 'Display',
         min: 0,
         max: 100,
         unit: '%'
       };
     }
 
-    const grid = getDevice('main-power-grid');
-    if (grid) {
+    const espNode = getDevice('esp8266-nodemcu-01') || devicesList[1];
+    if (espNode) {
+      pins[2] = {
+        pin: 'V2',
+        deviceId: espNode.id,
+        deviceName: espNode.name,
+        streamKey: 'value',
+        streamLabel: 'ESP8266 ADC Sensor V2',
+        value: espNode.value,
+        type: 'read',
+        widgetType: 'Gauge',
+        min: 0,
+        max: 100,
+        unit: '%'
+      };
+    }
+
+    const espS3 = getDevice('esp32s3-sensor-node') || devicesList[2];
+    if (espS3) {
+      pins[3] = {
+        pin: 'V3',
+        deviceId: espS3.id,
+        deviceName: espS3.name,
+        streamKey: 'value',
+        streamLabel: 'ESP32-S3 Core Temp V3',
+        value: espS3.value,
+        type: 'read',
+        widgetType: 'Gauge',
+        min: 0,
+        max: 50,
+        unit: '°C'
+      };
+    }
+
+    const espRelay = getDevice('esp8266-relay-board') || devicesList[3];
+    if (espRelay) {
+      pins[4] = {
+        pin: 'V4',
+        deviceId: espRelay.id,
+        deviceName: espRelay.name,
+        streamKey: 'powerState',
+        streamLabel: 'Relay Channel 1 (V4)',
+        value: espRelay.powerState ? 1 : 0,
+        type: 'write',
+        widgetType: 'Switch'
+      };
       pins[5] = {
         pin: 'V5',
-        deviceId: grid.id,
-        deviceName: grid.name,
+        deviceId: espRelay.id,
+        deviceName: espRelay.name,
         streamKey: 'value',
-        streamLabel: 'Grid Electrical Load',
-        value: grid.value,
+        streamLabel: 'Relay Board Load V5',
+        value: espRelay.value,
         type: 'read',
         widgetType: 'Chart',
         min: 0,
@@ -116,15 +109,32 @@ export default function VirtualPinManager({ devices, onToggleDevice, onChangeDev
       };
     }
 
-    const fan = getDevice('ventilation-fan-01');
-    if (fan) {
+    const espCam = getDevice('esp32-cam-module') || devicesList[4];
+    if (espCam) {
       pins[6] = {
         pin: 'V6',
-        deviceId: fan.id,
-        deviceName: fan.name,
+        deviceId: espCam.id,
+        deviceName: espCam.name,
+        streamKey: 'value',
+        streamLabel: 'Vision Stream FPS V6',
+        value: espCam.value,
+        type: 'read',
+        widgetType: 'Display',
+        min: 0,
+        max: 60,
+        unit: 'FPS'
+      };
+    }
+
+    const stmBoard = getDevice('stm32-esp01-custom') || devicesList[5];
+    if (stmBoard) {
+      pins[7] = {
+        pin: 'V7',
+        deviceId: stmBoard.id,
+        deviceName: stmBoard.name,
         streamKey: 'powerState',
-        streamLabel: 'Ventilation Fan Switch',
-        value: fan.powerState ? 1 : 0,
+        streamLabel: 'Bridge Relay V7',
+        value: stmBoard.powerState ? 1 : 0,
         type: 'write',
         widgetType: 'Switch'
       };

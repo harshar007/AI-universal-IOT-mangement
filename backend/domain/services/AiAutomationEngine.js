@@ -133,8 +133,8 @@ class AiAutomationEngine {
       // 1. SAFETY GUARD PROFILE RULES
       // ===============================================
       if (settings.currentProfile === 'SAFETY') {
-        // Rule S1: Server room or high temp > 28°C -> Force A/C or Ventilation ON
-        if ((device.category === 'Server Room' || device.name.toLowerCase().includes('ac') || device.name.toLowerCase().includes('fan')) && device.value > 28 && !device.powerState) {
+        // Rule S1: ESP32 or high thermal reading > 28°C -> Turn ON Board/Relay
+        if ((device.category.includes('ESP') || device.name.toLowerCase().includes('esp') || device.name.toLowerCase().includes('board')) && device.value > 28 && !device.powerState) {
           modifiedDevice.powerState = true;
           modifiedDevice.status = 'online';
           decision = {
@@ -143,14 +143,14 @@ class AiAutomationEngine {
             deviceId: device.id,
             deviceName: device.name,
             action: 'TURN_ON',
-            reason: `Temperature exceeded safety limit (${device.value}${device.unit} > 28.0°C). AI turned node ON.`,
+            reason: `Board telemetry exceeded safety limit (${device.value}${device.unit} > 28.0°C). AI turned node ON.`,
             previousState: { powerState: false },
             newState: { powerState: true },
             profile: 'SAFETY'
           };
         }
-        // Rule S2: Industrial high load or high temp > 32°C -> Reduce target temp to 20°C
-        else if (device.value > 30 && device.name.toLowerCase().includes('ac')) {
+        // Rule S2: High thermal warning > 30°C on sensor node -> Adjust PWM / Value
+        else if (device.value > 30 && (device.name.toLowerCase().includes('esp') || device.name.toLowerCase().includes('sensor'))) {
           const oldVal = device.value;
           modifiedDevice.value = 21.0;
           decision = {
@@ -159,7 +159,7 @@ class AiAutomationEngine {
             deviceId: device.id,
             deviceName: device.name,
             action: 'ADJUST_VALUE',
-            reason: `High heat warning (${oldVal}°C). AI engaged Overdrive Cooling to 21°C.`,
+            reason: `High heat warning on node (${oldVal}°C). AI adjusted core setpoint to 21°C.`,
             previousState: { value: oldVal },
             newState: { value: 21.0 },
             profile: 'SAFETY'
@@ -171,40 +171,22 @@ class AiAutomationEngine {
       // 2. ECO SAVER PROFILE RULES
       // ===============================================
       else if (settings.currentProfile === 'ECO') {
-        // Rule E1: A/C running below 24°C -> Adjust to eco setpoint 24°C
-        if (device.name.toLowerCase().includes('ac') && device.powerState && device.value < 24) {
+        // Rule E1: Board power draw high -> Optimize PWM / Duty cycle
+        if ((device.name.toLowerCase().includes('esp') || device.name.toLowerCase().includes('relay')) && device.powerState && device.value > 70) {
           const oldVal = device.value;
-          modifiedDevice.value = 24.0;
-          modifiedDevice.powerDraw = Math.round(device.powerDraw * 0.82);
+          modifiedDevice.value = 50;
+          modifiedDevice.powerDraw = Math.round(device.powerDraw * 0.85);
           decision = {
             id: `dec_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
             timestamp: new Date().toLocaleTimeString(),
             deviceId: device.id,
             deviceName: device.name,
             action: 'ECO_OPTIMIZE',
-            reason: `Eco Mode: Adjusted A/C setpoint from ${oldVal}°C to 24.0°C (Saved ~18% energy).`,
+            reason: `Eco Mode: Optimized board PWM duty cycle from ${oldVal}% to 50% (Saved ~15% power).`,
             previousState: { value: oldVal },
-            newState: { value: 24.0 },
+            newState: { value: 50 },
             profile: 'ECO'
           };
-        }
-        // Rule E2: High power draw lighting on -> Dim power draw
-        else if (device.name.toLowerCase().includes('lighting') || device.name.toLowerCase().includes('floodlight')) {
-          if (device.powerState && device.value > 50) {
-            const oldVal = device.value;
-            modifiedDevice.value = 40;
-            decision = {
-              id: `dec_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
-              timestamp: new Date().toLocaleTimeString(),
-              deviceId: device.id,
-              deviceName: device.name,
-              action: 'DIM_LOAD',
-              reason: `Eco Mode: Dimmed non-essential lighting from ${oldVal}% to 40%.`,
-              previousState: { value: oldVal },
-              newState: { value: 40 },
-              profile: 'ECO'
-            };
-          }
         }
       }
 

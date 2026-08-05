@@ -16,19 +16,19 @@ export default function AiController({ devices = [], onToggleDevice, onChangeDev
     {
       id: 'dec_1',
       timestamp: '18:30:12',
-      deviceId: 'living-room-ac',
-      deviceName: 'Living Room A/C',
+      deviceId: 'esp32-main-board',
+      deviceName: 'ESP32 Main Gateway Board',
       action: 'TURN_ON',
-      reason: 'Ambient temperature reached 28.5°C (> 28°C threshold). Safety Guard automatically engaged cooling.',
+      reason: 'Core temperature reached 28.5°C (> 28°C threshold). Safety Guard automatically engaged node relay.',
       profile: 'SAFETY'
     },
     {
       id: 'dec_2',
       timestamp: '18:25:04',
-      deviceId: 'ventilation-fan-01',
-      deviceName: 'Ventilation Fan 01',
-      action: 'HUMIDITY_BALANCE',
-      reason: 'Air Quality PPM crossed 780. AI engaged warehouse ventilation fans.',
+      deviceId: 'esp8266-relay-board',
+      deviceName: 'ESP8266 4-Channel Relay Controller',
+      action: 'VOLTAGE_BALANCE',
+      reason: 'Bus voltage fluctuation detected. AI synchronized relay channel loads.',
       profile: 'SAFETY'
     }
   ]);
@@ -151,10 +151,10 @@ export default function AiController({ devices = [], onToggleDevice, onChangeDev
 
   // NLP Chat Handlers
   const suggestions = [
-    { label: '🤖 Auto-Optimize Energy', query: 'Optimize energy consumption for all appliances' },
-    { label: '❄️ Cool Down Server Room', query: 'Cool down server room clusters to 20 degrees' },
-    { label: '⚡ Turn Off High Load', query: 'Turn off non-essential high power draw appliances' },
-    { label: '🚨 Safety Status Check', query: 'Check safety status of all IoT sensors' }
+    { label: '⚡ Control ESP32 Board', query: 'Turn off ESP32 main board' },
+    { label: '🔌 Toggle Relay Board', query: 'Turn on ESP8266 relay board' },
+    { label: '📡 ESP32-S3 Sensor Node', query: 'Turn off ESP32-S3 sensor station' },
+    { label: '🚨 Board Safety Status', query: 'Check safety status of all ESP32 and ESP8266 nodes' }
   ];
 
   const handleSend = async (textToSend) => {
@@ -186,12 +186,14 @@ export default function AiController({ devices = [], onToggleDevice, onChangeDev
 
       if (message.commands && message.commands.length > 0) {
         message.commands.forEach(cmd => {
+          const targetDevice = devices.find(d => d.id === cmd.deviceId || d.id.endsWith(cmd.deviceId));
           if (cmd.action === 'setValue') {
-            onChangeDeviceValue(cmd.deviceId, cmd.value);
+            if (targetDevice) {
+              onChangeDeviceValue(targetDevice.id, cmd.value);
+            }
           } else if (cmd.action === 'toggle') {
-            const targetDevice = devices.find(d => d.id === cmd.deviceId);
             if (targetDevice && targetDevice.powerState !== cmd.value) {
-              onToggleDevice(cmd.deviceId);
+              onToggleDevice(targetDevice.id);
             }
           }
         });
