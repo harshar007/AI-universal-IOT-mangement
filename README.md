@@ -133,22 +133,50 @@ graph TD
    cd nunnarri-iot-ai
    ```
 
-2. **Launch all 6 microservices**:
+2. **Configure Environment Variables**:
+   Copy the example template file to create your backend environment file:
+   ```bash
+   cp backend/.env.example backend/.env
+   ```
+   *(Optional)* Fill in your `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` if enabling GitHub OAuth single sign-on.
+
+3. **Launch all microservices**:
    ```bash
    sudo docker compose up -d --build
    ```
 
-3. **Check container status**:
+4. **Check container status**:
    ```bash
    sudo docker compose ps
    ```
 
-4. **Access Applications**:
+5. **Access Applications**:
    - 🌐 **Web Dashboard**: `http://localhost`
    - 🔌 **Backend REST API**: `http://localhost:5000`
    - 🤖 **AI Intelligence API**: `http://localhost:5006`
    - ⚡ **IoT WebSocket Gateway**: `ws://localhost:5002`
    - 📡 **MQTT Broker**: `mqtt://localhost:1883`
+
+---
+
+## 🔐 Authentication & GitHub OAuth Setup
+
+Nunnarri supports traditional email/password registration and one-click GitHub OAuth single sign-on:
+
+1. **Create GitHub OAuth App**:
+   - Go to [GitHub Developer Settings](https://github.com/settings/developers) -> **OAuth Apps** -> **New OAuth App**.
+   - **Application Name**: `Nunnarri IoT Gateway`
+   - **Homepage URL**: `http://localhost`
+   - **Authorization Callback URL**: `http://localhost/api/auth/github/callback`
+
+2. **Set Environment Variables**:
+   Update `backend/.env` (and `docker-compose.yml` for containerized setups):
+   ```env
+   GITHUB_CLIENT_ID=your_client_id_here
+   GITHUB_CLIENT_SECRET=your_client_secret_here
+   GITHUB_CALLBACK_URL=http://localhost/api/auth/github/callback
+   FRONTEND_URL=http://localhost
+   ```
 
 ---
 

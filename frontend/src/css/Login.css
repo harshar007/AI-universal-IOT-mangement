@@ -330,6 +330,61 @@
   flex-shrink: 0;
 }
 
+/* OAuth Divider & Buttons */
+.oauth-divider {
+  display: flex;
+  align-items: center;
+  margin: 1.25rem 0 1rem 0;
+  color: #9ca3af;
+  font-size: 0.78rem;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  width: 100%;
+}
+
+.oauth-divider::before,
+.oauth-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.oauth-divider span {
+  padding: 0 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.github-auth-btn {
+  width: 100%;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #24292e;
+  color: #ffffff;
+  border: 1px solid #1b1f23;
+  border-radius: 10px;
+  font-family: var(--font-heading, 'Manrope', sans-serif);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+}
+
+.github-auth-btn:hover {
+  background: #000000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.github-auth-btn:active {
+  transform: translateY(1px);
+}
+
 /* Mobile Viewport Adaptations */
 @media (max-width: 480px) {
   .login-page-wrapper {

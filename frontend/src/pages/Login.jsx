@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, AlertCircle, CheckCircle2, Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { ArrowLeft, AlertCircle, CheckCircle2, Eye, EyeOff, Mail, Lock, User, Github } from 'lucide-react';
 import axios from 'axios';
 import '../css/Login.css';
 
@@ -124,6 +124,46 @@ export default function Login({ onLoginSuccess }) {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+
+  // Handle GitHub OAuth callback redirect URL parameters
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const userStr = urlParams.get('user');
+    const error = urlParams.get('error');
+
+    if (error) {
+      setErrorMsg(decodeURIComponent(error));
+      window.history.replaceState({}, document.title, window.location.pathname);
+      return;
+    }
+
+    if (token && userStr) {
+      try {
+        const user = JSON.parse(decodeURIComponent(userStr));
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        if (onLoginSuccess) {
+          onLoginSuccess(user);
+        }
+
+        setSuccessMsg(`Welcome back, ${user.name || 'Operator'}! Redirecting...`);
+        window.history.replaceState({}, document.title, window.location.pathname);
+
+        setTimeout(() => {
+          navigate('/');
+        }, 500);
+      } catch (e) {
+        console.error('Failed to parse GitHub OAuth payload:', e);
+        setErrorMsg('Failed to process GitHub authentication callback.');
+      }
+    }
+  }, [navigate, onLoginSuccess]);
+
+  const handleGithubLogin = () => {
+    window.location.href = '/api/auth/github';
+  };
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -320,6 +360,20 @@ export default function Login({ onLoginSuccess }) {
               <button className="auth-btn" type="submit" disabled={loading}>
                 {loading ? 'Entering...' : 'Log In'}
               </button>
+
+              <div className="oauth-divider">
+                <span>OR</span>
+              </div>
+
+              <button
+                type="button"
+                className="github-auth-btn"
+                onClick={handleGithubLogin}
+                disabled={loading}
+              >
+                <Github size={18} />
+                <span>Continue with GitHub</span>
+              </button>
             </form>
           ) : (
             /* SIGN UP FORM */
@@ -399,6 +453,20 @@ export default function Login({ onLoginSuccess }) {
 
               <button className="auth-btn" type="submit" disabled={loading}>
                 {loading ? 'Registering...' : 'Sign Up'}
+              </button>
+
+              <div className="oauth-divider">
+                <span>OR</span>
+              </div>
+
+              <button
+                type="button"
+                className="github-auth-btn"
+                onClick={handleGithubLogin}
+                disabled={loading}
+              >
+                <Github size={18} />
+                <span>Continue with GitHub</span>
               </button>
             </form>
           )}

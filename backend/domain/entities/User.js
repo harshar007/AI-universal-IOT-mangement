@@ -1,5 +1,5 @@
 class User {
-  constructor(id, name, email, passwordHash, createdAt = new Date(), profilePic = null, role = 'OPERATOR') {
+  constructor(id, name, email, passwordHash, createdAt = new Date(), profilePic = null, role = 'OPERATOR', githubId = null) {
     this.id = id;
     this.name = name;
     this.email = email;
@@ -7,6 +7,7 @@ class User {
     this.createdAt = createdAt;
     this.profilePic = profilePic;
     this.role = role;
+    this.githubId = githubId;
   }
 
   static validateEmail(email) {

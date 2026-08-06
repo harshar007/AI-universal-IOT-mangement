@@ -31,7 +31,8 @@ const initDB = async () => {
         id SERIAL PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
-        password_hash VARCHAR(255) NOT NULL,
+        password_hash VARCHAR(255),
+        github_id VARCHAR(100) UNIQUE,
         role VARCHAR(20) DEFAULT 'OPERATOR',
         profile_pic TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -42,6 +43,8 @@ const initDB = async () => {
     // Ensure role column exists if upgrading existing users table
     await userClient.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT \'OPERATOR\';');
     await userClient.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_pic TEXT;');
+    await userClient.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS github_id VARCHAR(100) UNIQUE;');
+    await userClient.query('ALTER TABLE users ALTER COLUMN password_hash DROP NOT NULL;');
 
     // User Audit Logs table
     await userClient.query(`
