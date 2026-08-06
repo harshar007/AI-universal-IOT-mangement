@@ -117,10 +117,29 @@ const processMessage = async (userId, userText) => {
   let useFallback = false;
   
   try {
-    const responseText = await ollamaClient.generateChatResponse(ollamaMessages);
-    chatResponse = JSON.parse(responseText);
+    const rawResponse = await ollamaClient.generateChatResponse(ollamaMessages);
+    let cleaned = (rawResponse || '').trim();
+    if (cleaned.startsWith('```')) {
+      cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+    }
+    const firstBrace = cleaned.indexOf('{');
+    const lastBrace = cleaned.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace > firstBrace) {
+      cleaned = cleaned.substring(firstBrace, lastBrace + 1);
+    }
+
+    try {
+      chatResponse = JSON.parse(cleaned);
+    } catch (parseErr) {
+      // Ollama returned a valid text/markdown response rather than strict JSON
+      chatResponse = {
+        reply: rawResponse,
+        commands: [],
+        logs: ['NEXUS_AI: Generated response via Llama 3.2']
+      };
+    }
   } catch (err) {
-    console.warn('Ollama request failed or JSON parsing failed. Invoking rule-based offline fallback...');
+    console.warn('Ollama connection error:', err.message);
     useFallback = true;
   }
   
@@ -353,7 +372,7 @@ The **Nexus C++ Library** is an open-source, non-blocking bridge designed specif
       'NEXUS_DOCS: Fetching Nexus C++ Library overview documentation.'
     ];
   } else {
-    reply = `I analyzed your request: "${text}". The AI Core is currently operating in offline mode. Please ensure the local Ollama service (tinyllama) is active to answer arbitrary questions. 
+    reply = `I analyzed your request: "${text}". The AI Core is currently operating in offline mode. Please ensure the local Ollama service (llama3.2) is active to answer arbitrary questions. 
 
 You can also ask me about the Nexus C++ Library, such as:
 - How to **install** it

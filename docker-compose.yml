@@ -71,7 +71,7 @@ services:
     environment:
       - PORT=5006
       - OLLAMA_HOST=http://host.docker.internal:11434
-      - OLLAMA_MODEL=tinyllama
+      - OLLAMA_MODEL=llama3.2
       - IOT_DATABASE_URL=postgres://postgres:prabha0312@iot-db:5432/nexus_iot_db
       - JWT_SECRET=nexus_super_secret_key_987654321
     extra_hosts:

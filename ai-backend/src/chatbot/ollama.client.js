@@ -1,27 +1,41 @@
 const axios = require('axios');
 
-const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://localhost:11434';
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llama3';
+const PRIMARY_HOST = process.env.OLLAMA_HOST || 'http://host.docker.internal:11434';
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llama3.2';
+
+const CANDIDATE_HOSTS = Array.from(new Set([
+  PRIMARY_HOST,
+  'http://host.docker.internal:11434',
+  'http://172.17.0.1:11434',
+  'http://172.18.0.1:11434',
+  'http://localhost:11434',
+  'http://127.0.0.1:11434'
+]));
 
 const generateChatResponse = async (messages) => {
-  try {
-    const response = await axios.post(`${OLLAMA_HOST}/api/chat`, {
-      model: OLLAMA_MODEL,
-      messages: messages,
-      stream: false,
-      format: 'json'
-    }, {
-      timeout: 5000 // 5 seconds timeout to trigger fallback quickly if Ollama is not up
-    });
+  let lastError = null;
 
-    if (response.data && response.data.message) {
-      return response.data.message.content;
+  for (const hostUrl of CANDIDATE_HOSTS) {
+    try {
+      const response = await axios.post(`${hostUrl}/api/chat`, {
+        model: OLLAMA_MODEL,
+        messages: messages,
+        stream: false
+      }, {
+        timeout: 45000
+      });
+
+      if (response.data && response.data.message) {
+        return response.data.message.content;
+      }
+    } catch (error) {
+      lastError = error;
+      console.warn(`[Ollama Discovery] Candidate host ${hostUrl} failed (${error.message}). Trying next...`);
     }
-    throw new Error('Invalid response format from Ollama');
-  } catch (error) {
-    console.error('Ollama Client Error:', error.message);
-    throw error;
   }
+
+  console.error('All Ollama Host candidates failed. Last error:', lastError?.message);
+  throw lastError || new Error('All Ollama host candidates failed to respond.');
 };
 
 module.exports = {

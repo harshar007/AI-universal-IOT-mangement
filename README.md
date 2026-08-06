@@ -6,7 +6,7 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org)
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev)
 [![MQTT](https://img.shields.io/badge/MQTT-1883-660066?logo=eclipse-mosquitto&logoColor=white)](https://mqtt.org)
-[![Ollama AI](https://img.shields.io/badge/AI-Ollama%2FTinyLlama-FF6F00?logo=ollama&logoColor=white)](https://ollama.ai)
+[![Ollama AI](https://img.shields.io/badge/AI-Ollama%2FLlama3.2-FF6F00?logo=ollama&logoColor=white)](https://ollama.ai)
 
 ---
 
@@ -112,7 +112,7 @@ graph TD
 
 - ⚡ **Sub-Millisecond Telemetry Ingestion**: Embedded MQTT broker (`1883`) and WebSocket gateway (`5002`) for real-time telemetry streaming.
 - 📌 **Blynk-Style Virtual Pin Architecture**: Bind hardware inputs/outputs (`V0` to `V255`) to interactive UI widgets seamlessly.
-- 🤖 **On-Premise Sovereign AI**: Integrated localized LLM (`Ollama` + `tinyllama`) for natural language commands and anomaly detection.
+- 🤖 **On-Premise Sovereign AI**: Integrated localized LLM (`Ollama` + `llama3.2`) for natural language commands and anomaly detection.
 - 🎨 **Dynamic Glassmorphism Dashboard**: Customizer pages (Nunnarri & Blynk customizers), Virtual Pin Manager, MQTT Live Monitor, and Admin Panel.
 - 🛡️ **Clean Microservices Security**: JWT authentication, RBAC admin privileges, dynamic device API key validation.
 - 🐳 **One-Command Docker Deployment**: Ready-to-go multi-container environment with automated health checks.
