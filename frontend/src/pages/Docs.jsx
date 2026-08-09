@@ -106,7 +106,7 @@ void loop() {
   };
 
   return (
-    <div className="main-content">
+    <div className="page">
       {/* Header */}
       <header className="dashboard-header">
         <div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, AlertCircle, CheckCircle2, Eye, EyeOff, Mail, Lock, User, Github } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Eye, EyeOff, Github } from 'lucide-react';
 import axios from 'axios';
 import '../css/Login.css';
 
@@ -254,74 +254,76 @@ export default function Login({ onLoginSuccess }) {
   };
 
   return (
-    <div className="login-page-wrapper">
-      <div className="login-container glass-panel">
-        
-        {/* Brand Header */}
-        <div className="brand-header">
-          <div className="logo-badge">
-            <img src="/logo.png" alt="Nunnarri IoT Logo" className="brand-logo" />
+    <div className="login-page">
+      {/* Hero / brand side */}
+      <aside className="login-hero">
+        <div className="login-hero-content">
+          <div className="login-hero-brand">
+            <div className="brand-mark">N</div>
+            <span>Nunnarri</span>
           </div>
-          <h1 className="brand-title">NUNNARRI</h1>
-          <p className="brand-subtitle">IoT Gateway Console</p>
+          <h1>Build, monitor, and control your IoT fleet.</h1>
+          <p>
+            A unified console for ESP32, ESP8266, and custom boards — with local AI,
+            MQTT telemetry, and zero cloud lock-in.
+          </p>
         </div>
-
-        {/* Tab Selector */}
-        <div className="auth-tabs">
-          <button
-            type="button"
-            className={`auth-tab ${!isSignUp ? 'active' : ''}`}
-            onClick={() => {
-              setIsSignUp(false);
-              setErrorMsg('');
-              setSuccessMsg('');
-            }}
-            disabled={loading}
-          >
-            Log In
-          </button>
-          <button
-            type="button"
-            className={`auth-tab ${isSignUp ? 'active' : ''}`}
-            onClick={() => {
-              setIsSignUp(true);
-              setErrorMsg('');
-              setSuccessMsg('');
-            }}
-            disabled={loading}
-          >
-            Sign Up
-          </button>
+        <div className="login-hero-foot">
+          © {new Date().getFullYear()} Nunnarri · Open source IoT platform
         </div>
+      </aside>
 
-        {/* Form Container */}
-        <div className="auth-form-container">
+      {/* Auth side */}
+      <div className="login-panel">
+        <div className="login-card">
+          <div>
+            <h2>{isSignUp ? 'Create your account' : 'Sign in'}</h2>
+            <p className="subtitle">
+              {isSignUp
+                ? 'Get started managing your IoT fleet.'
+                : 'Welcome back. Enter your credentials.'}
+            </p>
+          </div>
+
+          <div className="auth-tabs">
+            <button
+              type="button"
+              className={!isSignUp ? 'active' : ''}
+              onClick={() => { setIsSignUp(false); setErrorMsg(''); setSuccessMsg(''); }}
+              disabled={loading}
+            >
+              Sign in
+            </button>
+            <button
+              type="button"
+              className={isSignUp ? 'active' : ''}
+              onClick={() => { setIsSignUp(true); setErrorMsg(''); setSuccessMsg(''); }}
+              disabled={loading}
+            >
+              Create account
+            </button>
+          </div>
+
           {!isSignUp ? (
-            /* LOG IN FORM */
             <form className="auth-form" onSubmit={handleLoginSubmit}>
-              <div className="form-header-text">Welcome back. Enter your credentials.</div>
-              
               {errorMsg && (
                 <div className="feedback-msg error">
-                  <AlertCircle size={16} className="msg-icon" />
+                  <AlertCircle size={16} />
                   <span>{errorMsg}</span>
                 </div>
               )}
               {successMsg && (
                 <div className="feedback-msg success">
-                  <CheckCircle2 size={16} className="msg-icon" />
+                  <CheckCircle2 size={16} />
                   <span>{successMsg}</span>
                 </div>
               )}
 
-              <div className="input-group">
-                <span className="input-icon-wrapper">
-                  <Mail size={18} />
-                </span>
+              <div className="md-field">
+                <label>Email</label>
                 <input
                   type="email"
-                  placeholder="Email address"
-                  className="auth-input"
+                  placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value.trim())}
                   disabled={loading}
@@ -329,14 +331,11 @@ export default function Login({ onLoginSuccess }) {
                 />
               </div>
 
-              <div className="input-group">
-                <span className="input-icon-wrapper">
-                  <Lock size={18} />
-                </span>
+              <div className="md-field password-field">
+                <label>Password</label>
                 <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Password"
-                  className="auth-input"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={loading}
@@ -345,29 +344,22 @@ export default function Login({ onLoginSuccess }) {
                 <button
                   type="button"
                   className="password-toggle"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setShowPassword(!showPassword);
-                  }}
-                  tabIndex="-1"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  onClick={(e) => { e.preventDefault(); setShowPassword(!showPassword); }}
+                  tabIndex={-1}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
 
               <button className="auth-btn" type="submit" disabled={loading}>
-                {loading ? 'Entering...' : 'Log In'}
+                {loading ? 'Signing in…' : 'Sign in'}
               </button>
 
-              <div className="oauth-divider">
-                <span>OR</span>
-              </div>
-
+              <div className="oauth-divider"><span>or</span></div>
               <button
                 type="button"
-                className="github-auth-btn"
+                className="github-btn"
                 onClick={handleGithubLogin}
                 disabled={loading}
               >
@@ -376,61 +368,47 @@ export default function Login({ onLoginSuccess }) {
               </button>
             </form>
           ) : (
-            /* SIGN UP FORM */
             <form className="auth-form" onSubmit={handleSignupSubmit}>
-              <div className="form-header-text">Create a new operator account.</div>
-
               {errorMsg && (
                 <div className="feedback-msg error">
-                  <AlertCircle size={16} className="msg-icon" />
+                  <AlertCircle size={16} />
                   <span>{errorMsg}</span>
                 </div>
               )}
               {successMsg && (
                 <div className="feedback-msg success">
-                  <CheckCircle2 size={16} className="msg-icon" />
+                  <CheckCircle2 size={16} />
                   <span>{successMsg}</span>
                 </div>
               )}
 
-              <div className="input-group">
-                <span className="input-icon-wrapper">
-                  <User size={18} />
-                </span>
+              <div className="md-field">
+                <label>Full name</label>
                 <input
                   type="text"
-                  placeholder="Full name"
-                  className="auth-input"
+                  placeholder="Ada Lovelace"
                   value={signupName}
                   onChange={(e) => setSignupName(e.target.value)}
                   disabled={loading}
                   required
                 />
               </div>
-
-              <div className="input-group">
-                <span className="input-icon-wrapper">
-                  <Mail size={18} />
-                </span>
+              <div className="md-field">
+                <label>Email</label>
                 <input
                   type="email"
-                  placeholder="Email address"
-                  className="auth-input"
+                  placeholder="you@example.com"
                   value={signupEmail}
                   onChange={(e) => setSignupEmail(e.target.value.trim())}
                   disabled={loading}
                   required
                 />
               </div>
-
-              <div className="input-group">
-                <span className="input-icon-wrapper">
-                  <Lock size={18} />
-                </span>
+              <div className="md-field password-field">
+                <label>Password</label>
                 <input
-                  type={showSignupPassword ? "text" : "password"}
-                  placeholder="Password"
-                  className="auth-input"
+                  type={showSignupPassword ? 'text' : 'password'}
+                  placeholder="At least 8 characters"
                   value={signupPassword}
                   onChange={(e) => setSignupPassword(e.target.value)}
                   disabled={loading}
@@ -439,29 +417,22 @@ export default function Login({ onLoginSuccess }) {
                 <button
                   type="button"
                   className="password-toggle"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setShowSignupPassword(!showSignupPassword);
-                  }}
-                  tabIndex="-1"
-                  aria-label={showSignupPassword ? "Hide password" : "Show password"}
+                  onClick={(e) => { e.preventDefault(); setShowSignupPassword(!showSignupPassword); }}
+                  tabIndex={-1}
+                  aria-label={showSignupPassword ? 'Hide password' : 'Show password'}
                 >
                   {showSignupPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
 
               <button className="auth-btn" type="submit" disabled={loading}>
-                {loading ? 'Registering...' : 'Sign Up'}
+                {loading ? 'Creating account…' : 'Create account'}
               </button>
 
-              <div className="oauth-divider">
-                <span>OR</span>
-              </div>
-
+              <div className="oauth-divider"><span>or</span></div>
               <button
                 type="button"
-                className="github-auth-btn"
+                className="github-btn"
                 onClick={handleGithubLogin}
                 disabled={loading}
               >

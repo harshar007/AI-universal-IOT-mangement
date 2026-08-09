@@ -177,7 +177,7 @@ export default function Sensors() {
   };
 
   return (
-    <div className="main-content">
+    <div className="page">
       {/* Top Banner */}
       <header className="dashboard-header">
         <div>

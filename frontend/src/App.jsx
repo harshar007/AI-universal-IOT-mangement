@@ -596,18 +596,17 @@ function AppContent({ theme, toggleTheme }) {
           onLogout={() => setUser(null)}
         />
       )}
-      {pageLoading || isAppLoading ? (
-        <div className="page-loader-container" style={isLoginPage ? { maxWidth: '100%' } : {}}>
-          <div className="loading">
-            <svg width="64px" height="48px">
-              <polyline points="0.157 23.954, 14 23.954, 21.843 48, 43 0, 50 24, 64 24" id="back"></polyline>
-              <polyline points="0.157 23.954, 14 23.954, 21.843 48, 43 0, 50 24, 64 24" id="front"></polyline>
-            </svg>
-            <div className="loading-text">Loading Node Operations...</div>
+      <main
+        className="main-content"
+        style={isLoginPage ? { marginLeft: 0, width: '100%' } : undefined}
+      >
+        {pageLoading || isAppLoading ? (
+          <div className="page-loader-container">
+            <div className="md-spinner" />
+            <div className="loading-text">Loading…</div>
           </div>
-        </div>
-      ) : (
-        <Routes>
+        ) : (
+          <Routes>
           <Route
             path="/login"
             element={<Login onLoginSuccess={(u) => setUser(u)} />}
@@ -710,7 +709,8 @@ function AppContent({ theme, toggleTheme }) {
             element={<Navigate to="/" replace />}
           />
         </Routes>
-      )}
+        )}
+      </main>
     </>
   );
 }

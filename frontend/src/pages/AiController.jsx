@@ -1,44 +1,40 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Bot, Send, Sparkles, ShieldCheck, Leaf, Thermometer,
-  Zap, ToggleLeft, ToggleRight, CheckCircle2, AlertTriangle,
-  RefreshCw, Cpu, Activity, Info
+  ToggleLeft, ToggleRight, CheckCircle2, AlertTriangle,
+  RefreshCw, Cpu, Activity, Info, WifiOff
 } from 'lucide-react';
 import axios from 'axios';
 import '../css/AiController.css';
 
 export default function AiController({ devices = [], onToggleDevice, onChangeDeviceValue }) {
-  // Autonomous AI State
+  // AI state
   const [aiEnabled, setAiEnabled] = useState(true);
-  const [aiProfile, setAiProfile] = useState('SAFETY'); // 'SAFETY', 'ECO', 'COMFORT'
-  const [deviceAiSettings, setDeviceAiSettings] = useState({}); // deviceId -> boolean
+  const [aiProfile, setAiProfile] = useState('SAFETY');
+  const [deviceAiSettings, setDeviceAiSettings] = useState({});
   const [aiDecisions, setAiDecisions] = useState([
     {
-      id: 'dec_1',
-      timestamp: '18:30:12',
-      deviceId: 'esp32-main-board',
-      deviceName: 'ESP32 Main Gateway Board',
+      id: 'dec_1', timestamp: '18:30:12',
+      deviceId: 'esp32-main-board', deviceName: 'ESP32 Main Gateway Board',
       action: 'TURN_ON',
-      reason: 'Core temperature reached 28.5°C (> 28°C threshold). Safety Guard automatically engaged node relay.',
+      reason: 'Core temperature reached 28.5°C (> 28°C threshold). Safety Guard engaged node relay.',
       profile: 'SAFETY'
     },
     {
-      id: 'dec_2',
-      timestamp: '18:25:04',
-      deviceId: 'esp8266-relay-board',
-      deviceName: 'ESP8266 4-Channel Relay Controller',
+      id: 'dec_2', timestamp: '18:25:04',
+      deviceId: 'esp8266-relay-board', deviceName: 'ESP8266 4-Channel Relay Controller',
       action: 'VOLTAGE_BALANCE',
       reason: 'Bus voltage fluctuation detected. AI synchronized relay channel loads.',
       profile: 'SAFETY'
     }
   ]);
   const [isEvaluating, setIsEvaluating] = useState(false);
+  const [aiOnline, setAiOnline] = useState(true);
 
-  // NLP Chat State
+  // Chat state
   const [messages, setMessages] = useState([
     {
-      id: 1,
-      sender: 'ai',
+      id: 1, sender: 'ai',
       text: 'Nunnarri Autonomous AI Controller is active. I am continuously monitoring telemetry streams across your IoT devices. You can configure AI automation profiles above or command me directly using natural language below!',
       timestamp: '18:30'
     }
@@ -47,11 +43,9 @@ export default function AiController({ devices = [], onToggleDevice, onChangeDev
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef(null);
 
-  // Initialize AI status and Chat session on mount
   useEffect(() => {
     const initData = async () => {
       try {
-        // Fetch AI Autonomous Engine Status
         const statusRes = await axios.get('/api/ai/automation/status');
         if (statusRes.data) {
           setAiEnabled(statusRes.data.isEnabled);
@@ -59,8 +53,11 @@ export default function AiController({ devices = [], onToggleDevice, onChangeDev
           if (statusRes.data.deviceAiSettings) {
             setDeviceAiSettings(statusRes.data.deviceAiSettings);
           }
-          if (statusRes.data.recentDecisions && statusRes.data.recentDecisions.length > 0) {
+          if (statusRes.data.recentDecisions?.length > 0) {
             setAiDecisions(statusRes.data.recentDecisions);
+          }
+          if (typeof statusRes.data.aiOnline === 'boolean') {
+            setAiOnline(statusRes.data.aiOnline);
           }
         }
       } catch (err) {
@@ -68,13 +65,10 @@ export default function AiController({ devices = [], onToggleDevice, onChangeDev
       }
 
       try {
-        // Initialize Conversation Session
         const response = await axios.post('/api/chat/conversation');
-        const convId = response.data.conversationId;
-        setActiveConversationId(convId);
-
-        const historyResponse = await axios.get(`/api/chat/history?conversationId=${convId}`);
-        if (historyResponse.data && historyResponse.data.messages && historyResponse.data.messages.length > 0) {
+        setActiveConversationId(response.data.conversationId);
+        const historyResponse = await axios.get(`/api/chat/history?conversationId=${response.data.conversationId}`);
+        if (historyResponse.data?.messages?.length > 0) {
           setMessages(historyResponse.data.messages);
         }
       } catch (err) {
@@ -84,60 +78,46 @@ export default function AiController({ devices = [], onToggleDevice, onChangeDev
     initData();
   }, []);
 
-  // Auto-scroll chat
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Handlers for AI Automation Controls
   const handleToggleAiMaster = async () => {
     const newStatus = !aiEnabled;
     setAiEnabled(newStatus);
     try {
       await axios.post('/api/ai/automation/toggle', { enabled: newStatus });
-    } catch (err) {
-      console.error('Failed to toggle AI master engine:', err);
-    }
+    } catch (err) { console.error('Failed to toggle AI master engine:', err); }
   };
 
   const handleSelectProfile = async (profile) => {
     setAiProfile(profile);
     try {
       await axios.post('/api/ai/automation/profile', { profile });
-    } catch (err) {
-      console.error('Failed to update AI profile:', err);
-    }
+    } catch (err) { console.error('Failed to update AI profile:', err); }
   };
 
   const handleToggleDeviceAi = async (deviceId) => {
-    const current = deviceAiSettings[deviceId] !== false; // default true
+    const current = deviceAiSettings[deviceId] !== false;
     const nextVal = !current;
-    setDeviceAiSettings(prev => ({ ...prev, [deviceId]: nextVal }));
+    setDeviceAiSettings((prev) => ({ ...prev, [deviceId]: nextVal }));
     try {
       await axios.post('/api/ai/automation/device-setting', { deviceId, enabled: nextVal });
-    } catch (err) {
-      console.error('Failed to update device AI setting:', err);
-    }
+    } catch (err) { console.error('Failed to update device AI setting:', err); }
   };
 
   const handleRunManualEvaluation = async () => {
     setIsEvaluating(true);
     try {
       const res = await axios.post('/api/ai/automation/evaluate', { devices });
-      if (res.data && res.data.executedDecisions && res.data.executedDecisions.length > 0) {
-        setAiDecisions(prev => [...res.data.executedDecisions, ...prev].slice(0, 50));
-
-        // Apply updated device states
+      if (res.data?.executedDecisions?.length > 0) {
+        setAiDecisions((prev) => [...res.data.executedDecisions, ...prev].slice(0, 50));
         if (res.data.updatedDevices) {
-          res.data.updatedDevices.forEach(upDev => {
-            const origDev = devices.find(d => d.id === upDev.id);
+          res.data.updatedDevices.forEach((upDev) => {
+            const origDev = devices.find((d) => d.id === upDev.id);
             if (origDev) {
-              if (origDev.powerState !== upDev.powerState) {
-                onToggleDevice(upDev.id);
-              }
-              if (origDev.value !== upDev.value) {
-                onChangeDeviceValue(upDev.id, upDev.value);
-              }
+              if (origDev.powerState !== upDev.powerState) onToggleDevice(upDev.id);
+              if (origDev.value !== upDev.value) onChangeDeviceValue(upDev.id, upDev.value);
             }
           });
         }
@@ -149,63 +129,71 @@ export default function AiController({ devices = [], onToggleDevice, onChangeDev
     }
   };
 
-  // NLP Chat Handlers
   const suggestions = [
-    { label: '⚡ Control ESP32 Board', query: 'Turn off ESP32 main board' },
-    { label: '🔌 Toggle Relay Board', query: 'Turn on ESP8266 relay board' },
-    { label: '📡 ESP32-S3 Sensor Node', query: 'Turn off ESP32-S3 sensor station' },
-    { label: '🚨 Board Safety Status', query: 'Check safety status of all ESP32 and ESP8266 nodes' }
+    { label: '⚡ Control ESP32', query: 'Turn off ESP32 main board' },
+    { label: '🔌 Toggle Relay',  query: 'Turn on ESP8266 relay board' },
+    { label: '📡 Sensor Node',   query: 'Turn off ESP32-S3 sensor station' },
+    { label: '🚨 Board Safety',  query: 'Check safety status of all ESP32 and ESP8266 nodes' }
   ];
 
   const handleSend = async (textToSend) => {
     const text = textToSend || inputValue;
     if (!text.trim()) return;
-
     const userMsg = {
       id: Date.now(),
       sender: 'user',
-      text: text,
+      text,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
-    setMessages(prev => [...prev, userMsg]);
+    setMessages((prev) => [...prev, userMsg]);
     setInputValue('');
+
+    // Offline fallback response
+    if (!aiOnline) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          sender: 'ai',
+          text: "I'm currently running in offline mode because the local Ollama service (llama3.2) is not reachable. You can still manage devices manually, or start Ollama to enable natural-language commands.",
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }
+      ]);
+      return;
+    }
 
     try {
       const response = await axios.post('/api/chat/message', {
         message: text,
         conversationId: activeConversationId
       });
-
       const { message } = response.data;
-      setMessages(prev => [...prev, {
-        id: message.id,
-        sender: 'ai',
-        text: message.text,
-        timestamp: message.timestamp
-      }]);
-
-      if (message.commands && message.commands.length > 0) {
-        message.commands.forEach(cmd => {
-          const targetDevice = devices.find(d => d.id === cmd.deviceId || d.id.endsWith(cmd.deviceId));
-          if (cmd.action === 'setValue') {
-            if (targetDevice) {
-              onChangeDeviceValue(targetDevice.id, cmd.value);
-            }
-          } else if (cmd.action === 'toggle') {
-            if (targetDevice && targetDevice.powerState !== cmd.value) {
-              onToggleDevice(targetDevice.id);
-            }
-          }
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: message.id,
+          sender: 'ai',
+          text: message.text,
+          timestamp: message.timestamp
+        }
+      ]);
+      if (message.commands?.length > 0) {
+        message.commands.forEach((cmd) => {
+          const targetDevice = devices.find((d) => d.id === cmd.deviceId || d.id.endsWith(cmd.deviceId));
+          if (!targetDevice) return;
+          if (cmd.action === 'setValue') onChangeDeviceValue(targetDevice.id, cmd.value);
+          else if (cmd.action === 'toggle' && targetDevice.powerState !== cmd.value) onToggleDevice(targetDevice.id);
         });
       }
     } catch (error) {
       console.error('Error sending AI chat command:', error);
-      setMessages(prev => [
+      setAiOnline(false);
+      setMessages((prev) => [
         ...prev,
         {
           id: Date.now() + 1,
           sender: 'ai',
-          text: 'AI Agent executed command analysis across active node channels.',
+          text: "I couldn't reach the AI backend. Falling back to offline mode. You can still control devices manually from the Devices page.",
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
       ]);
@@ -213,334 +201,245 @@ export default function AiController({ devices = [], onToggleDevice, onChangeDev
   };
 
   return (
-    <div className="main-content">
-      {/* Page Header */}
-      <header className="dashboard-header">
+    <div className="page">
+      {/* Header */}
+      <div className="page-header">
         <div>
-          <h1>Autonomous AI Controller</h1>
-          <p className="dashboard-subtitle">Real-Time Autonomous IoT Device Control & NLP Command Hub</p>
+          <h1>AI Controller</h1>
+          <p>Autonomous IoT control and natural-language commands</p>
         </div>
-        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+        <div className="page-header-actions">
           <button
-            className={`add-device-btn ${isEvaluating ? 'animate-pulse' : ''}`}
+            className="btn btn-filled"
             onClick={handleRunManualEvaluation}
             disabled={!aiEnabled || isEvaluating}
-            style={{ background: 'var(--accent-cyan)', color: '#000', fontWeight: '600' }}
           >
-            <RefreshCw size={16} className={isEvaluating ? 'animate-spin' : ''} />
-            <span>{isEvaluating ? 'AI Evaluating...' : 'Run AI Cycle Now'}</span>
+            <RefreshCw size={16} className={isEvaluating ? 'spin' : ''} />
+            {isEvaluating ? 'Evaluating…' : 'Run AI cycle now'}
           </button>
         </div>
-      </header>
+      </div>
 
-      {/* SECTION 1: MASTER AI AUTONOMOUS AGENT CONTROL BAR */}
-      <section className="glass-panel" style={{ padding: '1.25rem', marginBottom: '1.5rem', borderRadius: '12px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div className={`logo-glow-wrapper ${aiEnabled ? 'active' : ''}`} style={{ width: '42px', height: '42px', borderRadius: '50%', background: aiEnabled ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Bot size={24} className={aiEnabled ? 'text-green animate-pulse' : 'text-red'} />
-            </div>
-            <div>
-              <h3 style={{ margin: 0, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                Autonomous AI Agent Engine
-                <span className={`device-badge-cat ${aiEnabled ? 'smart-home' : 'industrial'}`} style={{ fontSize: '0.7rem', padding: '2px 8px' }}>
-                  {aiEnabled ? 'ACTIVE & MONITORING' : 'MANUAL OVERRIDE'}
-                </span>
-              </h3>
-              <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                Continuously analyzes live telemetry streams and dispatches automated commands to connected IoT channels.
-              </p>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <button
-              onClick={handleToggleAiMaster}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '8px 16px',
-                borderRadius: '8px',
-                border: '1px solid var(--glass-border)',
-                background: aiEnabled ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                color: aiEnabled ? '#4ade80' : '#f87171',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
-            >
-              {aiEnabled ? <ToggleRight size={22} /> : <ToggleLeft size={22} />}
-              <span>{aiEnabled ? 'AI Control ON' : 'AI Control OFF'}</span>
-            </button>
+      {/* Online / offline status banner */}
+      {aiOnline ? (
+        <div className="ai-status-banner online">
+          <CheckCircle2 size={18} />
+          <div className="status-text">
+            <strong>AI Core is online.</strong> Local Ollama service <code>llama3.2</code> is responding to natural-language queries.
           </div>
         </div>
-
-        {/* AI AUTOMATION PROFILES */}
-        {aiEnabled && (
-          <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid var(--glass-border)' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-secondary)', marginBottom: '0.75rem', display: 'block' }}>
-              Select Active AI Automation Policy
-            </span>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
-              {/* Profile 1: Safety Guard */}
-              <div
-                onClick={() => handleSelectProfile('SAFETY')}
-                className={`glass-panel ${aiProfile === 'SAFETY' ? 'profile-active' : ''}`}
-                style={{
-                  padding: '1rem',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  border: aiProfile === 'SAFETY' ? '2px solid var(--accent-cyan)' : '1px solid var(--glass-border)',
-                  background: aiProfile === 'SAFETY' ? 'rgba(6, 182, 212, 0.1)' : 'rgba(255, 255, 255, 0.02)',
-                  transition: 'all 0.2s'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
-                  <ShieldCheck size={18} className="text-cyan" />
-                  <strong style={{ fontSize: '0.95rem' }}>Shield Safety Guard</strong>
-                </div>
-                <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-                  Prioritizes system protection. Automatically triggers cooling & ventilation if temp &gt; 28°C or air quality PPM &gt; 750.
-                </p>
-              </div>
-
-              {/* Profile 2: Eco Saver */}
-              <div
-                onClick={() => handleSelectProfile('ECO')}
-                className={`glass-panel ${aiProfile === 'ECO' ? 'profile-active' : ''}`}
-                style={{
-                  padding: '1rem',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  border: aiProfile === 'ECO' ? '2px solid #4ade80' : '1px solid var(--glass-border)',
-                  background: aiProfile === 'ECO' ? 'rgba(74, 222, 128, 0.1)' : 'rgba(255, 255, 255, 0.02)',
-                  transition: 'all 0.2s'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
-                  <Leaf size={18} className="text-green" />
-                  <strong style={{ fontSize: '0.95rem' }}>Eco Energy Saver</strong>
-                </div>
-                <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-                  Optimizes energy draw. Adjusts A/C setpoints to 24°C and dims non-essential high-power loads when idle.
-                </p>
-              </div>
-
-              {/* Profile 3: Comfort Optimizer */}
-              <div
-                onClick={() => handleSelectProfile('COMFORT')}
-                className={`glass-panel ${aiProfile === 'COMFORT' ? 'profile-active' : ''}`}
-                style={{
-                  padding: '1rem',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  border: aiProfile === 'COMFORT' ? '2px solid #a78bfa' : '1px solid var(--glass-border)',
-                  background: aiProfile === 'COMFORT' ? 'rgba(167, 139, 250, 0.1)' : 'rgba(255, 255, 255, 0.02)',
-                  transition: 'all 0.2s'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
-                  <Thermometer size={18} className="text-violet" />
-                  <strong style={{ fontSize: '0.95rem' }}>Comfort Optimizer</strong>
-                </div>
-                <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-                  Maintains ideal indoor climate at 22°C and balances humidity levels dynamically for user comfort.
-                </p>
-              </div>
-            </div>
+      ) : (
+        <div className="ai-status-banner offline">
+          <WifiOff size={18} />
+          <div className="status-text">
+            <strong>AI Core is offline.</strong> The local Ollama service <code>llama3.2</code> isn't reachable. Start it with{' '}
+            <code>ollama serve</code> and <code>ollama pull llama3.2</code> to restore natural-language commands.
+            Autonomous decisions continue to use the rules engine below.
           </div>
-        )}
-      </section>
+          <button
+            className="btn btn-outlined btn-sm"
+            onClick={async () => {
+              try {
+                const r = await axios.get('/api/ai/automation/status');
+                setAiOnline(r.data?.aiOnline !== false);
+              } catch { /* keep offline */ }
+            }}
+            type="button"
+          >
+            <RefreshCw size={14} /> Retry
+          </button>
+        </div>
+      )}
 
-      {/* SECTION 2: PER-DEVICE AI AUTOMATION TOGGLES & LIVE DECISIONS FEED */}
-      <div className="ai-layout-grid" style={{ marginBottom: '1.5rem' }}>
-
-        {/* Per-Device AI Control Grid */}
-        <div className="glass-panel" style={{ padding: '1.25rem', borderRadius: '12px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h3 style={{ margin: 0, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Cpu size={18} className="text-cyan" />
-              Per-Device AI Permissions
-            </h3>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Toggle AI authority per node</span>
+      {/* Master AI card */}
+      <div className="ai-master-card">
+        <div className="ai-master-meta">
+          <div className={`ai-master-icon ${aiEnabled ? 'green' : 'red'}`}>
+            <Bot size={22} />
           </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', maxHeight: '280px', overflowY: 'auto' }}>
-            {devices.map(dev => {
-              const isDevAiOn = deviceAiSettings[dev.id] !== false;
-              return (
-                <div
-                  key={dev.id}
-                  style={{
-                    display: 'flex',
-                    justify: 'space-between',
-                    alignItems: 'center',
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid var(--glass-border)'
-                  }}
-                >
-                  <div>
-                    <div style={{ fontSize: '0.85rem', fontWeight: '600' }}>{dev.name}</div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
-                      {dev.category} • {dev.value}{dev.unit}
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => handleToggleDeviceAi(dev.id)}
-                    disabled={!aiEnabled}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.25rem',
-                      padding: '4px 8px',
-                      fontSize: '0.72rem',
-                      borderRadius: '4px',
-                      border: 'none',
-                      background: isDevAiOn && aiEnabled ? 'rgba(74, 222, 128, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                      color: isDevAiOn && aiEnabled ? '#4ade80' : 'var(--text-secondary)',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {isDevAiOn && aiEnabled ? <CheckCircle2 size={12} /> : <Info size={12} />}
-                    <span>{isDevAiOn && aiEnabled ? 'AI Allowed' : 'Manual Only'}</span>
-                  </button>
-                </div>
-              );
-            })}
+          <div>
+            <h3>Autonomous AI Agent Engine</h3>
+            <p>
+              {aiEnabled
+                ? 'Continuously analyzing telemetry and dispatching automated commands.'
+                : 'Manual override active. AI will not dispatch commands until re-enabled.'}
+            </p>
           </div>
         </div>
+        <button
+          className={`btn ${aiEnabled ? 'btn-outlined' : 'btn-filled'}`}
+          onClick={handleToggleAiMaster}
+          type="button"
+        >
+          {aiEnabled ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
+          {aiEnabled ? 'AI control ON' : 'AI control OFF'}
+        </button>
+      </div>
 
-        {/* Live AI Decision Log Feed */}
-        <div className="glass-panel" style={{ padding: '1.25rem', borderRadius: '12px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h3 style={{ margin: 0, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Activity size={18} className="text-yellow animate-pulse" />
-              Live AI Autonomous Action Feed
-            </h3>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{aiDecisions.length} Action Events</span>
+      {/* AI Profiles */}
+      {aiEnabled && (
+        <div className="ai-profiles" style={{ marginBottom: 16 }}>
+          <div
+            className={`ai-profile-card ${aiProfile === 'SAFETY' ? 'active' : ''}`}
+            onClick={() => handleSelectProfile('SAFETY')}
+          >
+            <h4><ShieldCheck size={16} /> Shield Safety Guard</h4>
+            <p>Prioritizes system protection. Triggers cooling &amp; ventilation if temperature &gt; 28°C or AQI PPM &gt; 750.</p>
           </div>
+          <div
+            className={`ai-profile-card ${aiProfile === 'ECO' ? 'active' : ''}`}
+            onClick={() => handleSelectProfile('ECO')}
+          >
+            <h4><Leaf size={16} /> Eco Energy Saver</h4>
+            <p>Optimizes energy draw. Adjusts A/C setpoints to 24°C and dims non-essential high-power loads when idle.</p>
+          </div>
+          <div
+            className={`ai-profile-card ${aiProfile === 'COMFORT' ? 'active' : ''}`}
+            onClick={() => handleSelectProfile('COMFORT')}
+          >
+            <h4><Thermometer size={16} /> Comfort Optimizer</h4>
+            <p>Maintains ideal indoor climate at 22°C and balances humidity levels dynamically for user comfort.</p>
+          </div>
+        </div>
+      )}
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', maxHeight: '280px', overflowY: 'auto' }}>
-            {aiDecisions.length > 0 ? (
-              aiDecisions.map(dec => (
-                <div
-                  key={dec.id}
-                  style={{
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    background: 'rgba(0, 0, 0, 0.2)',
-                    borderLeft: '3px solid var(--accent-cyan)',
-                    fontSize: '0.78rem'
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                    <strong style={{ color: '#a78bfa' }}>{dec.deviceName}</strong>
-                    <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>{dec.timestamp}</span>
-                  </div>
-                  <p style={{ margin: 0, color: 'var(--text-primary)', fontSize: '0.76rem' }}>
-                    {dec.reason}
-                  </p>
-                </div>
-              ))
+      {/* Per-device permissions + Decision log */}
+      <div className="ai-grid">
+        <div className="ai-section">
+          <div className="ai-section-head">
+            <h3><Cpu size={18} /> Per-device AI permissions</h3>
+            <span style={{ fontSize: 12, color: 'var(--md-on-surface-variant)' }}>Toggle AI authority per node</span>
+          </div>
+          <div className="ai-section-body">
+            {devices.length === 0 ? (
+              <div className="empty-state" style={{ padding: 24, border: 'none' }}>
+                <p>No devices registered yet.</p>
+              </div>
             ) : (
-              <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-                No automated decisions triggered yet. The AI is continuously scanning telemetry.
-              </div>
+              devices.map((dev) => {
+                const isDevAiOn = deviceAiSettings[dev.id] !== false;
+                return (
+                  <div key={dev.id} className="ai-perm-row">
+                    <div className="device-info">
+                      <div className="device-name">{dev.name}</div>
+                      <div className="device-meta">
+                        {dev.category} · {dev.value}{dev.unit}
+                      </div>
+                    </div>
+                    <button
+                      className="btn btn-sm"
+                      onClick={() => handleToggleDeviceAi(dev.id)}
+                      disabled={!aiEnabled}
+                      style={{
+                        background: isDevAiOn && aiEnabled ? 'var(--md-success-container)' : 'var(--md-surface-container-high)',
+                        color: isDevAiOn && aiEnabled ? 'var(--md-success)' : 'var(--md-on-surface-variant)',
+                        fontWeight: 500,
+                      }}
+                      type="button"
+                    >
+                      {isDevAiOn && aiEnabled ? <CheckCircle2 size={14} /> : <Info size={14} />}
+                      {isDevAiOn && aiEnabled ? 'AI allowed' : 'Manual only'}
+                    </button>
+                  </div>
+                );
+              })
             )}
           </div>
         </div>
 
+        <div className="ai-section">
+          <div className="ai-section-head">
+            <h3><Activity size={18} /> Live AI decision feed</h3>
+            <span style={{ fontSize: 12, color: 'var(--md-on-surface-variant)' }}>{aiDecisions.length} events</span>
+          </div>
+          <div className="ai-section-body">
+            {aiDecisions.length === 0 ? (
+              <div className="empty-state" style={{ padding: 24, border: 'none' }}>
+                <p>No automated decisions yet. The AI is continuously scanning telemetry.</p>
+              </div>
+            ) : (
+              aiDecisions.map((dec) => (
+                <div key={dec.id} className="ai-decision">
+                  <div className="decision-head">
+                    <span className="decision-device">{dec.deviceName}</span>
+                    <span className="decision-time">{dec.timestamp}</span>
+                  </div>
+                  <p className="decision-reason">{dec.reason}</p>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* SECTION 3: NATURAL LANGUAGE AI COMMAND CHAT CONSOLE */}
-      <div className="ai-layout-grid">
-        <div className="container">
-          <div className="nav-bar">
-            <a href="#chat" onClick={(e) => e.preventDefault()}>
-              <Bot size={18} className="text-violet animate-glow" style={{ marginRight: '8px' }} />
-              NLP Command Console
-              <span className="ai-badge" style={{ marginLeft: '8px' }}>NATURAL LANGUAGE AI</span>
-            </a>
+      {/* Chat console + reference panel */}
+      <div className="ai-grid">
+        <div className="ai-chat">
+          <div className="ai-chat-head">
+            <Bot size={20} className="text-violet" />
+            <h3>NLP Command Console</h3>
+            <span className="ai-badge">{aiOnline ? 'Online' : 'Offline fallback'}</span>
           </div>
-
-          <div className="messages-area">
-            {messages.map((msg, index) => {
-              const isOdd = index % 2 === 0;
-              const alternateClass = isOdd ? 'msg-odd' : 'msg-even';
-              return (
-                <div key={msg.id} className={`message ${alternateClass}`}>
-                  <div className="message-content">
-                    <div className="message-header">
-                      {msg.sender === 'ai' ? (
-                        <span className="msg-sender-name ai-sender">
-                          <Bot size={13} /> Nunnarri AI
-                        </span>
-                      ) : (
-                        <span className="msg-sender-name user-sender">
-                          User Command
-                        </span>
-                      )}
-                      <span className="msg-time">{msg.timestamp}</span>
-                    </div>
-                    <p className="msg-text">{msg.text}</p>
-                  </div>
+          <div className="ai-messages">
+            {messages.map((msg) => (
+              <div key={msg.id} className={`ai-msg ${msg.sender}`}>
+                <div className="avatar">
+                  <Bot size={16} />
                 </div>
-              );
-            })}
+                <div>
+                  <div className="msg-meta">
+                    <span>{msg.sender === 'ai' ? 'Nunnarri AI' : 'You'}</span>
+                    <span>·</span>
+                    <span>{msg.timestamp}</span>
+                  </div>
+                  <div className="msg-bubble">{msg.text}</div>
+                </div>
+              </div>
+            ))}
             <div ref={messagesEndRef} />
           </div>
-
-          <div className="sender-area">
-            <div className="suggestions-row">
-              {suggestions.map((s, idx) => (
-                <button
-                  key={idx}
-                  className="suggestion-tag"
-                  onClick={() => handleSend(s.query)}
-                >
-                  {s.label}
-                </button>
-              ))}
-            </div>
-
-            <div className="input-place">
-              <input
-                type="text"
-                placeholder="Type natural command e.g. 'Turn on Living Room A/C'..."
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                className="send-input"
-              />
-              <div className="send" onClick={() => handleSend()} title="Send Command">
-                <Send className="send-icon" size={15} />
-              </div>
-            </div>
+          <div className="ai-suggestions">
+            {suggestions.map((s, idx) => (
+              <button key={idx} onClick={() => handleSend(s.query)} type="button">
+                {s.label}
+              </button>
+            ))}
+          </div>
+          <div className="ai-input">
+            <input
+              type="text"
+              placeholder={aiOnline
+                ? "Ask the AI — e.g. 'Turn on the relay board' or 'Check safety status of all nodes'"
+                : "AI offline — you can still type, the bot will respond in offline mode"}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+            />
+            <button
+              className="send-btn"
+              onClick={() => handleSend()}
+              disabled={!inputValue.trim()}
+              type="button"
+              aria-label="Send"
+            >
+              <Send size={16} />
+            </button>
           </div>
         </div>
 
-        {/* AI Reference Panel */}
-        <div className="ai-sidebar-column">
-          <div className="recommendations-panel glass-panel">
-            <div className="rec-header">
-              <Sparkles size={18} className="text-yellow" />
-              <h4>AI Autonomous Logic</h4>
-            </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-              <p>The Autonomous AI Engine connects live telemetry from <strong>`nexus_iot_db`</strong> with user identities in <strong>`user_db`</strong>.</p>
-              <ul style={{ paddingLeft: '1.2rem', marginTop: '0.5rem' }}>
-                <li>Monitors temperature, humidity, and power draw metrics.</li>
-                <li>Executes non-blocking device toggle & value adjustments.</li>
-                <li>Logs every action for full transparency and manual override.</li>
-              </ul>
-            </div>
-          </div>
+        <div className="ai-ref">
+          <h4><Sparkles size={18} /> AI autonomous logic</h4>
+          <p>
+            The Autonomous AI Engine connects live telemetry from <strong>nexus_iot_db</strong> with user
+            identities in <strong>user_db</strong>.
+          </p>
+          <ul>
+            <li>Monitors temperature, humidity, and power draw metrics in real time.</li>
+            <li>Executes non-blocking device toggle and value adjustments.</li>
+            <li>Logs every action for full transparency and manual override.</li>
+            <li>Falls back to deterministic rules when Ollama is unreachable.</li>
+          </ul>
         </div>
-
       </div>
     </div>
   );

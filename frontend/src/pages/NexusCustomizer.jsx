@@ -315,7 +315,7 @@ export default function NexusCustomizer({ devices, onToggleDevice, onChangeDevic
   };
 
   return (
-    <div className="main-content">
+    <div className="page">
       {/* Header Banner */}
       <header className="dashboard-header">
         <div>

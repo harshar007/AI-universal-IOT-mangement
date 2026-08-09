@@ -1,130 +1,199 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Plus, Search, SlidersHorizontal, Trash2,
-  Wifi, WifiOff, Battery, BatteryCharging,
-  AlertCircle, CheckCircle2, X, Sliders, Copy, Key, RefreshCw
+  Wifi, WifiOff, Battery, BatteryLow,
+  AlertCircle, CheckCircle2, X,
+  Copy, Key, RefreshCw, Power, PowerOff,
+  LayoutGrid, List, Cpu, MapPin,
+  ArrowUpDown, FilterX
 } from 'lucide-react';
 import '../css/Devices.css';
 
-export default function Devices({ devices, onToggleDevice, onAddDevice, onDeleteDevice, onRegenerateToken }) {
+const CATEGORIES = ['All', 'Smart Home', 'Industrial', 'Server Room', 'ESP32 Board', 'ESP8266 Board', 'Custom Board'];
+const STATUSES   = ['All', 'Online', 'Offline', 'Maintenance'];
+
+function StatusChip({ status }) {
+  const map = {
+    online:      { cls: 'chip-success', label: 'Online' },
+    offline:     { cls: 'chip-warning', label: 'Offline' },
+    maintenance: { cls: 'chip-info',    label: 'Maintenance' },
+  };
+  const s = map[status] || { cls: '', label: status };
+  return (
+    <span className={`chip ${s.cls}`}>
+      <span className="chip-dot" />
+      {s.label}
+    </span>
+  );
+}
+
+function CategoryIcon({ category, status, size = 20 }) {
+  const tone =
+    status === 'online'   ? 'green'  :
+    status === 'maintenance' ? 'yellow' :
+    'red';
+  return (
+    <div className={`dev-card-icon ${status === 'online' ? 'green' : tone}`}>
+      <Cpu size={size} />
+    </div>
+  );
+}
+
+export default function Devices({
+  devices,
+  onToggleDevice,
+  onAddDevice,
+  onDeleteDevice,
+  onRegenerateToken,
+  onChangeDeviceValue
+}) {
   const navigate = useNavigate();
-  const [filterCategory, setFilterCategory] = useState('All');
+
+  // Filters & search
   const [searchQuery, setSearchQuery] = useState('');
+  const [filterCategory, setFilterCategory] = useState('All');
+  const [filterStatus, setFilterStatus]   = useState('All');
+  const [filterLocation, setFilterLocation] = useState('All');
+  const [sortBy, setSortBy] = useState('name-asc');
+
+  // Multi-select
+  const [selectedIds, setSelectedIds] = useState(new Set());
+
+  // View
+  const [view, setView] = useState('grid'); // 'grid' | 'list'
+
+  // Modal: add / regenerate / success
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Form State for new device
-  const [newDeviceName, setNewDeviceName] = useState('');
-  const [newDeviceCategory, setNewDeviceCategory] = useState('Smart Home');
-  const [newDeviceLocation, setNewDeviceLocation] = useState('Living Room');
-  const [newDeviceValue, setNewDeviceValue] = useState('');
-  const [newDeviceUnit, setNewDeviceUnit] = useState('°C');
-  const [newDevicePower, setNewDevicePower] = useState('50');
-
-  // Token / Registration / Copy states
   const [registerResult, setRegisterResult] = useState(null);
   const [isRegistering, setIsRegistering] = useState(false);
   const [registerError, setRegisterError] = useState('');
-  const [copied, setCopied] = useState(false);
   const [isRegeneratingToken, setIsRegeneratingToken] = useState(false);
-  const [copiedDeviceId, setCopiedDeviceId] = useState(null);
+  const [copied, setCopied] = useState(false);
 
-  // Filter & Search logic
-  const filteredDevices = devices.filter(device => {
-    const matchesCategory = filterCategory === 'All' || device.category === filterCategory;
-    const matchesSearch = device.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      device.location.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+  // Form
+  const [newDevice, setNewDevice] = useState({
+    name: '',
+    category: 'Smart Home',
+    location: '',
+    value: '',
+    unit: '°C',
+    powerDraw: 50,
   });
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
+  // Derived
+  const locations = useMemo(() => {
+    const set = new Set(devices.map((d) => d.location).filter(Boolean));
+    return ['All', ...Array.from(set).sort()];
+  }, [devices]);
+
+  const categoryCounts = useMemo(() => {
+    const counts = { All: devices.length };
+    devices.forEach((d) => {
+      counts[d.category] = (counts[d.category] || 0) + 1;
+    });
+    return counts;
+  }, [devices]);
+
+  const filteredDevices = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    let list = devices.filter((d) => {
+      const matchesSearch = !q ||
+        d.name.toLowerCase().includes(q) ||
+        d.location.toLowerCase().includes(q) ||
+        d.id.toLowerCase().includes(q) ||
+        d.category.toLowerCase().includes(q);
+      const matchesCategory = filterCategory === 'All' || d.category === filterCategory;
+      const matchesStatus   = filterStatus   === 'All' ||
+        (filterStatus === 'Online' && d.status === 'online') ||
+        (filterStatus === 'Offline' && d.status === 'offline') ||
+        (filterStatus === 'Maintenance' && d.status === 'maintenance');
+      const matchesLocation = filterLocation === 'All' || d.location === filterLocation;
+      return matchesSearch && matchesCategory && matchesStatus && matchesLocation;
+    });
+    list = [...list].sort((a, b) => {
+      switch (sortBy) {
+        case 'name-asc':   return a.name.localeCompare(b.name);
+        case 'name-desc':  return b.name.localeCompare(a.name);
+        case 'value-asc':  return (a.value || 0) - (b.value || 0);
+        case 'value-desc': return (b.value || 0) - (a.value || 0);
+        case 'power-desc': return (b.powerDraw || 0) - (a.powerDraw || 0);
+        case 'status':     return (a.status || '').localeCompare(b.status || '');
+        default: return 0;
+      }
+    });
+    return list;
+  }, [devices, searchQuery, filterCategory, filterStatus, filterLocation, sortBy]);
+
+  // Selection
+  const allSelected = filteredDevices.length > 0 && filteredDevices.every((d) => selectedIds.has(d.id));
+  const someSelected = !allSelected && filteredDevices.some((d) => selectedIds.has(d.id));
+
+  const toggleSelect = (id) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+  const toggleSelectAll = () => {
+    setSelectedIds((prev) => {
+      if (allSelected) return new Set();
+      const next = new Set(prev);
+      filteredDevices.forEach((d) => next.add(d.id));
+      return next;
+    });
+  };
+  const clearSelection = () => setSelectedIds(new Set());
+
+  // Modal handlers
+  const openAddModal = () => {
     setRegisterError('');
     setRegisterResult(null);
     setIsRegeneratingToken(false);
+    setNewDevice({ name: '', category: 'Smart Home', location: '', value: '', unit: '°C', powerDraw: 50 });
+    setIsModalOpen(true);
   };
-  const handleCloseModal = () => {
+  const closeModal = () => {
     setIsModalOpen(false);
-    // Reset form
-    setNewDeviceName('');
-    setNewDeviceValue('');
     setRegisterResult(null);
-    setIsRegistering(false);
     setRegisterError('');
+    setIsRegistering(false);
     setCopied(false);
   };
 
-  const handleCopyToken = (token) => {
-    navigator.clipboard.writeText(token);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleCardCopyToken = (deviceId, token) => {
-    navigator.clipboard.writeText(token);
-    setCopiedDeviceId(deviceId);
-    setTimeout(() => setCopiedDeviceId(null), 2000);
-  };
-
-  const handleRegenerateClick = async (deviceId) => {
-    const confirmRegen = window.confirm("Are you sure you want to regenerate the Secret Key for this device? Microcontrollers connected with the old key will need to be updated.");
-    if (!confirmRegen) return;
-
-    setIsRegeneratingToken(true);
-    setIsModalOpen(true);
-    setRegisterResult(null);
-    setRegisterError('');
-
+  const handleCopyToken = async (token) => {
     try {
-      const result = await onRegenerateToken(deviceId);
-      setRegisterResult(result);
-    } catch (err) {
-      console.error(err);
-      setRegisterError('Failed to regenerate token on gateway server.');
-    } finally {
-      setIsRegeneratingToken(false);
-    }
-  };
-
-  const handleCategoryChange = (cat) => {
-    setNewDeviceCategory(cat);
-    // Set typical units based on category
-    if (cat === 'Server Room') {
-      setNewDeviceUnit('°C');
-      setNewDevicePower('15');
-    } else if (cat === 'Industrial') {
-      setNewDeviceUnit('%');
-      setNewDevicePower('400');
-    } else {
-      setNewDeviceUnit('°C');
-      setNewDevicePower('100');
+      await navigator.clipboard.writeText(token);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* ignore */
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!newDeviceName.trim()) return;
-
+    if (!newDevice.name.trim() || !newDevice.location.trim()) return;
     setIsRegistering(true);
     setRegisterError('');
-
-    const newDevice = {
-      id: `${newDeviceCategory.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
-      name: newDeviceName,
-      category: newDeviceCategory,
-      location: newDeviceLocation,
+    const device = {
+      id: `${newDevice.category.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
+      name: newDevice.name.trim(),
+      category: newDevice.category,
+      location: newDevice.location.trim(),
       status: 'online',
       powerState: true,
-      value: newDeviceValue ? parseFloat(newDeviceValue) : 0,
-      unit: newDeviceUnit,
-      powerDraw: parseInt(newDevicePower) || 0,
-      battery: newDeviceCategory === 'Server Room' ? 100 : null,
-      lastUpdated: 'Just now'
+      value: newDevice.value === '' ? 0 : parseFloat(newDevice.value),
+      unit: newDevice.unit || '',
+      powerDraw: parseFloat(newDevice.powerDraw) || 0,
+      battery: newDevice.category === 'Server Room' ? 100 : null,
+      lastUpdated: 'Just now',
     };
-
     try {
-      const result = await onAddDevice(newDevice);
-      setRegisterResult(result);
+      const result = await onAddDevice(device);
+      setRegisterResult(result || device);
     } catch (err) {
       setRegisterError(err.response?.data?.error || err.message || 'Failed to provision device.');
     } finally {
@@ -132,373 +201,542 @@ export default function Devices({ devices, onToggleDevice, onAddDevice, onDelete
     }
   };
 
-  return (
-    <div className="main-content">
-      {/* Page Header */}
-      <header className="dashboard-header">
-        <div>
-          <h1>Devices Directory</h1>
-          <p className="dashboard-subtitle">Manage and provision active IoT channels</p>
-        </div>
-        <button className="add-device-btn" onClick={handleOpenModal}>
-          <Plus size={16} />
-          <span>Add New Device</span>
-        </button>
-      </header>
+  const handleRegenerateClick = async (deviceId) => {
+    if (!window.confirm('Regenerate the Secret Key? Microcontrollers using the old key must be updated.')) return;
+    setIsRegeneratingToken(true);
+    setIsModalOpen(true);
+    setRegisterResult(null);
+    setRegisterError('');
+    try {
+      const result = await onRegenerateToken(deviceId);
+      setRegisterResult(result);
+    } catch (err) {
+      setRegisterError('Failed to regenerate token.');
+    } finally {
+      setIsRegeneratingToken(false);
+    }
+  };
 
-      {/* Directory Filters & Search Row */}
-      <section className="directory-controls glass-panel">
-        <div className="search-bar-wrapper">
+  // Batch operations
+  const handleBatchPower = async (state) => {
+    for (const id of selectedIds) {
+      try { await onToggleDevice(id, state); } catch (e) { /* ignore individual */ }
+    }
+    clearSelection();
+  };
+  const handleBatchDelete = () => {
+    if (!window.confirm(`Delete ${selectedIds.size} selected device(s)?`)) return;
+    selectedIds.forEach((id) => onDeleteDevice(id));
+    clearSelection();
+  };
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setFilterCategory('All');
+    setFilterStatus('All');
+    setFilterLocation('All');
+    setSortBy('name-asc');
+  };
+  const hasActiveFilters =
+    searchQuery !== '' ||
+    filterCategory !== 'All' ||
+    filterStatus !== 'All' ||
+    filterLocation !== 'All';
+
+  return (
+    <div className="page">
+      {/* Page header */}
+      <div className="page-header">
+        <div>
+          <h1>Devices</h1>
+          <p>Provision, monitor, and manage your IoT fleet</p>
+        </div>
+        <div className="page-header-actions">
+          <button className="btn btn-filled" onClick={openAddModal}>
+            <Plus size={16} /> Add device
+          </button>
+        </div>
+      </div>
+
+      {/* Toolbar */}
+      <div className="dev-toolbar">
+        <div className="dev-search">
           <Search size={18} className="search-icon" />
           <input
-            type="text"
-            placeholder="Search by device name or location..."
+            type="search"
+            placeholder="Search devices by name, location, ID, or category…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="search-input"
           />
         </div>
-
-        <div className="filters-group">
-          <SlidersHorizontal size={16} className="text-muted" />
-          {['All', 'Smart Home', 'Industrial', 'Server Room'].map(cat => (
-            <button
-              key={cat}
-              className={`filter-btn ${filterCategory === cat ? 'active' : ''}`}
-              onClick={() => setFilterCategory(cat)}
-            >
-              {cat}
-            </button>
-          ))}
+        <div className="dev-view-toggle">
+          <button
+            className={view === 'grid' ? 'active' : ''}
+            onClick={() => setView('grid')}
+            aria-label="Grid view"
+            type="button"
+          >
+            <LayoutGrid size={16} />
+          </button>
+          <button
+            className={view === 'list' ? 'active' : ''}
+            onClick={() => setView('list')}
+            aria-label="List view"
+            type="button"
+          >
+            <List size={16} />
+          </button>
         </div>
-      </section>
+        <select
+          className="dev-select"
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+        >
+          <option value="name-asc">Name (A–Z)</option>
+          <option value="name-desc">Name (Z–A)</option>
+          <option value="value-desc">Value (high–low)</option>
+          <option value="value-asc">Value (low–high)</option>
+          <option value="power-desc">Power draw (high–low)</option>
+          <option value="status">Status</option>
+        </select>
+        {hasActiveFilters && (
+          <button className="btn btn-text btn-sm" onClick={clearFilters} type="button">
+            <FilterX size={14} /> Clear filters
+          </button>
+        )}
+      </div>
 
-      {/* Devices List Grid */}
-      <section className="devices-grid">
-        {filteredDevices.length > 0 ? (
-          filteredDevices.map(device => {
-            const hasBattery = device.battery !== null;
-            const isOnline = device.status === 'online';
-            const isMaintenance = device.status === 'maintenance';
+      {/* Category chips */}
+      <div className="dev-filters" style={{ marginBottom: 12 }}>
+        {CATEGORIES.map((cat) => (
+          <button
+            key={cat}
+            type="button"
+            className={`dev-filter-chip ${filterCategory === cat ? 'active' : ''}`}
+            onClick={() => setFilterCategory(cat)}
+          >
+            {cat}
+            <span className="count">{categoryCounts[cat] || 0}</span>
+          </button>
+        ))}
+      </div>
 
+      {/* Status + location filters */}
+      <div className="dev-filters" style={{ marginBottom: 20 }}>
+        {STATUSES.map((s) => (
+          <button
+            key={s}
+            type="button"
+            className={`dev-filter-chip ${filterStatus === s ? 'active' : ''}`}
+            onClick={() => setFilterStatus(s)}
+          >
+            {s}
+          </button>
+        ))}
+        {locations.length > 2 && (
+          <select
+            className="dev-select"
+            value={filterLocation}
+            onChange={(e) => setFilterLocation(e.target.value)}
+            style={{ marginLeft: 'auto' }}
+          >
+            {locations.map((loc) => (
+              <option key={loc} value={loc}>
+                {loc === 'All' ? 'All locations' : `📍 ${loc}`}
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
+
+      {/* Selection bar */}
+      {selectedIds.size > 0 && (
+        <div className="dev-selection-bar">
+          <span className="selection-count">
+            {selectedIds.size} device{selectedIds.size === 1 ? '' : 's'} selected
+          </span>
+          <button className="btn btn-text btn-sm" onClick={clearSelection} type="button">
+            Clear
+          </button>
+          <div className="spacer" />
+          <button className="btn btn-outlined btn-sm" onClick={() => handleBatchPower(true)} type="button">
+            <Power size={14} /> Power on
+          </button>
+          <button className="btn btn-outlined btn-sm" onClick={() => handleBatchPower(false)} type="button">
+            <PowerOff size={14} /> Power off
+          </button>
+          <button className="btn btn-outlined btn-sm" onClick={handleBatchDelete} type="button">
+            <Trash2 size={14} /> Delete
+          </button>
+        </div>
+      )}
+
+      {/* Devices list */}
+      {filteredDevices.length === 0 ? (
+        <div className="empty-state">
+          <Cpu size={36} />
+          <h3>No devices found</h3>
+          <p>
+            {hasActiveFilters
+              ? 'Try adjusting your search or filters.'
+              : 'Add your first device to start streaming telemetry.'}
+          </p>
+          {hasActiveFilters ? (
+            <button className="btn btn-outlined" onClick={clearFilters} style={{ marginTop: 16 }} type="button">
+              Clear filters
+            </button>
+          ) : (
+            <button className="btn btn-filled" onClick={openAddModal} style={{ marginTop: 16 }} type="button">
+              <Plus size={16} /> Add device
+            </button>
+          )}
+        </div>
+      ) : view === 'grid' ? (
+        <div className="dev-grid">
+          {filteredDevices.map((device) => {
+            const selected = selectedIds.has(device.id);
             return (
-              <div key={device.id} className={`device-card glass-panel ${!device.powerState ? 'device-inactive' : ''}`}>
-                <div className="device-card-header">
-                  <div className="device-meta">
-                    <span className={`device-badge-cat ${device.category.toLowerCase().replace(/\s+/g, '-')}`}>
-                      {device.category}
-                    </span>
-                    <span className="device-location">{device.location}</span>
-                  </div>
+              <div
+                key={device.id}
+                className={`dev-card ${selected ? 'selected' : ''} ${device.status === 'offline' ? 'offline' : ''}`}
+              >
+                <label className="md-checkbox card-select" onClick={(e) => e.stopPropagation()}>
+                  <input
+                    type="checkbox"
+                    checked={selected}
+                    onChange={() => toggleSelect(device.id)}
+                  />
+                  <span className="md-checkbox-mark">
+                    {selected && <CheckCircle2 size={14} />}
+                  </span>
+                </label>
 
-                  <div style={{ display: 'flex', gap: '0.25rem' }}>
+                <div className="dev-card-actions">
+                  {device.secretKey && (
                     <button
-                      className="regenerate-token-btn"
+                      type="button"
+                      className="icon-btn"
+                      title="Regenerate secret key"
                       onClick={() => handleRegenerateClick(device.id)}
-                      title="Regenerate Secret Key"
-                      style={{
-                        padding: '6px',
-                        width: '28px',
-                        height: '28px',
-                        background: 'none',
-                        border: 'none',
-                        boxShadow: 'none',
-                        borderRadius: '50%',
-                        color: 'var(--text-secondary)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
                     >
                       <Key size={14} />
                     </button>
-                    <button
-                      className="configure-device-btn"
-                      onClick={() => navigate(`/nexus-customizer?deviceId=${device.id}`)}
-                      title="Configure Nunnarri Customizer"
-                      style={{
-                        padding: '6px',
-                        width: '28px',
-                        height: '28px',
-                        background: 'none',
-                        border: 'none',
-                        boxShadow: 'none',
-                        borderRadius: '50%',
-                        color: 'var(--text-secondary)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >
-                      <Sliders size={14} />
-                    </button>
-                    <button
-                      className="delete-device-icon-btn"
-                      onClick={() => onDeleteDevice(device.id)}
-                      title="Delete Device"
-                    >
-                      <Trash2 size={15} />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="device-card-body">
-                  <h3 className="device-title">{device.name}</h3>
-                  <div className="device-id-subtext" style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontFamily: 'monospace', opacity: 0.8, marginBottom: '0.5rem', textAlign: 'left' }}>
-                    ID: {device.id}
-                  </div>
-                  <div className="device-metrics-row">
-                    <div className="device-main-value">
-                      <span className="val">{device.value}</span>
-                      <span className="unit">{device.unit}</span>
-                    </div>
-
-                    {/* WiFi and Battery meters */}
-                    <div className="device-secondary-metrics">
-                      <div className="metric-icon-text" title="Signal Strength">
-                        {isOnline ? (
-                          <Wifi size={14} className="text-green" />
-                        ) : (
-                          <WifiOff size={14} className="text-red" />
-                        )}
-                        <span>{isOnline ? 'Excellent' : 'Offline'}</span>
-                      </div>
-
-                      {hasBattery && (
-                        <div className="metric-icon-text" title={`Battery Level: ${device.battery}%`}>
-                          <Battery size={14} className={device.battery < 30 ? 'text-red' : 'text-green'} />
-                          <span>{device.battery}%</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="device-card-footer">
-                  <div className="status-indicator-block">
-                    <span className={`status-led ${device.status}`}></span>
-                    <span className="status-text uppercase">{device.status}</span>
-                  </div>
-
-                  {device.secretKey && (
-                    <button
-                      className="card-copy-token-btn"
-                      onClick={() => handleCardCopyToken(device.id, device.secretKey)}
-                      title="Copy Auth Key / Secret"
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.25rem',
-                        fontSize: '0.7rem',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid var(--glass-border)',
-                        borderRadius: '4px',
-                        padding: '3px 6px',
-                        cursor: 'pointer',
-                        color: 'var(--text-secondary)',
-                        transition: 'all 0.2s',
-                        outline: 'none',
-                        boxShadow: 'none'
-                      }}
-                    >
-                      {copiedDeviceId === device.id ? (
-                        <>
-                          <CheckCircle2 size={10} className="text-green" />
-                          <span className="text-green">Copied!</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy size={10} />
-                          <span>Copy Auth</span>
-                        </>
-                      )}
-                    </button>
                   )}
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    title="Configure"
+                    onClick={() => navigate(`/nexus-customizer?deviceId=${device.id}`)}
+                  >
+                    <SlidersHorizontal size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    className="icon-btn danger"
+                    title="Delete"
+                    onClick={() => {
+                      if (window.confirm(`Delete "${device.name}"?`)) onDeleteDevice(device.id);
+                    }}
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
 
-                  <div className="toggle-border">
+                <div className="dev-card-top">
+                  <CategoryIcon category={device.category} status={device.status} />
+                  <div style={{ flex: 1, minWidth: 0, paddingRight: 90 }}>
+                    <div className="dev-card-name">{device.name}</div>
+                    <div className="dev-card-id">{device.id}</div>
+                  </div>
+                </div>
+
+                <div className="dev-card-meta">
+                  <MapPin size={12} /> {device.location} · {device.category}
+                </div>
+
+                <div className="dev-card-value">
+                  {device.status === 'online' ? (
+                    <>
+                      <span className="num">{device.value}</span>
+                      <span className="unit">{device.unit}</span>
+                    </>
+                  ) : (
+                    <span style={{ fontSize: 16, color: 'var(--md-on-surface-muted)' }}>Offline</span>
+                  )}
+                </div>
+
+                <div className="dev-card-stats">
+                  <StatusChip status={device.status} />
+                  {device.battery !== null && (
+                    <span className="chip">
+                      {device.battery < 30 ? <BatteryLow size={12} /> : <Battery size={12} />}
+                      {device.battery}%
+                    </span>
+                  )}
+                  {device.powerDraw > 0 && (
+                    <span className="chip">{device.powerDraw} W</span>
+                  )}
+                </div>
+
+                <div className="dev-card-footer">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--md-on-surface-variant)', fontSize: 13 }}>
+                    {device.status === 'online' ? <Wifi size={14} /> : <WifiOff size={14} />}
+                    {device.status === 'online' ? 'Connected' : 'Disconnected'}
+                  </div>
+                  <label className="md-switch" title="Power">
                     <input
                       type="checkbox"
-                      id={`switch-dev-${device.id}`}
                       checked={device.powerState}
                       disabled={device.status === 'offline'}
                       onChange={() => onToggleDevice(device.id)}
                     />
-                    <label htmlFor={`switch-dev-${device.id}`}>
-                      <div className="handle"></div>
-                    </label>
-                  </div>
+                    <span className="md-switch-track" />
+                  </label>
                 </div>
               </div>
             );
-          })
-        ) : (
-          <div className="no-devices-panel glass-panel">
-            <AlertCircle size={32} className="text-yellow animate-bounce" />
-            <h3>No Devices Found</h3>
-            <p>We couldn't find any devices matching your filters. Try adjusting your query or add a new node.</p>
+          })}
+        </div>
+      ) : (
+        <div className="md-card" style={{ padding: 0 }}>
+          {/* Header row */}
+          <div className="dev-table-row" style={{ background: 'var(--md-surface-container)', fontWeight: 500, fontSize: 12, color: 'var(--md-on-surface-variant)', textTransform: 'uppercase', letterSpacing: 0.4 }}>
+            <label className="md-checkbox">
+              <input
+                type="checkbox"
+                checked={allSelected}
+                ref={(el) => { if (el) el.indeterminate = someSelected; }}
+                onChange={toggleSelectAll}
+              />
+              <span className="md-checkbox-mark">
+                {allSelected && <CheckCircle2 size={14} />}
+              </span>
+            </label>
+            <div>Device</div>
+            <div className="col-hide-sm">Status</div>
+            <div>Value</div>
+            <div className="col-hide-sm">Battery</div>
+            <div className="col-hide-sm">Power</div>
+            <div style={{ textAlign: 'right' }}>Actions</div>
           </div>
-        )}
-      </section>
 
-      {/* Add Device Overlay Modal */}
-      {isModalOpen && (
-        <div className="modal-backdrop">
-          <div className="modal-container glass-panel">
-            <div className="modal-header">
-              <h3>
-                {isRegeneratingToken ? 'Regenerating Secret Key...' : 
-                 registerResult ? (newDeviceName ? 'Node Registration Successful' : 'Secret Key Regenerated') : 
-                 'Provision New Node Channel'}
-              </h3>
-              <button className="modal-close-btn" onClick={handleCloseModal}>
-                <X size={18} />
-              </button>
-            </div>
-
-            {isRegeneratingToken ? (
-              <div className="registration-success-pane" style={{ padding: '2rem 0' }}>
-                <div className="success-icon-wrapper" style={{ color: 'var(--accent-cyan)' }}>
-                  <RefreshCw size={48} className="animate-spin text-cyan" />
+          {filteredDevices.map((device) => {
+            const selected = selectedIds.has(device.id);
+            return (
+              <div
+                key={device.id}
+                className={`dev-table-row ${selected ? 'selected' : ''}`}
+              >
+                <label className="md-checkbox" onClick={(e) => e.stopPropagation()}>
+                  <input
+                    type="checkbox"
+                    checked={selected}
+                    onChange={() => toggleSelect(device.id)}
+                  />
+                  <span className="md-checkbox-mark">
+                    {selected && <CheckCircle2 size={14} />}
+                  </span>
+                </label>
+                <div>
+                  <div className="device-name">{device.name}</div>
+                  <div className="device-id">{device.location} · {device.category}</div>
                 </div>
-                <p className="success-message">
-                  Contacting the Nunnarri core gateway to generate a new secure authentication token...
-                </p>
+                <div className="col-hide-sm">
+                  <StatusChip status={device.status} />
+                </div>
+                <div className="device-val">
+                  {device.status === 'online'
+                    ? `${device.value}${device.unit || ''}`
+                    : '—'}
+                </div>
+                <div className="col-hide-sm" style={{ fontSize: 13, color: 'var(--md-on-surface-variant)' }}>
+                  {device.battery !== null ? `${device.battery}%` : '—'}
+                </div>
+                <div className="col-hide-sm" style={{ fontSize: 13, color: 'var(--md-on-surface-variant)' }}>
+                  {device.powerDraw} W
+                </div>
+                <div className="table-actions">
+                  <button
+                    type="button"
+                    className="btn btn-icon btn-sm"
+                    onClick={() => navigate(`/nexus-customizer?deviceId=${device.id}`)}
+                    title="Configure"
+                  >
+                    <SlidersHorizontal size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-icon btn-sm"
+                    onClick={() => {
+                      if (window.confirm(`Delete "${device.name}"?`)) onDeleteDevice(device.id);
+                    }}
+                    title="Delete"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                  <label className="md-switch" title="Power">
+                    <input
+                      type="checkbox"
+                      checked={device.powerState}
+                      disabled={device.status === 'offline'}
+                      onChange={() => onToggleDevice(device.id)}
+                    />
+                    <span className="md-switch-track" />
+                  </label>
+                </div>
               </div>
-            ) : registerResult ? (
-              <div className="registration-success-pane">
-                <div className="success-icon-wrapper">
-                  <CheckCircle2 size={48} className="text-green animate-bounce" />
+            );
+          })}
+        </div>
+      )}
+
+      {/* Add / Regenerate modal */}
+      {isModalOpen && (
+        <div className="md-dialog-backdrop" onClick={closeModal}>
+          <div className="md-dialog" onClick={(e) => e.stopPropagation()} style={{ position: 'relative' }}>
+            <button
+              className="md-dialog-close btn btn-icon"
+              onClick={closeModal}
+              type="button"
+              aria-label="Close"
+            >
+              <X size={18} />
+            </button>
+            <div className="md-dialog-header">
+              <h2 className="md-dialog-title">
+                {isRegeneratingToken
+                  ? 'Regenerating secret key'
+                  : registerResult
+                    ? (isRegeneratingToken ? 'Secret key updated' : 'Device registered')
+                    : 'Add a new device'}
+              </h2>
+            </div>
+            <div className="md-dialog-content">
+              {isRegeneratingToken && !registerResult ? (
+                <div style={{ textAlign: 'center', padding: 24 }}>
+                  <div className="md-spinner" style={{ margin: '0 auto 16px' }} />
+                  <p>Contacting the Nunnarri gateway to generate a new key…</p>
                 </div>
-                <p className="success-message">
-                  {newDeviceName 
-                    ? "Your device has been successfully registered and provisioned in the Nunnarri core gateway!"
-                    : "Your device's secret key has been successfully regenerated and updated in the Nunnarri gateway database!"}
-                </p>
-                
-                <div className="credential-box glass-panel">
-                  <div className="credential-row">
-                    <span className="cred-label">Device ID:</span>
-                    <code className="cred-value">{registerResult.deviceId || registerResult.id}</code>
+              ) : registerResult ? (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: 'var(--md-success)', marginBottom: 16 }}>
+                    <CheckCircle2 size={20} />
+                    <span>
+                      {isRegeneratingToken
+                        ? 'The secret key was regenerated successfully.'
+                        : 'Your device is provisioned in the Nunnarri gateway.'}
+                    </span>
                   </div>
-                  <div className="credential-row token-row">
-                    <span className="cred-label">Secret Key / Token:</span>
+                  <div className="md-field">
+                    <label>Device ID</label>
                     <div className="token-display">
-                      <code className="cred-value text-cyan">{registerResult.secretKey}</code>
-                      <button 
-                        type="button" 
-                        onClick={() => handleCopyToken(registerResult.secretKey)} 
-                        className="copy-token-btn"
-                        title="Copy Secret Key"
+                      <code style={{ flex: 1 }}>{registerResult.deviceId || registerResult.id}</code>
+                    </div>
+                  </div>
+                  <div className="md-field" style={{ marginTop: 12 }}>
+                    <label>Secret key (MQTT password)</label>
+                    <div className="token-display">
+                      <code style={{ flex: 1, wordBreak: 'break-all' }}>{registerResult.secretKey}</code>
+                      <button
+                        type="button"
+                        className="copy-btn"
+                        onClick={() => handleCopyToken(registerResult.secretKey)}
                       >
-                        {copied ? <CheckCircle2 size={16} className="text-green" /> : <Copy size={16} />}
+                        {copied ? <><CheckCircle2 size={14} /> Copied</> : <><Copy size={14} /> Copy</>}
                       </button>
                     </div>
                   </div>
+                  <div style={{ marginTop: 16, padding: 12, background: 'var(--md-warning-container)', color: 'var(--md-warning)', borderRadius: 8, fontSize: 13, display: 'flex', gap: 8 }}>
+                    <AlertCircle size={16} style={{ flexShrink: 0, marginTop: 2 }} />
+                    <span>Copy this key now — it cannot be retrieved later.</span>
+                  </div>
                 </div>
-
-                <div className="note-alert yellow" style={{ display: 'flex', gap: '0.5rem', padding: '0.75rem', borderRadius: '4px', background: 'rgba(234, 179, 8, 0.1)', border: '1px solid rgba(234, 179, 8, 0.2)', marginBottom: '1.5rem', textAlign: 'left', fontSize: '0.85rem' }}>
-                  <AlertCircle size={16} className="text-yellow" style={{ flexShrink: 0, marginTop: '2px' }} />
-                  <span>
-                    <strong>Important:</strong> Copy this secret key now. It acts as the MQTT password for your device and cannot be recovered later!
-                  </span>
-                </div>
-
-                <button type="button" className="form-btn-submit success-done-btn" onClick={handleCloseModal}>
-                  Close & Done
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="modal-form">
-                <div className="form-group">
-                  <label>Device Name</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Smart Cooler, Air Sensor"
-                    value={newDeviceName}
-                    onChange={(e) => setNewDeviceName(e.target.value)}
-                    className="form-input"
-                  />
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
+              ) : (
+                <form onSubmit={handleSubmit} className="dev-form" id="add-device-form">
+                  <div className="md-field full">
+                    <label>Device name *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Smart Cooler, Air Sensor"
+                      value={newDevice.name}
+                      onChange={(e) => setNewDevice({ ...newDevice, name: e.target.value })}
+                    />
+                  </div>
+                  <div className="md-field">
                     <label>Category</label>
                     <select
-                      value={newDeviceCategory}
-                      onChange={(e) => handleCategoryChange(e.target.value)}
-                      className="form-select"
+                      value={newDevice.category}
+                      onChange={(e) => setNewDevice({ ...newDevice, category: e.target.value })}
                     >
-                      <option value="Smart Home">Smart Home</option>
-                      <option value="Industrial">Industrial</option>
-                      <option value="Server Room">Server Room</option>
+                      <option>Smart Home</option>
+                      <option>Industrial</option>
+                      <option>Server Room</option>
+                      <option>ESP32 Board</option>
+                      <option>ESP8266 Board</option>
+                      <option>Custom Board</option>
                     </select>
                   </div>
-
-                  <div className="form-group">
-                    <label>Installation Area</label>
+                  <div className="md-field">
+                    <label>Location *</label>
                     <input
                       type="text"
                       required
                       placeholder="e.g. Kitchen, Lab Zone B"
-                      value={newDeviceLocation}
-                      onChange={(e) => setNewDeviceLocation(e.target.value)}
-                      className="form-input"
+                      value={newDevice.location}
+                      onChange={(e) => setNewDevice({ ...newDevice, location: e.target.value })}
                     />
                   </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Initial Value</label>
+                  <div className="md-field">
+                    <label>Initial value</label>
                     <input
                       type="number"
                       placeholder="e.g. 22"
-                      value={newDeviceValue}
-                      onChange={(e) => setNewDeviceValue(e.target.value)}
-                      className="form-input"
+                      value={newDevice.value}
+                      onChange={(e) => setNewDevice({ ...newDevice, value: e.target.value })}
                     />
                   </div>
-
-                  <div className="form-group">
-                    <label>Unit Label</label>
+                  <div className="md-field">
+                    <label>Unit</label>
                     <input
                       type="text"
                       placeholder="e.g. °C, %, kWh"
-                      value={newDeviceUnit}
-                      onChange={(e) => setNewDeviceUnit(e.target.value)}
-                      className="form-input"
+                      value={newDevice.unit}
+                      onChange={(e) => setNewDevice({ ...newDevice, unit: e.target.value })}
                     />
                   </div>
-                </div>
-
-                <div className="form-group">
-                  <label>Base Power Draw (Watts)</label>
-                  <input
-                    type="number"
-                    placeholder="e.g. 150"
-                    value={newDevicePower}
-                    onChange={(e) => setNewDevicePower(e.target.value)}
-                    className="form-input"
-                  />
-                </div>
-
-                {registerError && (
-                  <div className="error-message" style={{ color: '#ef4444', fontSize: '0.85rem', marginBottom: '1rem', textAlign: 'left' }}>
-                    {registerError}
+                  <div className="md-field full">
+                    <label>Base power draw (W)</label>
+                    <input
+                      type="number"
+                      placeholder="e.g. 50"
+                      value={newDevice.powerDraw}
+                      onChange={(e) => setNewDevice({ ...newDevice, powerDraw: e.target.value })}
+                    />
                   </div>
-                )}
-
-                <div className="form-actions">
-                  <button type="button" className="form-btn-cancel" onClick={handleCloseModal} disabled={isRegistering}>
-                    Cancel
-                  </button>
-                  <button type="submit" className="form-btn-submit" disabled={isRegistering}>
-                    {isRegistering ? 'Registering...' : 'Provision Node'}
-                  </button>
-                </div>
-              </form>
-            )}
+                  {registerError && (
+                    <div className="full" style={{ color: 'var(--md-error)', fontSize: 13 }}>
+                      {registerError}
+                    </div>
+                  )}
+                </form>
+              )}
+            </div>
+            <div className="md-dialog-actions">
+              <button className="btn btn-text" onClick={closeModal} type="button">
+                {registerResult ? 'Close' : 'Cancel'}
+              </button>
+              {!registerResult && !isRegeneratingToken && (
+                <button
+                  className="btn btn-filled"
+                  type="submit"
+                  form="add-device-form"
+                  disabled={isRegistering}
+                >
+                  {isRegistering ? 'Registering…' : 'Register device'}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}

@@ -77,7 +77,7 @@ export default function Analytics({ devices }) {
   const srPercent = ((catShares['Server Room'] / totalShares) * 100).toFixed(0);
 
   return (
-    <div className="main-content">
+    <div className="page">
       {/* Page Header */}
       <header className="dashboard-header">
         <div>

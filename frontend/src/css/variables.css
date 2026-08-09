@@ -1,117 +1,152 @@
-:root, [data-theme='dark'] {
+/* =============================================================================
+   Nunnarri IoT — Material Design 3 / Google Developers Design Tokens
+   Light & Dark modes. All values are explicit HSL/RGB; no neon glows.
+   ============================================================================= */
+
+:root,
+[data-theme='light'] {
+  /* Brand */
+  --md-primary: #1a73e8;        /* Google Blue 600 */
+  --md-primary-hover: #1765cc;
+  --md-primary-container: #d3e3fd;
+  --md-on-primary: #ffffff;
+  --md-on-primary-container: #001d35;
+
+  --md-secondary: #5f6368;      /* Google Grey 700 */
+  --md-secondary-container: #e8eaed;
+  --md-on-secondary: #ffffff;
+  --md-on-secondary-container: #1f1f1f;
+
+  --md-tertiary: #00897b;       /* Teal 600 */
+  --md-tertiary-container: #b2dfdb;
+  --md-on-tertiary: #ffffff;
+
+  /* Surface */
+  --md-bg: #ffffff;
+  --md-surface: #ffffff;
+  --md-surface-container: #f8f9fa;
+  --md-surface-container-high: #f1f3f4;
+  --md-surface-container-highest: #e8eaed;
+  --md-surface-variant: #f1f3f4;
+  --md-surface-inverse: #202124;
+
+  --md-on-surface: #202124;
+  --md-on-surface-variant: #5f6368;
+  --md-on-surface-muted: #80868b;
+
+  --md-outline: #dadce0;
+  --md-outline-variant: #e8eaed;
+  --md-divider: #f1f3f4;
+
+  /* Status (Material) */
+  --md-success: #1e8e3e;        /* Green 800 */
+  --md-success-container: #e6f4ea;
+  --md-warning: #f9ab00;        /* Yellow 700 */
+  --md-warning-container: #fef7e0;
+  --md-error: #d93025;          /* Red 600 */
+  --md-error-container: #fce8e6;
+  --md-info: #1a73e8;
+
   /* Typography */
-  --font-heading: 'Manrope', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  --font-mono: 'JetBrains Mono', SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  --font-display: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont,
+                  'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Roboto', -apple-system, BlinkMacSystemFont,
+               'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Roboto Mono', 'JetBrains Mono', SFMono-Regular, Consolas,
+               'Liberation Mono', monospace;
 
-  /* Premium Dark Theme Variables (Black Background & Vibrant Accents) */
-  --bg-primary: #000000;
-  --bg-secondary: #0a0a0a;
-  --bg-tertiary: #141414;
+  --fs-display-large: 57px;
+  --fs-display-medium: 45px;
+  --fs-headline-large: 32px;
+  --fs-headline-medium: 28px;
+  --fs-headline-small: 24px;
+  --fs-title-large: 22px;
+  --fs-title-medium: 16px;
+  --fs-title-small: 14px;
+  --fs-body-large: 16px;
+  --fs-body-medium: 14px;
+  --fs-body-small: 12px;
+  --fs-label-large: 14px;
+  --fs-label-medium: 12px;
+  --fs-label-small: 11px;
 
-  /* Glassmorphism Panel Colors */
-  --glass-bg: #0c0c0c;
-  --glass-border: #222222;
-  --glass-border-hover: #333333;
-  --glass-highlight: rgba(255, 255, 255, 0.03);
+  /* Shape */
+  --r-xs: 4px;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 28px;
+  --r-pill: 9999px;
 
-  --accent-cyan: #10b981;
-  --accent-cyan-glow: rgba(16, 185, 129, 0.15);
-  --accent-cyan-hover: #059669;
+  /* Elevation (Material 3) */
+  --elev-0: none;
+  --elev-1: 0 1px 2px 0 rgba(60, 64, 67, 0.30), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  --elev-2: 0 1px 2px 0 rgba(60, 64, 67, 0.30), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+  --elev-3: 0 4px 8px 3px rgba(60, 64, 67, 0.15), 0 1px 3px 0 rgba(60, 64, 67, 0.30);
+  --elev-4: 0 6px 10px 4px rgba(60, 64, 67, 0.15), 0 2px 3px 0 rgba(60, 64, 67, 0.30);
+  --elev-5: 0 8px 12px 6px rgba(60, 64, 67, 0.15), 0 4px 4px 0 rgba(60, 64, 67, 0.30);
 
-  --accent-violet: #a855f7;
-  --accent-violet-glow: rgba(168, 85, 247, 0.15);
+  /* Motion */
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --ease-standard: cubic-bezier(0.2, 0, 0.2, 1);
+  --dur-short1: 50ms;
+  --dur-short2: 100ms;
+  --dur-medium1: 250ms;
+  --dur-medium2: 300ms;
+  --dur-long1: 450ms;
 
-  --accent-green: #10b981;
-  --accent-green-glow: rgba(16, 185, 129, 0.15);
-
-  --accent-orange: #f97316;
-  --accent-orange-glow: rgba(249, 115, 22, 0.15);
-
-  --accent-red: #ef4444;
-  --accent-red-glow: rgba(239, 68, 68, 0.15);
-
-  --accent-yellow: #facc15;
-  --accent-yellow-glow: rgba(250, 204, 21, 0.15);
-
-  /* Chart Legend Shades (Vibrant colors for dark theme) */
-  --chart-violet: rgba(168, 85, 247, 0.6);
-  --chart-orange: rgba(249, 115, 22, 0.6);
-
-  /* Text Colors */
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --text-muted: #666666;
-  --text-dark: #ffffff;
-
-  /* Animations & Transitions */
-  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* Border Radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-full: 9999px;
-
-  --shadow-glow-cyan: 0 0 12px rgba(16, 185, 129, 0.25);
-  --shadow-glow-violet: 0 0 12px rgba(168, 85, 247, 0.25);
-  --shadow-glow-green: 0 0 12px rgba(16, 185, 129, 0.25);
-  --shadow-glow-orange: 0 0 12px rgba(249, 115, 22, 0.25);
-  --shadow-glow-red: 0 0 12px rgba(239, 68, 68, 0.25);
-  
-  --shadow-card: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
-  --shadow-inset: inset 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+  /* Layout */
+  --nav-width: 256px;
+  --nav-width-collapsed: 72px;
+  --topbar-height: 64px;
 }
 
-[data-theme='light'] {
-  /* Premium Light Theme Variables (White Background & Vibrant Accents) */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8f9fa;
-  --bg-tertiary: #f1f3f4;
-  
-  --glass-bg: #ffffff;
-  --glass-border: #dadce0;
-  --glass-border-hover: #bdc1c6;
-  --glass-highlight: rgba(16, 185, 129, 0.04);
+[data-theme='dark'] {
+  /* Brand */
+  --md-primary: #8ab4f8;
+  --md-primary-hover: #aecbfa;
+  --md-primary-container: #1f3a60;
+  --md-on-primary: #062e6f;
+  --md-on-primary-container: #d3e3fd;
 
-  /* Vibrant Accent Colors (Readable on White) */
-  --accent-cyan: #10b981;
-  --accent-cyan-glow: rgba(16, 185, 129, 0.15);
-  --accent-cyan-hover: #059669;
+  --md-secondary: #bdc1c6;
+  --md-secondary-container: #3c4043;
+  --md-on-secondary: #2d2e31;
+  --md-on-secondary-container: #e8eaed;
 
-  --accent-violet: #8b5cf6;
-  --accent-violet-glow: rgba(139, 92, 246, 0.15);
+  --md-tertiary: #80cbc4;
+  --md-tertiary-container: #004d40;
+  --md-on-tertiary: #003731;
 
-  --accent-green: #10b981;
-  --accent-green-glow: rgba(16, 185, 129, 0.15);
+  /* Surface */
+  --md-bg: #202124;
+  --md-surface: #202124;
+  --md-surface-container: #292a2d;
+  --md-surface-container-high: #2d2e30;
+  --md-surface-container-highest: #35363a;
+  --md-surface-variant: #3c4043;
+  --md-surface-inverse: #f1f3f4;
 
-  --accent-orange: #f97316;
-  --accent-orange-glow: rgba(249, 115, 22, 0.15);
+  --md-on-surface: #e8eaed;
+  --md-on-surface-variant: #bdc1c6;
+  --md-on-surface-muted: #9aa0a6;
 
-  --accent-red: #d93025;
-  --accent-red-glow: rgba(217, 48, 37, 0.15);
+  --md-outline: #5f6368;
+  --md-outline-variant: #3c4043;
+  --md-divider: #2d2e30;
 
-  --accent-yellow: #f9ab00;
-  --accent-yellow-glow: rgba(249, 171, 0, 0.15);
+  /* Status */
+  --md-success: #81c995;
+  --md-success-container: #0d652d;
+  --md-warning: #fdd663;
+  --md-warning-container: #5c4500;
+  --md-error: #f28b82;
+  --md-error-container: #5c1d18;
+  --md-info: #8ab4f8;
 
-  /* Chart Legend Shades (Vibrant colors for light theme) */
-  --chart-violet: rgba(139, 92, 246, 0.6);
-  --chart-orange: rgba(249, 115, 22, 0.6);
-
-  /* Text Colors */
-  --text-primary: #202124;
-  --text-secondary: #5f6368;
-  --text-muted: #70757a;
-  --text-dark: #ffffff;
-
-  --shadow-glow-cyan: none;
-  --shadow-glow-violet: none;
-  --shadow-glow-green: none;
-  --shadow-glow-orange: none;
-  --shadow-glow-red: none;
-  
-  --shadow-card: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
-  --shadow-inset: none;
+  /* Elevation (darker) */
+  --elev-1: 0 1px 2px 0 rgba(0, 0, 0, 0.30), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --elev-2: 0 1px 2px 0 rgba(0, 0, 0, 0.30), 0 2px 6px 2px rgba(0, 0, 0, 0.20);
+  --elev-3: 0 4px 8px 3px rgba(0, 0, 0, 0.20), 0 1px 3px 0 rgba(0, 0, 0, 0.30);
+  --elev-4: 0 6px 10px 4px rgba(0, 0, 0, 0.20), 0 2px 3px 0 rgba(0, 0, 0, 0.30);
 }

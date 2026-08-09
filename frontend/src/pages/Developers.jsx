@@ -43,7 +43,7 @@ export default function Developers() {
   ];
 
   return (
-    <div className="main-content">
+    <div className="page">
       {/* Header Section */}
       <header className="dashboard-header">
         <div>
