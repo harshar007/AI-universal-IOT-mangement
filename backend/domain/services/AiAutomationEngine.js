@@ -1,4 +1,24 @@
 const { pool } = require('../../config/db');
+const axios = require('axios');
+
+const OLLAMA_CANDIDATES = Array.from(new Set([
+  process.env.OLLAMA_HOST || 'http://host.docker.internal:11434',
+  'http://host.docker.internal:11434',
+  'http://172.17.0.1:11434',
+  'http://172.18.0.1:11434',
+  'http://localhost:11434',
+  'http://127.0.0.1:11434'
+]));
+
+const checkOllamaOnline = async () => {
+  for (const host of OLLAMA_CANDIDATES) {
+    try {
+      const r = await axios.get(`${host}/api/tags`, { timeout: 2000 });
+      if (r.status === 200) return true;
+    } catch (_) { /* try next */ }
+  }
+  return false;
+};
 
 class AiAutomationEngine {
   async getOrCreateUserSettings(userId) {
@@ -80,12 +100,14 @@ class AiAutomationEngine {
 
   async getStatus(userId) {
     const settings = await this.getOrCreateUserSettings(userId);
+    const ollamaOnline = await checkOllamaOnline();
     return {
       isEnabled: settings.isEnabled,
       currentProfile: settings.currentProfile,
       deviceAiSettings: settings.deviceAiSettings,
       recentDecisions: settings.recentDecisions.slice(-30),
-      lastEvaluatedAt: settings.lastEvaluatedAt
+      lastEvaluatedAt: settings.lastEvaluatedAt,
+      aiOnline: ollamaOnline
     };
   }
 

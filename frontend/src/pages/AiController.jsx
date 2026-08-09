@@ -30,6 +30,9 @@ export default function AiController({ devices = [], onToggleDevice, onChangeDev
   ]);
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [aiOnline, setAiOnline] = useState(true);
+  // The rules engine is always available — it just won't have LLM-quality
+  // open-ended answers when Ollama is offline. The chat input is never blocked.
+  const rulesEngineOnline = true;
 
   // Chat state
   const [messages, setMessages] = useState([
@@ -148,20 +151,8 @@ export default function AiController({ devices = [], onToggleDevice, onChangeDev
     setMessages((prev) => [...prev, userMsg]);
     setInputValue('');
 
-    // Offline fallback response
-    if (!aiOnline) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now() + 1,
-          sender: 'ai',
-          text: "I'm currently running in offline mode because the local Ollama service (llama3.2) is not reachable. You can still manage devices manually, or start Ollama to enable natural-language commands.",
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
-      ]);
-      return;
-    }
-
+    // Offline fallback response — backend's rules engine will still respond
+    // helpfully. We don't block the user from sending messages.
     try {
       const response = await axios.post('/api/chat/message', {
         message: text,
@@ -187,13 +178,12 @@ export default function AiController({ devices = [], onToggleDevice, onChangeDev
       }
     } catch (error) {
       console.error('Error sending AI chat command:', error);
-      setAiOnline(false);
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now() + 1,
           sender: 'ai',
-          text: "I couldn't reach the AI backend. Falling back to offline mode. You can still control devices manually from the Devices page.",
+          text: "I couldn't reach the AI backend. Check that the ai-backend service is running, then try again. You can still control devices manually from the Devices page.",
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
       ]);
@@ -220,7 +210,8 @@ export default function AiController({ devices = [], onToggleDevice, onChangeDev
         </div>
       </div>
 
-      {/* Online / offline status banner */}
+      {/* Online / offline status banner — informational only; rules engine
+          always responds, so the chat is never blocked. */}
       {aiOnline ? (
         <div className="ai-status-banner online">
           <CheckCircle2 size={18} />
@@ -232,9 +223,8 @@ export default function AiController({ devices = [], onToggleDevice, onChangeDev
         <div className="ai-status-banner offline">
           <WifiOff size={18} />
           <div className="status-text">
-            <strong>AI Core is offline.</strong> The local Ollama service <code>llama3.2</code> isn't reachable. Start it with{' '}
-            <code>ollama serve</code> and <code>ollama pull llama3.2</code> to restore natural-language commands.
-            Autonomous decisions continue to use the rules engine below.
+            <strong>Local LLM (Ollama) is offline.</strong> The rules engine still answers every question — start{' '}
+            <code>ollama serve</code> and <code>ollama pull llama3.2</code> to upgrade open-ended answers with the local LLM.
           </div>
           <button
             className="btn btn-outlined btn-sm"
@@ -242,7 +232,7 @@ export default function AiController({ devices = [], onToggleDevice, onChangeDev
               try {
                 const r = await axios.get('/api/ai/automation/status');
                 setAiOnline(r.data?.aiOnline !== false);
-              } catch { /* keep offline */ }
+              } catch { /* keep current state */ }
             }}
             type="button"
           >
