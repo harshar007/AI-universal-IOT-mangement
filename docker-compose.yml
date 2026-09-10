@@ -70,6 +70,9 @@ services:
       - "5006:5006"
     environment:
       - PORT=5006
+      - AI_PROVIDER=${AI_PROVIDER:-auto}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-1.5-flash}
       - OLLAMA_HOST=http://host.docker.internal:11434
       - OLLAMA_MODEL=llama3.2
       - IOT_DATABASE_URL=postgres://postgres:prabha0312@iot-db:5432/nexus_iot_db

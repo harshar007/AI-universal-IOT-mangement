@@ -3,16 +3,17 @@
 #include <ArduinoJson.h>
 
 // ==========================================================
-// 1. CONFIGURATION: Update these settings
+// 1. CONFIGURATION (Fully Configured with your Wi-Fi & Device Credentials)
 // ==========================================================
-const char* ssid = "YOUR_WIFI_SSID";
-const char* password = "YOUR_WIFI_PASSWORD";
-const char* mqtt_server = "YOUR_SERVER_IP";
-const int mqtt_port = 1883;
+const char* ssid          = "Asianet-HARSHAR-2G"; // Your Wi-Fi SSID
+const char* password      = "Harshar@90";          // Your Wi-Fi Password
+const char* mqtt_server   = "192.168.1.36";        // Your PC IPv4 Address
+const int   mqtt_port     = 1883;
 
-const char* mqtt_client_id = "esp8266_node";
-const char* mqtt_user = "esp8266";
-const char* mqtt_password = "YOUR_MQTT_PASSWORD";
+// Credentials from your Device Registration:
+const char* mqtt_client_id = "custom-board-1789045698002";
+const char* mqtt_user      = "custom-board-1789045698002";
+const char* mqtt_password  = "883d3866aad5b464a08ba8a09e8a09af3dcc938b3ba7bef5";
 
 // ==========================================================
 // MQTT Clients and Topics
@@ -21,10 +22,10 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 unsigned long lastMsg = 0;
 
-char telemetryTopic[64];
-char statusTopic[64];
-char commandTopic[64];
-char heartbeatTopic[64];
+char telemetryTopic[128];
+char statusTopic[128];
+char commandTopic[128];
+char heartbeatTopic[128];
 
 // ==========================================================
 // WIFI SETUP
@@ -45,12 +46,12 @@ void setup_wifi() {
 
   Serial.println("");
   Serial.println("Wi-Fi connected successfully!");
-  Serial.print("IP Address: ");
+  Serial.print("ESP8266 IP Address: ");
   Serial.println(WiFi.localIP());
 }
 
 // ==========================================================
-// MQTT INCOMING MESSAGE CALLBACK
+// MQTT INCOMING COMMAND CALLBACK (LIGHT ON / OFF CONTROL)
 // ==========================================================
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Command received on topic [");
@@ -73,33 +74,39 @@ void callback(char* topic, byte* payload, unsigned int length) {
     return;
   }
 
-  if (doc.containsKey("action")) {
-    const char* action = doc["action"];
-    int value = doc["value"];
-    
-    Serial.print("Action Target: ");
-    Serial.println(action);
-    
-    if (strcmp(action, "toggle") == 0 || strcmp(action, "switch") == 0) {
-      // Toggle built-in LED
-      // Note: On NodeMCU/ESP8266, LOW turns the built-in LED ON, HIGH turns it OFF.
-      digitalWrite(LED_BUILTIN, value == 1 ? LOW : HIGH); 
-      Serial.print("LED state toggled to: ");
-      Serial.println(value == 1 ? "ON" : "OFF");
-
-      // Send Response payload back to the gateway
-      char responseTopic[64];
-      snprintf(responseTopic, sizeof(responseTopic), "iot/device/%s/response", mqtt_client_id);
-      
-      StaticJsonDocument<128> responseDoc;
-      responseDoc["status"] = "success";
-      responseDoc["message"] = "LED toggled successfully";
-      
-      char responseBuffer[128];
-      serializeJson(responseDoc, responseBuffer);
-      client.publish(responseTopic, responseBuffer);
-    }
+  int value = 0;
+  if (doc.containsKey("value")) {
+    value = doc["value"];
+  } else if (doc.containsKey("state")) {
+    String st = doc["state"].as<String>();
+    st.toLowerCase();
+    if (st == "on" || st == "true" || st == "1") value = 1;
+  } else if (doc.containsKey("action")) {
+    const char* act = doc["action"];
+    if (strcmp(act, "on") == 0) value = 1;
   }
+
+  // Toggle built-in LED
+  // On ESP8266: LOW turns LED ON, HIGH turns LED OFF
+  if (value == 1) {
+    digitalWrite(LED_BUILTIN, LOW);  // TURN LIGHT ON
+    Serial.println("💡 BUILT-IN LIGHT IS NOW: ON");
+  } else {
+    digitalWrite(LED_BUILTIN, HIGH); // TURN LIGHT OFF
+    Serial.println("🌑 BUILT-IN LIGHT IS NOW: OFF");
+  }
+
+  // Send Response payload back to the gateway
+  char responseTopic[128];
+  snprintf(responseTopic, sizeof(responseTopic), "iot/device/%s/response", mqtt_client_id);
+  
+  StaticJsonDocument<128> responseDoc;
+  responseDoc["status"] = "success";
+  responseDoc["lightState"] = (value == 1) ? "ON" : "OFF";
+  
+  char responseBuffer[128];
+  serializeJson(responseDoc, responseBuffer);
+  client.publish(responseTopic, responseBuffer);
 }
 
 // ==========================================================
@@ -107,19 +114,21 @@ void callback(char* topic, byte* payload, unsigned int length) {
 // ==========================================================
 void reconnect() {
   while (!client.connected()) {
-    Serial.print("Connecting to Nexus MQTT Broker...");
+    Serial.print("Connecting to Nunnarri MQTT Broker...");
     
-    // Connect using mqtt_client_id as Client ID, mqtt_user as Username, and mqtt_password as Password
+    // Connect using deviceId as Client ID, Username, and Password
     if (client.connect(mqtt_client_id, mqtt_user, mqtt_password, statusTopic, 1, true, "offline")) {
       Serial.println("connected!");
       
       // Publish "online" status (retains online status on broker)
       client.publish(statusTopic, "online", true);
       
-      // Subscribe to receive commands from the Web Dashboard
+      // Subscribe to receive light commands from the Web Dashboard
       client.subscribe(commandTopic);
+      Serial.print("Subscribed to topic: ");
+      Serial.println(commandTopic);
     } else {
-      Serial.print("failed, connection status code = ");
+      Serial.print("failed, rc=");
       Serial.print(client.state());
       Serial.println(". Retrying in 5 seconds...");
       delay(5000);
@@ -132,8 +141,10 @@ void reconnect() {
 // ==========================================================
 void setup() {
   Serial.begin(115200);
+  
+  // Setup built-in LED pin
   pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, HIGH); // Start with LED Off (HIGH)
+  digitalWrite(LED_BUILTIN, HIGH); // Start with light OFF (HIGH)
 
   // Dynamically generate topic strings
   snprintf(telemetryTopic, sizeof(telemetryTopic), "iot/device/%s/telemetry", mqtt_client_id);
@@ -156,24 +167,10 @@ void loop() {
   }
   client.loop();
 
-  // Send periodic telemetry and heartbeat pings every 10 seconds
+  // Send heartbeat ping every 10 seconds to maintain online status
   unsigned long now = millis();
   if (now - lastMsg > 10000) {
     lastMsg = now;
-    
-    // 1. Publish Telemetry (Simulated Temperature sensor reading)
-    StaticJsonDocument<128> doc;
-    doc["streamKey"] = "temp";
-    doc["value"] = 23.8 + random(-10, 10) / 10.0; // Simulated range 22.8°C - 24.8°C
-
-    char telemetryBuffer[128];
-    serializeJson(doc, telemetryBuffer);
-    
-    client.publish(telemetryTopic, telemetryBuffer);
-    Serial.print("Published telemetry payload: ");
-    Serial.println(telemetryBuffer);
-    
-    // 2. Publish Heartbeat Ping
     client.publish(heartbeatTopic, "ping");
   }
 }

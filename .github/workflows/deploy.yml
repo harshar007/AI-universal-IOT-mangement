@@ -1,0 +1,77 @@
+name: Nunnarri IoT Platform CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  build-and-test:
+    name: Build & Validate Docker Services
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Compose Services
+        run: |
+          docker compose build
+
+  deploy-to-server:
+    name: Deploy to Remote Production Server
+    needs: build-and-test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_SSH_PORT || 22 }}
+          script: |
+            echo "🚀 Starting Automated Deployment on Server..."
+            
+            # Navigate to project directory
+            TARGET_DIR="${{ secrets.SERVER_PROJECT_PATH }}"
+            if [ -z "$TARGET_DIR" ]; then
+              TARGET_DIR="~/AI-universal-IOT-mangement"
+            fi
+            
+            mkdir -p $TARGET_DIR
+            cd $TARGET_DIR
+            
+            # If git repo not initialized, clone it
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/${{ github.repository }}.git .
+            fi
+
+            # Fetch & pull latest commits
+            git fetch --all
+            git reset --hard origin/${{ github.ref_name }}
+            
+            # Export server environment variables
+            export GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}"
+            export AI_PROVIDER="auto"
+            
+            # Rebuild and launch all microservices in background
+            docker compose up -d --build --remove-orphans
+            
+            # Prune dangling docker build caches
+            docker image prune -f
+            
+            echo "✅ Nunnarri IoT Platform deployed successfully!"
