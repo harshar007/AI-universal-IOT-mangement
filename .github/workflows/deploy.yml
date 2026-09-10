@@ -41,10 +41,10 @@ jobs:
       - name: Deploy to Server via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SERVER_HOST || secrets.SERVER || '79.143.179.156' }}
-          username: ${{ secrets.SERVER_USER || 'root' }}
+          host: "79.143.179.156"
+          username: "root"
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SERVER_SSH_PORT || 22 }}
+          port: 22
           script: |
             echo "🚀 Starting Automated Deployment on Server..."
             
