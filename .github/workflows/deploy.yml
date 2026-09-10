@@ -38,42 +38,40 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Deploy to Server via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: "79.143.179.156"
-          username: "root"
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
+      - name: Deploy to Server via Native SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_HOST: "79.143.179.156"
+          SERVER_USER: "root"
+        run: |
+          if [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo "❌ Error: SSH_PRIVATE_KEY secret is not set in GitHub Secrets!"
+            exit 1
+          fi
+
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $SERVER_USER@$SERVER_HOST << 'EOF'
             echo "🚀 Starting Automated Deployment on Server..."
             
-            # Navigate to project directory
-            TARGET_DIR="${{ secrets.SERVER_PROJECT_PATH }}"
-            if [ -z "$TARGET_DIR" ]; then
-              TARGET_DIR="~/AI-universal-IOT-mangement"
-            fi
-            
+            TARGET_DIR="~/AI-universal-IOT-mangement"
             mkdir -p $TARGET_DIR
             cd $TARGET_DIR
             
-            # If git repo not initialized, clone it
             if [ ! -d ".git" ]; then
               git clone https://github.com/${{ github.repository }}.git .
             fi
 
-            # Fetch & pull latest commits
             git fetch --all
             git reset --hard origin/${{ github.ref_name }}
             
-            # Export server environment variables
             export GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}"
             export AI_PROVIDER="auto"
             
-            # Rebuild and launch all microservices in background
             docker compose up -d --build --remove-orphans
-            
-            # Prune dangling docker build caches
             docker image prune -f
             
-            echo "✅ Nunnarri IoT Platform deployed successfully!"
+            echo "✅ Nunnarri IoT Platform deployed successfully on 79.143.179.156!"
+          EOF
