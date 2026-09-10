@@ -5,10 +5,12 @@ on:
     branches:
       - main
       - master
+      - claude
   pull_request:
     branches:
       - main
       - master
+      - claude
 
 jobs:
   build-and-test:
@@ -29,7 +31,7 @@ jobs:
   deploy-to-server:
     name: Deploy to Remote Production Server
     needs: build-and-test
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/claude')
     runs-on: ubuntu-latest
 
     steps:
