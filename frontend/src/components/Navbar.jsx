@@ -32,7 +32,7 @@ const NAV_GROUPS = [
     items: [
       { to: '/nexus-customizer', label: 'Customizer', icon: Sliders },
       { to: '/docs', label: 'Documentation', icon: BookOpen },
-      { to: '/developers', label: 'Project Team', icon: Users },
+      { to: '/developers', label: 'Developer', icon: Code },
     ],
   },
 ];
@@ -48,7 +48,7 @@ const PAGE_TITLES = {
   '/sensors': 'Sensors & Alerts',
   '/nexus-customizer': 'Customizer',
   '/docs': 'Documentation',
-  '/developers': 'Project Team',
+  '/developers': 'Developer Profile',
   '/admin': 'Admin Control',
 };
 
