@@ -289,7 +289,7 @@ export default function Login({ onLoginSuccess }) {
               onError={(e) => { e.target.style.display = 'none'; }}
             />
           </div>
-          <div>
+          <div className="login-header">
             <h2>{isSignUp ? 'Create your account' : 'Sign in'}</h2>
             <p className="subtitle">
               {isSignUp

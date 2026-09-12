@@ -43,8 +43,13 @@ class DeviceRepository {
       RETURNING id, name, secret_key, status, last_heartbeat, user_id
     `;
     const result = await iotPool.query(queryText, [id, name, secretKey, userId ? String(userId) : null]);
-    const row = result.rows[0];
     return new Device(row.id, row.name, row.secret_key, row.status, row.last_heartbeat, row.user_id);
+  }
+
+  async delete(id) {
+    const queryText = 'DELETE FROM iot_devices WHERE id = $1';
+    await iotPool.query(queryText, [id]);
+    return true;
   }
 }
 

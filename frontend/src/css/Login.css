@@ -108,18 +108,26 @@
   max-width: 400px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
-.login-card h2 {
+.login-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.login-header h2 {
   font-family: var(--font-display);
   font-size: var(--fs-headline-small);
-  font-weight: 400;
+  font-weight: 500;
   color: var(--md-on-surface);
+  margin: 0;
+  line-height: 1.25;
 }
-.login-card .subtitle {
+.login-header .subtitle {
   color: var(--md-on-surface-variant);
   font-size: var(--fs-body-medium);
-  margin-top: -16px;
+  margin: 0;
+  line-height: 1.4;
 }
 
 .auth-tabs {

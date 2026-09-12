@@ -8,5 +8,6 @@ router.get('/', auth, (req, res) => deviceController.getAllDevices(req, res));
 router.post('/:deviceId/regenerate-token', auth, (req, res) => deviceController.regenerateDeviceToken(req, res));
 router.post('/:deviceId/command', auth, (req, res) => deviceController.dispatchDeviceCommand(req, res));
 router.post('/:deviceId/ota', auth, (req, res) => deviceController.dispatchDeviceOta(req, res));
+router.delete('/:deviceId', auth, (req, res) => deviceController.deleteDevice(req, res));
 
 module.exports = router;
