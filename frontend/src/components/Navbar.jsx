@@ -3,7 +3,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Cpu, Layers, Activity, Radio,
   BookOpen, Users, Sliders, Terminal, Shield,
-  LogOut, Sun, Moon, X, Menu, Sparkles
+  LogOut, Sun, Moon, X, Menu, Sparkles, Code
 } from 'lucide-react';
 import axios from 'axios';
 import '../css/Navbar.css';
