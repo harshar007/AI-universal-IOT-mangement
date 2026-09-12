@@ -1,0 +1,37 @@
+﻿{
+  "name": "nunnarri-mcp-server",
+  "version": "1.0.0",
+  "description": "Model Context Protocol (MCP) Server for Nunnarri (நுண்ணறி) Smart Intelligence IoT Platform",
+  "main": "src/index.js",
+  "bin": {
+    "nunnarri-mcp": "./src/index.js"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "stdio": "node src/index.js --transport=stdio",
+    "http": "node src/index.js --transport=http --port=5007",
+    "sse": "node src/index.js --transport=sse --port=5007",
+    "dev": "node src/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "iot",
+    "nunnarri",
+    "esp8266",
+    "esp32",
+    "ai",
+    "smart-home"
+  ],
+  "author": "Nunnarri Team",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.1",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pg": "^8.13.1",
+    "zod": "^3.24.2"
+  }
+}

@@ -98,6 +98,29 @@ services:
       iot-db:
         condition: service_healthy
 
+  # MCP Server Service (Model Context Protocol for AI Communication)
+  mcp-server:
+    build:
+      context: ./mcp-server
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "5007:5007"
+    environment:
+      - PORT=5007
+      - MCP_TRANSPORT=sse
+      - USER_DATABASE_URL=postgres://postgres:prabha0312@user-db:5432/user_db
+      - IOT_DATABASE_URL=postgres://postgres:prabha0312@iot-db:5432/nexus_iot_db
+      - GATEWAY_URL=http://iot-gateway:5002
+      - BACKEND_URL=http://backend:5000
+    depends_on:
+      user-db:
+        condition: service_healthy
+      iot-db:
+        condition: service_healthy
+      iot-gateway:
+        condition: service_started
+
   # Frontend Service (React / Vite + Nginx)
   frontend:
     build:
@@ -110,6 +133,7 @@ services:
       - backend
       - ai-backend
       - iot-gateway
+      - mcp-server
 
 volumes:
   pguserdata:

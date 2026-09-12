@@ -84,6 +84,18 @@ class DeviceController {
       res.status(err.status || 500).json({ error: err.message });
     }
   }
+
+  async deleteDevice(req, res) {
+    const { deviceId } = req.params;
+    const userId = req.user?.userId;
+    try {
+      await this.verifyDeviceOwner(deviceId, userId);
+      await this.deviceRepository.delete(deviceId);
+      res.status(200).json({ message: `Device ${deviceId} deleted successfully`, deviceId });
+    } catch (err) {
+      res.status(err.status || 500).json({ error: err.message });
+    }
+  }
 }
 
 module.exports = new DeviceController();

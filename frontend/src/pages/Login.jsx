@@ -259,8 +259,13 @@ export default function Login({ onLoginSuccess }) {
       <aside className="login-hero">
         <div className="login-hero-content">
           <div className="login-hero-brand">
-            <div className="brand-mark">N</div>
-            <span>Nunnarri</span>
+            <img
+              src="/logo.png"
+              alt="Nunnarri Logo"
+              className="login-brand-logo"
+              onError={(e) => { e.target.style.display = 'none'; }}
+            />
+            <span>நுண்ணறி (Nunnarri)</span>
           </div>
           <h1>Build, monitor, and control your IoT fleet.</h1>
           <p>
@@ -276,7 +281,15 @@ export default function Login({ onLoginSuccess }) {
       {/* Auth side */}
       <div className="login-panel">
         <div className="login-card">
-          <div>
+          <div className="login-mobile-logo-wrap">
+            <img
+              src="/logo.png"
+              alt="Nunnarri Logo"
+              className="login-mobile-logo"
+              onError={(e) => { e.target.style.display = 'none'; }}
+            />
+          </div>
+          <div className="login-header">
             <h2>{isSignUp ? 'Create your account' : 'Sign in'}</h2>
             <p className="subtitle">
               {isSignUp

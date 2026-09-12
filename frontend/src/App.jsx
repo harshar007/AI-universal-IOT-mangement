@@ -13,6 +13,7 @@ import Sensors from './pages/Sensors.jsx';
 import AdminPanel from './pages/AdminPanel.jsx';
 import VirtualPinManager from './pages/VirtualPinManager.jsx';
 import MqttMonitor from './pages/MqttMonitor.jsx';
+import McpHub from './pages/McpHub.jsx';
 import axios from 'axios';
 
 
@@ -45,86 +46,7 @@ export default function App() {
   );
 }
 
-const getDefaultDevices = (userId) => [
-  {
-    id: `user_${userId}_esp32-main-board`,
-    name: 'ESP32 Main Gateway Board',
-    category: 'ESP32 Board',
-    location: 'Lab Bench 1',
-    status: 'online',
-    powerState: true,
-    value: 24,
-    unit: '°C',
-    powerDraw: 1.2,
-    battery: null,
-    lastUpdated: 'Just now'
-  },
-  {
-    id: `user_${userId}_esp8266-nodemcu-01`,
-    name: 'ESP8266 NodeMCU Telemetry Node',
-    category: 'ESP8266 Board',
-    location: 'Field Cluster A',
-    status: 'online',
-    powerState: true,
-    value: 48,
-    unit: '%',
-    powerDraw: 0.8,
-    battery: 88,
-    lastUpdated: 'Just now'
-  },
-  {
-    id: `user_${userId}_esp32s3-sensor-node`,
-    name: 'ESP32-S3 Dual-Core Sensor Station',
-    category: 'ESP32-S3 Board',
-    location: 'Environmental Rack',
-    status: 'online',
-    powerState: true,
-    value: 21,
-    unit: '°C',
-    powerDraw: 1.5,
-    battery: 95,
-    lastUpdated: 'Just now'
-  },
-  {
-    id: `user_${userId}_esp8266-relay-board`,
-    name: 'ESP8266 4-Channel Relay Controller',
-    category: 'ESP8266 Board',
-    location: 'Control Box B',
-    status: 'online',
-    powerState: true,
-    value: 80,
-    unit: '%',
-    powerDraw: 4.5,
-    battery: null,
-    lastUpdated: 'Just now'
-  },
-  {
-    id: `user_${userId}_esp32-cam-module`,
-    name: 'ESP32-CAM AI Vision Node',
-    category: 'ESP32 Board',
-    location: 'Perimeter Rig',
-    status: 'online',
-    powerState: true,
-    value: 30,
-    unit: 'FPS',
-    powerDraw: 2.2,
-    battery: null,
-    lastUpdated: 'Just now'
-  },
-  {
-    id: `user_${userId}_stm32-esp01-custom`,
-    name: 'STM32 + ESP-01 Custom Board',
-    category: 'Custom Board',
-    location: 'Test Bench 2',
-    status: 'online',
-    powerState: false,
-    value: 65,
-    unit: '%',
-    powerDraw: 0.9,
-    battery: 72,
-    lastUpdated: 'Just now'
-  }
-];
+const getDefaultDevices = () => [];
 
 function AppContent({ theme, toggleTheme }) {
   const location = useLocation();
@@ -192,17 +114,18 @@ function AppContent({ theme, toggleTheme }) {
     return () => axios.interceptors.response.eject(interceptor);
   }, []);
 
-  // Shared state of IoT devices scoped to user (loads from localStorage for user isolation)
+  // Shared state of IoT devices scoped to user
   const [devices, setDevices] = useState(() => {
     const saved = localStorage.getItem(`nexus_devices_state_${userId}`);
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        return Array.isArray(parsed) ? parsed.filter(d => !d.id?.startsWith('user_')) : [];
       } catch (e) {
         console.error('Failed to parse saved devices state:', e);
       }
     }
-    return getDefaultDevices(userId);
+    return [];
   });
 
   // Sync devices state when user session shifts
@@ -210,12 +133,13 @@ function AppContent({ theme, toggleTheme }) {
     const saved = localStorage.getItem(`nexus_devices_state_${userId}`);
     if (saved) {
       try {
-        setDevices(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        setDevices(Array.isArray(parsed) ? parsed.filter(d => !d.id?.startsWith('user_')) : []);
       } catch (e) {
         console.error('Failed to parse saved devices state:', e);
       }
     } else {
-      setDevices(getDefaultDevices(userId));
+      setDevices([]);
     }
   }, [userId]);
 
@@ -405,7 +329,7 @@ function AppContent({ theme, toggleTheme }) {
     };
   }, [isAuthenticated, userId]);
 
-  // Fetch registered devices from gateway and sync / auto-register if missing
+  // Fetch registered devices from gateway and sync state
   useEffect(() => {
     if (!isAuthenticated) return;
 
@@ -413,72 +337,37 @@ function AppContent({ theme, toggleTheme }) {
       try {
         const response = await axios.get(`/api/devices?userId=${userId}`);
         const gatewayDevices = response.data;
-        console.log('Fetched devices from IoT gateway for user:', userId, gatewayDevices);
+        if (Array.isArray(gatewayDevices)) {
+          setDevices(gatewayDevices.map(g => {
+            let category = 'Smart Home';
+            if (g.id?.includes('esp32')) category = 'ESP32 Board';
+            else if (g.id?.includes('esp8266')) category = 'ESP8266 Board';
+            else if (g.id?.startsWith('industrial-')) category = 'Industrial';
+            else if (g.id?.startsWith('server-room-')) category = 'Server Room';
 
-        setDevices(prevDevices => {
-          // 1. Sync status and secretKey of existing local devices
-          const syncedLocal = prevDevices.map(localDev => {
-            const gatewayDev = gatewayDevices.find(g => g.id === localDev.id);
-            if (gatewayDev) {
-              return { ...localDev, status: gatewayDev.status, secretKey: gatewayDev.secretKey };
-            } else {
-              console.log('Auto-registering device with gateway:', localDev.id);
-              axios.post('/api/devices/register', {
-                deviceId: localDev.id,
-                name: localDev.name,
-                userId: userId
-              }).then(res => {
-                if (res.data && res.data.secretKey) {
-                  setDevices(prev => 
-                    prev.map(d => d.id === localDev.id ? { ...d, secretKey: res.data.secretKey } : d)
-                  );
-                }
-              }).catch(err => console.error('Failed to auto-register device:', localDev.id, err.message));
-              
-              return { ...localDev, status: 'offline' };
-            }
-          });
-
-          // 2. Append remote devices not present in local devices list
-          const remoteOnly = gatewayDevices.filter(g => !prevDevices.some(local => local.id === g.id));
-          
-          if (remoteOnly.length > 0) {
-            console.log('Syncing remote-only devices from gateway for user:', userId, remoteOnly);
-            
-            const mappedRemote = remoteOnly.map(g => {
-              let category = 'Smart Home';
-              if (g.id.startsWith('industrial-')) {
-                category = 'Industrial';
-              } else if (g.id.startsWith('server-room-')) {
-                category = 'Server Room';
-              }
-              return {
-                id: g.id,
-                name: g.name || 'IoT Node',
-                category: category,
-                location: 'Nunnarri Core',
-                status: g.status || 'offline',
-                powerState: false,
-                value: 0,
-                unit: 'units',
-                powerDraw: 0,
-                battery: null,
-                secretKey: g.secretKey,
-                lastUpdated: 'Just now'
-              };
-            });
-            return [...syncedLocal, ...mappedRemote];
-          }
-
-          return syncedLocal;
-        });
+            return {
+              id: g.id,
+              name: g.name || 'IoT Device',
+              category: category,
+              location: g.location || 'Local Fleet',
+              status: g.status || 'offline',
+              powerState: g.status === 'online',
+              value: g.value !== undefined ? g.value : 0,
+              unit: g.unit || '°C',
+              powerDraw: g.powerDraw || 0,
+              battery: null,
+              secretKey: g.secretKey,
+              lastUpdated: g.lastHeartbeat || 'Just now'
+            };
+          }));
+        }
       } catch (err) {
-        console.error('Failed to sync devices with gateway:', err.message);
+        console.error('Failed to sync devices from gateway:', err.message);
       }
     };
 
     syncDevices();
-  }, [userId, isAuthenticated]);
+  }, [isAuthenticated, userId]);
 
   // Shared Action Handlers
   const handleToggleDevice = async (id, forceState = null) => {
@@ -563,8 +452,17 @@ function AppContent({ theme, toggleTheme }) {
     }
   };
 
-  const handleDeleteDevice = (id) => {
-    setDevices(prev => prev.filter(d => d.id !== id));
+  const handleDeleteDevice = async (id) => {
+    try {
+      await axios.delete(`/api/devices/${id}`);
+    } catch (err) {
+      console.warn(`Could not delete device ${id} from server:`, err.message);
+    }
+    setDevices(prev => {
+      const updated = prev.filter(d => d.id !== id);
+      localStorage.setItem(`nexus_devices_state_${userId}`, JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const handleRenameDevice = (id, newName) => {
@@ -631,6 +529,10 @@ function AppContent({ theme, toggleTheme }) {
                 onChangeDeviceValue={handleChangeDeviceValue}
               />
             }
+          />
+          <Route
+            path="/mcp"
+            element={<McpHub />}
           />
           <Route
             path="/devices"

@@ -143,7 +143,7 @@ void loop() {
             <div className="project-banner-alert" style={{ background: 'rgba(6, 182, 212, 0.08)', border: '1px dashed rgba(6, 182, 212, 0.3)', padding: '1.25rem', borderRadius: '8px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <Info className="text-cyan" size={20} style={{ flexShrink: 0 }} />
               <div style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: '1.5', textAlign: 'left' }}>
-                <strong>Academic Final Year Project:</strong> This platform is designed and built as a final year academic contribution. Meet the development team and view project details on the <a href="/developers" style={{ color: 'var(--text-cyan)', textDecoration: 'underline', fontWeight: '600' }}>Project Team Page</a>.
+                <strong>Academic Final Year Project:</strong> Designed and engineered solely by <strong>Harshar A T (Full Stack Developer)</strong>. Explore the full architecture and developer specifications on the <a href="/developers" style={{ color: 'var(--text-cyan)', textDecoration: 'underline', fontWeight: '600' }}>Developer Profile Page</a>.
               </div>
             </div>
             <h2>1. Platform Overview</h2>

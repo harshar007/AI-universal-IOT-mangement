@@ -50,18 +50,31 @@
   gap: 12px;
   font-family: var(--font-display);
   font-size: 20px;
-  font-weight: 500;
+  font-weight: 700;
   margin-bottom: 48px;
 }
-.login-hero-brand .brand-mark {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.18);
-  display: flex;
-  align-items: center;
+.login-hero-brand .login-brand-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  object-fit: contain;
+  background: #ffffff;
+  padding: 3px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+.login-mobile-logo-wrap {
+  display: none;
   justify-content: center;
-  font-weight: 700;
+  margin-bottom: 16px;
+}
+.login-mobile-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: contain;
+}
+@media (max-width: 900px) {
+  .login-mobile-logo-wrap { display: flex; }
 }
 .login-hero h1 {
   font-family: var(--font-display);
@@ -95,18 +108,26 @@
   max-width: 400px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
-.login-card h2 {
+.login-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.login-header h2 {
   font-family: var(--font-display);
   font-size: var(--fs-headline-small);
-  font-weight: 400;
+  font-weight: 500;
   color: var(--md-on-surface);
+  margin: 0;
+  line-height: 1.25;
 }
-.login-card .subtitle {
+.login-header .subtitle {
   color: var(--md-on-surface-variant);
   font-size: var(--fs-body-medium);
-  margin-top: -16px;
+  margin: 0;
+  line-height: 1.4;
 }
 
 .auth-tabs {
