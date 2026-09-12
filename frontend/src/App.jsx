@@ -13,6 +13,7 @@ import Sensors from './pages/Sensors.jsx';
 import AdminPanel from './pages/AdminPanel.jsx';
 import VirtualPinManager from './pages/VirtualPinManager.jsx';
 import MqttMonitor from './pages/MqttMonitor.jsx';
+import McpHub from './pages/McpHub.jsx';
 import axios from 'axios';
 
 
@@ -631,6 +632,10 @@ function AppContent({ theme, toggleTheme }) {
                 onChangeDeviceValue={handleChangeDeviceValue}
               />
             }
+          />
+          <Route
+            path="/mcp"
+            element={<McpHub />}
           />
           <Route
             path="/devices"

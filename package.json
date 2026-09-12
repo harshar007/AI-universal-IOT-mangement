@@ -6,7 +6,11 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "test": "node test_dummy_board_control.js"
+    "test": "node test_dummy_board_control.js",
+    "mcp": "node mcp-server/src/index.js",
+    "mcp:stdio": "node mcp-server/src/index.js --transport=stdio",
+    "mcp:sse": "node mcp-server/src/index.js --transport=sse --port=5007",
+    "mcp:test": "node mcp-server/test_mcp.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

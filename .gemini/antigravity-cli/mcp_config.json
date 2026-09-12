@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "nunnarri-iot": {
+      "command": "node",
+      "args": [
+        "P:/AI-universal-IOT-mangement/mcp-server/src/index.js",
+        "--transport=stdio"
+      ],
+      "env": {
+        "USER_DATABASE_URL": "postgres://postgres:prabha0312@localhost:5432/user_db",
+        "IOT_DATABASE_URL": "postgres://postgres:prabha0312@localhost:5432/nexus_iot_db",
+        "GATEWAY_URL": "http://localhost:5002",
+        "BACKEND_URL": "http://localhost:5000"
+      }
+    }
+  }
+}

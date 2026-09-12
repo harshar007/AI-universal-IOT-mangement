@@ -3,7 +3,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Cpu, Layers, Activity, Radio,
   BookOpen, Users, Sliders, Terminal, Shield,
-  LogOut, Sun, Moon, X, Menu
+  LogOut, Sun, Moon, X, Menu, Sparkles
 } from 'lucide-react';
 import axios from 'axios';
 import '../css/Navbar.css';
@@ -20,6 +20,7 @@ const NAV_GROUPS = [
     label: 'Operations',
     items: [
       { to: '/ai-command', label: 'AI Controller', icon: Cpu },
+      { to: '/mcp', label: 'MCP AI Hub', icon: Sparkles },
       { to: '/virtual-pins', label: 'Virtual Pins', icon: Sliders },
       { to: '/mqtt-monitor', label: 'MQTT Monitor', icon: Terminal },
       { to: '/analytics', label: 'Analytics', icon: Activity },
@@ -40,6 +41,7 @@ const PAGE_TITLES = {
   '/': 'Dashboard',
   '/devices': 'Devices',
   '/ai-command': 'AI Controller',
+  '/mcp': 'MCP AI Hub',
   '/virtual-pins': 'Virtual Pins',
   '/mqtt-monitor': 'MQTT Monitor',
   '/analytics': 'Analytics',
@@ -150,7 +152,10 @@ export default function Navbar({ theme, onToggleTheme, user, onUpdateUser, onLog
         >
           <Menu size={22} />
         </button>
-        <div className="topbar-title">{currentTitle}</div>
+        <div className="topbar-brand-wrap">
+          <img src="/logo.png" alt="Nunnarri Logo" className="topbar-logo-img" onError={(e) => { e.target.style.display = 'none'; }} />
+          <div className="topbar-title">{currentTitle}</div>
+        </div>
         <div className="topbar-spacer" />
         <div className="topbar-actions">
           <button
@@ -172,10 +177,19 @@ export default function Navbar({ theme, onToggleTheme, user, onUpdateUser, onLog
 
       <aside className={`app-nav-rail ${isOpen ? 'open' : ''}`} aria-label="Primary">
         <div className="app-nav-brand">
-          <div className="brand-mark">N</div>
+          <img
+            src="/logo.png"
+            alt="Nunnarri Logo"
+            className="brand-logo-img"
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'flex';
+            }}
+          />
+          <div className="brand-mark" style={{ display: 'none' }}>N</div>
           <div className="brand-text">
-            <span className="brand-name">Nunnarri</span>
-            <span className="brand-tag">IoT Console</span>
+            <span className="brand-name">நுண்ணறி</span>
+            <span className="brand-tag">Nunnarri IoT</span>
           </div>
         </div>
 

@@ -113,6 +113,7 @@ graph TD
 - ⚡ **Sub-Millisecond Telemetry Ingestion**: Embedded MQTT broker (`1883`) and WebSocket gateway (`5002`) for real-time telemetry streaming.
 - 📌 **Blynk-Style Virtual Pin Architecture**: Bind hardware inputs/outputs (`V0` to `V255`) to interactive UI widgets seamlessly.
 - 🤖 **On-Premise Sovereign AI**: Integrated localized LLM (`Ollama` + `llama3.2`) for natural language commands and anomaly detection.
+- 🔌 **Model Context Protocol (MCP) Server**: Full standard MCP integration (`stdio` & `SSE :5007`) allowing AI assistants (Claude, Antigravity, Cursor, OpenAI Agents) to directly command, observe, and diagnose IoT devices.
 - 🎨 **Dynamic Glassmorphism Dashboard**: Customizer pages (Nunnarri & Blynk customizers), Virtual Pin Manager, MQTT Live Monitor, and Admin Panel.
 - 🛡️ **Clean Microservices Security**: JWT authentication, RBAC admin privileges, dynamic device API key validation.
 - 🐳 **One-Command Docker Deployment**: Ready-to-go multi-container environment with automated health checks.
@@ -150,12 +151,46 @@ graph TD
    sudo docker compose ps
    ```
 
-5. **Access Applications**:
+5. **Access Applications & AI Interfaces**:
    - 🌐 **Web Dashboard**: `http://localhost`
    - 🔌 **Backend REST API**: `http://localhost:5000`
    - 🤖 **AI Intelligence API**: `http://localhost:5006`
    - ⚡ **IoT WebSocket Gateway**: `ws://localhost:5002`
    - 📡 **MQTT Broker**: `mqtt://localhost:1883`
+   - 🧩 **Model Context Protocol (MCP) Server**: `http://localhost:5007` (SSE) / `npm run mcp:stdio`
+
+---
+
+## 🧠 Model Context Protocol (MCP) - Connect Any AI
+
+Nunnarri includes a built-in **Model Context Protocol (MCP)** server, allowing AI coding assistants and LLMs to interact directly with your physical hardware!
+
+### Connecting with Antigravity / Claude Desktop / Cursor
+
+Add this configuration to your AI client's MCP configuration (`claude_desktop_config.json` / `mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "nunnarri-iot": {
+      "command": "node",
+      "args": ["P:/AI-universal-IOT-mangement/mcp-server/src/index.js", "--transport=stdio"],
+      "env": {
+        "USER_DATABASE_URL": "postgres://postgres:prabha0312@localhost:5432/user_db",
+        "IOT_DATABASE_URL": "postgres://postgres:prabha0312@localhost:5432/nexus_iot_db",
+        "GATEWAY_URL": "http://localhost:5002",
+        "BACKEND_URL": "http://localhost:5000"
+      }
+    }
+  }
+}
+```
+
+### Supported MCP Capabilities:
+- **20 Tools**: `list_devices`, `get_device`, `register_device`, `send_device_command`, `set_virtual_pin`, `get_virtual_pin`, `get_device_telemetry`, `publish_telemetry`, `get_device_logs`, `dispatch_ota_update`, `list_alert_rules`, `create_alert_rule`, `get_system_health`, `get_system_stats`, `analyze_anomalies`, etc.
+- **5 Resources**: `nunnarri://devices`, `nunnarri://system/health`, `nunnarri://system/stats`, `nunnarri://alerts/rules`, `nunnarri://alerts/recent`.
+- **3 Prompts**: `diagnose_iot_device`, `smart_actuator_copilot`, `iot_environmental_audit`.
+
 
 ---
 
