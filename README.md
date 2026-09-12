@@ -1,34 +1,37 @@
-# ⚡ நுண்ணறி (Nunnarri): Smart Intelligence IoT Platform
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?logo=docker&logoColor=white)](docker-compose.yml)
-[![Node.js](https://img.shields.io/badge/Node.js-v18%2B-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org)
-[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev)
-[![MQTT](https://img.shields.io/badge/MQTT-1883-660066?logo=eclipse-mosquitto&logoColor=white)](https://mqtt.org)
-[![Ollama AI](https://img.shields.io/badge/AI-Ollama%2FLlama3.2-FF6F00?logo=ollama&logoColor=white)](https://ollama.ai)
-
----
+# ⚡ நுண்ணறி (Nunnarri) — Smart Intelligence Cyber-Physical IoT & Local AI Platform
 
 <p align="center">
-  <img src="file:///home/harshar/Downloads/full-main/nunnari%20banner%20.png" alt="நுண்ணறி (Nunnarri) Smart Intelligence IoT Platform Banner" width="500" style="border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);" />
+  <img src="nunnari%20banner%20.png" alt="நுண்ணறி (Nunnarri) Smart Intelligence Platform Banner" width="100%" style="border-radius: 16px; box-shadow: 0 12px 40px rgba(0,242,254,0.25);" />
 </p>
+
+<div align="center">
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
+[![Docker](https://img.shields.io/badge/Docker-Multi--Container-2496ED?style=for-the-badge&logo=docker&logoColor=white)](docker-compose.yml)
+[![Node.js](https://img.shields.io/badge/Node.js-v18%2B-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org)
+[![React](https://img.shields.io/badge/React-18%20%7C%20Vite-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org)
+[![MQTT](https://img.shields.io/badge/MQTT-1883%20Broker-660066?style=for-the-badge&logo=eclipse-mosquitto&logoColor=white)](https://mqtt.org)
+[![Ollama AI](https://img.shields.io/badge/AI-Ollama%20%7C%20Llama3.2-FF6F00?style=for-the-badge&logo=ollama&logoColor=white)](https://ollama.ai)
+[![MCP Protocol](https://img.shields.io/badge/MCP-Protocol%201.0-00F2FE?style=for-the-badge&logo=anthropic&logoColor=black)](#-model-context-protocol-mcp--connect-any-ai)
+
+</div>
+
+---
 
 <div align="center">
 
 ### **நுண்ணறி • Nunnarri**
 #### **இணைப்பு • அறிவு • கட்டுப்பாடு** *(Connectivity • Intelligence • Control)*
-#### **Smart Intelligence Cyber-Physical Platform & AI Core**
+#### **Autonomous Cyber-Physical Operating System & Cognitive Hardware Mesh**
 
 </div>
 
-> **நுண்ணறி (Nunnarri)** is an open-source, full-stack, enterprise-grade **Smart Intelligence IoT Management & Local AI Platform**. The name **நுண்ணறி** (*Nunnarri*) signifies **Smart Intelligence** — bridging raw physical hardware telemetry (ESP8266/ESP32), sub-millisecond MQTT communication, dual-database memory architectures, and localized Large Language Models (LLMs) into a unified, autonomous cyber-physical operating system.
+> **நுண்ணறி (Nunnarri)** is an open-source, enterprise-grade **Smart Intelligence IoT Platform & Sovereign AI Core**. The Tamil word **நுண்ணறி** (*Nunnarri*) signifies **Sharp Intelligence / Deep Perception**. Nunnarri seamlessly bridges physical microcontroller hardware (ESP8266, ESP32, Raspberry Pi), sub-millisecond MQTT telemetry channels, dual PostgreSQL databases, and on-premise Large Language Models (LLMs) into a unified, autonomous cyber-physical environment.
 
 ---
 
-## 🎨 Dashboard & Graphical User Interface
-
-![Nunnarri IoT & AI Control Center UI](file:///home/harshar/.gemini/antigravity-ide/brain/4685b3c1-d3d6-4418-a123-ee193906e98b/nexus_dashboard_ui_mockup_1785068560811.png)
+## 📸 Nunnarri Control Center (HUD Console)
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -49,132 +52,125 @@
 
 ---
 
-## 🌌 Why Build the Future with IoT & AI? The Vision Behind Nunnarri (நுண்ணறி)
+## 🌌 The Vision Behind Nunnarri (நுண்ணறி)
 
 > [!IMPORTANT]
-> **The Next Tech Frontier**: We are transitioning from the era of static software to the era of **Autonomous Cyber-Physical Intelligence**. Standalone hardware is blind without software, and software is disconnected without physical sensors. **Nunnarri (Smart Intelligence) unites physical sensors with artificial cognitive reasoning.**
+> **The Autonomous Cyber-Physical Era**: Traditional IoT solutions are passive loggers — blindly collecting metrics while forcing humans to manually write rules and flip switches. **Nunnarri introduces autonomous cognitive loops.** By pairing sub-millisecond telemetry ingestion with local LLMs (Ollama) and Model Context Protocol (MCP) servers, hardware systems can self-diagnose, detect environmental anomalies, and execute real-time physical control.
 
-### 1. The Death of Dumb Hardware
-Traditional IoT platforms act as passive loggers—collecting data and relying on human operators to manually configure rules. **Nunnarri embeds local AI intelligence (Ollama LLM + Anomaly Engines)** directly into the loop, allowing systems to predict failures, adjust environment dynamics, and execute autonomous corrective actions.
+### 🏛️ Core Pillars of Nunnarri
 
-### 2. Open-Source Data Sovereignty
-Proprietary cloud platforms lock your hardware into cloud subscriptions, data harvesting, and vendor deprecations. Nunnarri provides **100% data sovereignty**: your telemetry, user databases, and AI models run locally on your own hardware using Docker.
+1. ⚡ **Sub-Millisecond Nervous Telemetry**: Instant bi-directional hardware communication over MQTT (`1883`) and WebSockets (`5002`).
+2. 🤖 **100% On-Premise Data Sovereignty**: Zero cloud vendor locks. User data, time-series telemetry, and AI models run locally on your own hardware via Docker.
+3. 📌 **Blynk-Style Virtual Pin Architecture**: Bind physical GPIO pins (`V0` to `V255`) to interactive UI widgets, automated rules, and AI function calls.
+4. 🔌 **Universal AI Integration (MCP Standard)**: AI Agents (Claude Desktop, Antigravity, Cursor, OpenAI Agents) can directly observe, control, and repair IoT infrastructure using standard MCP protocol schemas.
 
 ---
 
-## 🧠 Deep-Dive Architectural Analogy: Elon Musk’s Neural Architecture vs. Nunnarri
+## 🧠 Architectural Analogy: Biological Neural Network vs. Nunnarri
 
-Elon Musk’s vision (Neuralink & Tesla FSD) focuses on high-bandwidth bio-digital interfaces—merging biological neural networks with synthetic AI processors. **Nunnarri brings this exact neural architecture to the physical world of IoT.**
+Nunnarri's microservices architecture is engineered to mirror the high-bandwidth nerve impulse routing and cognitive executive control of biological systems:
 
 ```mermaid
 graph TD
-    subgraph PERIPHERAL_NERVES["⚡ Peripheral Nervous System (Sensors & Hardware)"]
-        ESP["ESP8266 / ESP32 Microcontrollers"] -->|Raw Telemetry Signals| MQTT
+    subgraph PERIPHERAL_NERVES["⚡ Peripheral Nervous System (Sensors & Actuators)"]
+        ESP["ESP8266 / ESP32 Microcontrollers"] -->|Sub-10ms MQTT Telemetry| MQTT
     end
 
-    subgraph NERVOUS_CHANNEL["⚡ Sub-Millisecond Nervous Channels"]
+    subgraph NERVOUS_CHANNEL["⚡ Central Nerve Channels"]
         MQTT["IoT Gateway (MQTT Broker :1883 / WebSockets :5002)"]
     end
 
     subgraph REFLEX_ENGINE["🦾 Motor Cortex & Autonomic Reflexes"]
-        MQTT -->|Fast Sub-10ms Stream| BACKEND["Express REST API & Rules Engine"]
-        BACKEND -->|Instant Trigger| RELAY["Actuator & Virtual Pin Control (V0 - V255)"]
+        MQTT -->|Fast Nerve Impulse| BACKEND["Backend REST API & Rule Dispatcher (:5000)"]
+        BACKEND -->|Instant Actuation| RELAY["Virtual Pin Actuators (V0 - V255)"]
     end
 
-    subgraph LONG_TERM_MEMORY["💾 Biological Memory (Hippocampus)"]
-        BACKEND <-->|Identity & Credentials| UDB[("UserDB (Postgres :5432)")]
-        BACKEND <-->|Telemetry Time-Series| IDB[("IotDB (Postgres Internal)")]
+    subgraph LONG_TERM_MEMORY["💾 Hippocampal Synaptic Memory"]
+        BACKEND <-->|Identity & RBAC| UDB[("UserDB (Postgres :5432)")]
+        BACKEND <-->|Telemetry Log Storage| IDB[("IotDB (Postgres :5432)")]
     end
 
-    subgraph COGNITIVE_CORTEX["🧠 Executive Cognitive Cortex (Prefrontal Intelligence)"]
-        BACKEND <-->|Natural Language Context & Anomaly Evaluation| AI["AI Backend (Ollama LLM :5006)"]
+    subgraph COGNITIVE_CORTEX["🧠 Executive Prefrontal Cortex"]
+        BACKEND <-->|Cognitive Reasoning & Anomaly Signals| AI["AI Backend (Ollama LLM :5006)"]
+        AI <-->|Tool Execution & Observations| MCP["MCP Server (Model Context Protocol :5007)"]
     end
 
-    subgraph VISUAL_HUD["👁️ Visual Cortex & Telepathic Dashboard"]
-        BACKEND <-->|Dynamic REST / WS| UI["React 18 + Vite Web Dashboard (:80)"]
+    subgraph VISUAL_HUD["👁️ Sensory Perception & Visual HUD"]
+        BACKEND <-->|Dynamic REST / WS Stream| UI["React 18 + Vite Glassmorphism Dashboard (:9090)"]
     end
 ```
 
-### Detailed Structural Comparison Table
+### 📊 Structural Metaphor Matrix
 
-| Neural Component (Biological / Neuralink) | Nunnarri Platform Component | Detailed Functional Metaphor |
+| Biological / Cyber-Physical Layer | Nunnarri Architecture Module | Technical Responsibility |
 | :--- | :--- | :--- |
-| **Prefrontal Cognitive Cortex** | `ai-backend` (Ollama LLM + Anomaly Detection) | **Executive Reasoning**: Processes natural language queries ("Why is energy consumption high?"), analyzes telemetry anomalies, and plans actions. |
-| **Central Nervous System & Spinal Cord** | `iot-gateway` (MQTT 1883 + WebSockets 5002) | **High-Bandwidth Pulse Channel**: Transmits sub-millisecond nerve impulses bi-directionally between sensors and the central processing core. |
-| **Motor Cortex & Autonomic Reflexes** | `backend` & `AiAutomationEngine` | **Involuntary Reflexes**: Executes instant safety triggers (e.g., automatically cutting off a gas relay when threshold is breached) without waiting for human input. |
-| **Hippocampus & Synaptic Memory** | Dual PostgreSQL (`user-db` + `iot-db`) | **Long-Term Memory Storage**: `user-db` handles identity/synaptic authorization, while `iot-db` acts as time-series memory of past physical events. |
-| **Visual Cortex & Telepathic HUD** | `frontend` (React + Vite + Nginx) | **Sensory Visualization**: Renders complex environmental states into dynamic, human-understandable visual dashboards, gauges, and live logs. |
-| **Peripheral Nerves & Sensory Receptors** | Hardware Nodes (ESP8266 / ESP32 / Sensors) | **Physical Tactile Nodes**: Reads temperature, humidity, vibration, and air quality from the physical environment and fires physical GPIO outputs. |
+| **Prefrontal Cognitive Cortex** | `ai-backend` (Node.js + Ollama LLM) | High-level reasoning, natural language device intent parsing, anomaly evaluation, and predictive maintenance. |
+| **Central Nerve Spinal Cord** | `iot-gateway` (Aedes MQTT + WebSockets) | Ultra-low latency transmission of nerve signals (telemetry packets) between physical hardware and server modules. |
+| **Autonomic Reflex System** | `backend` (Express API Engine) | Instant safety triggers (e.g. automatically shutting a gas solenoid when sensor threshold exceeds safe limit). |
+| **Hippocampal Synaptic Memory** | Dual PostgreSQL (`user-db` + `iot-db`) | Isolated long-term memory. `user-db` protects user identity/secrets while `iot-db` indexes high-frequency sensor records. |
+| **Sensory Visual Cortex** | `frontend` (React 18, Vite, Nginx) | Renders physical system states into dynamic glassmorphism charts, interactive gauges, and live MQTT terminals. |
+| **Peripheral Nerve Receptors** | Physical Hardware (ESP8266 / ESP32) | Physical sensory perception (temperature, humidity, motion, AQI) and direct physical GPIO motor/relay control. |
 
 ---
 
-## 🌟 Key Platform Features
+## 🌟 Key Platform Capabilities
 
-- ⚡ **Sub-Millisecond Telemetry Ingestion**: Embedded MQTT broker (`1883`) and WebSocket gateway (`5002`) for real-time telemetry streaming.
-- 📌 **Blynk-Style Virtual Pin Architecture**: Bind hardware inputs/outputs (`V0` to `V255`) to interactive UI widgets seamlessly.
-- 🤖 **On-Premise Sovereign AI**: Integrated localized LLM (`Ollama` + `llama3.2`) for natural language commands and anomaly detection.
-- 🔌 **Model Context Protocol (MCP) Server**: Full standard MCP integration (`stdio` & `SSE :5007`) allowing AI assistants (Claude, Antigravity, Cursor, OpenAI Agents) to directly command, observe, and diagnose IoT devices.
-- 🎨 **Dynamic Glassmorphism Dashboard**: Customizer pages (Nunnarri & Blynk customizers), Virtual Pin Manager, MQTT Live Monitor, and Admin Panel.
-- 🛡️ **Clean Microservices Security**: JWT authentication, RBAC admin privileges, dynamic device API key validation.
-- 🐳 **One-Command Docker Deployment**: Ready-to-go multi-container environment with automated health checks.
+```
+┌──────────────────────────────────────────────────────────────────────────────────────────┐
+│                                FEATURE HIGHLIGHTS                                       │
+├──────────────────────────────┬──────────────────────────────┬────────────────────────────┤
+│ ⚡ FAST TELEMETRY            │ 📌 VIRTUAL PIN HUD           │ 🤖 ON-PREMISE LOCAL AI     │
+│ Sub-millisecond MQTT (1883)  │ Flexible V0-V255 mapping for │ Ollama LLM integration for │
+│ and WebSocket data streaming │ relays, PWM, and sensors     │ autonomous IoT control     │
+├──────────────────────────────┼──────────────────────────────┼────────────────────────────┤
+│ 🔌 NATIVE MCP PROTOCOL       │ 🛡️ DUAL POSTGRESQL MEMORY    │ 🐳 1-CLICK DOCKER STACK    │
+│ Standard AI Agent tools for  │ Isolated identity & time-    │ Automated multi-container  │
+│ Claude, Cursor, Antigravity  │ series database architecture │ deployment with health checks│
+└──────────────────────────────┴──────────────────────────────┴────────────────────────────┘
+```
 
----
-
-## 🚀 Quick Start (Docker Orchestration)
-
-### Prerequisites
-- [Docker Desktop](https://www.docker.com/) or Docker Engine (`>= 20.10`)
-- Docker Compose (`v2.x`)
-
-### Deployment Commands
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/your-username/nunnarri-iot-ai.git
-   cd nunnarri-iot-ai
-   ```
-
-2. **Configure Environment Variables**:
-   Copy the example template file to create your backend environment file:
-   ```bash
-   cp backend/.env.example backend/.env
-   ```
-   *(Optional)* Fill in your `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` if enabling GitHub OAuth single sign-on.
-
-3. **Launch all microservices**:
-   ```bash
-   sudo docker compose up -d --build
-   ```
-
-4. **Check container status**:
-   ```bash
-   sudo docker compose ps
-   ```
-
-5. **Access Applications & AI Interfaces**:
-   - 🌐 **Web Dashboard**: `http://localhost`
-   - 🔌 **Backend REST API**: `http://localhost:5000`
-   - 🤖 **AI Intelligence API**: `http://localhost:5006`
-   - ⚡ **IoT WebSocket Gateway**: `ws://localhost:5002`
-   - 📡 **MQTT Broker**: `mqtt://localhost:1883`
-   - 🧩 **Model Context Protocol (MCP) Server**: `http://localhost:5007` (SSE) / `npm run mcp:stdio`
+- ⚡ **Sub-Millisecond Ingestion**: Integrated high-throughput Aedes MQTT broker (`1883`) and WebSocket bridge (`5002`).
+- 📌 **Virtual Pin System**: Full Blynk-style virtual pin mapping (`V0` to `V255`) supporting push/pull telemetry and hardware triggers.
+- 🤖 **Local AI Cortex**: Integrated Ollama AI module featuring Llama3.2 models for natural language interaction, smart automation, and anomaly detection.
+- 🔌 **Native Model Context Protocol (MCP)**: Embedded SSE (`5007`) and Stdio MCP server exposing 20+ specialized tools for AI Agent orchestration.
+- 🎨 **Glassmorphism HUD**: Responsive, ultra-modern dark/light React UI featuring customizer pages, Virtual Pin Manager, MQTT Live Monitor, and Developer APIs.
+- 🔐 **Enterprise Security**: JWT-based stateless authentication, RBAC authorization, per-device API tokens, and optional GitHub OAuth 2.0.
 
 ---
 
-## 🧠 Model Context Protocol (MCP) - Connect Any AI
+## 🏗️ Microservices Architecture & Port Mapping
 
-Nunnarri includes a built-in **Model Context Protocol (MCP)** server, allowing AI coding assistants and LLMs to interact directly with your physical hardware!
+Nunnarri is structured as 6 fully decoupled, containerized microservices:
 
-### Connecting with Antigravity / Claude Desktop / Cursor
+| Service Name | Description | Tech Stack | Port Mappings |
+| :--- | :--- | :--- | :--- |
+| **`frontend`** | Glassmorphism Web App & HUD Console | React 18, Vite, Nginx | `9090:80` |
+| **`backend`** | Core REST API, Auth, & Device Dispatcher | Node.js, Express, PostgreSQL | `5005:5000` |
+| **`ai-backend`** | Local AI Cortex & Anomaly Engine | Node.js, Ollama LLM, Express | `5006:5006` |
+| **`iot-gateway`** | Hardware Gateway, MQTT Broker & WebSockets | Node.js, Aedes MQTT, WS | `1883:1883`, `5002:5002` |
+| **`mcp-server`** | Model Context Protocol Server (SSE / Stdio) | Node.js, `@modelcontextprotocol/sdk` | `5007:5007` |
+| **`user-db`** | User Account & Authentication Database | PostgreSQL 15 | `5432` (Internal) |
+| **`iot-db`** | IoT Telemetry & Device State Database | PostgreSQL 15 | `5432` (Internal) |
 
-Add this configuration to your AI client's MCP configuration (`claude_desktop_config.json` / `mcp.json`):
+---
+
+## 🔌 Model Context Protocol (MCP) — Connect Any AI
+
+Nunnarri includes an enterprise-grade **Model Context Protocol (MCP)** server. This allows AI assistants like **Claude Desktop**, **Antigravity IDE**, **Cursor**, or custom **LangChain / LlamaIndex** agents to observe hardware state, alter virtual pins, and dispatch firmware updates.
+
+### 🛠️ Connecting to Antigravity / Claude Desktop / Cursor
+
+Add the following to your AI environment's MCP configuration (`mcp_config.json` or `claude_desktop_config.json`):
 
 ```json
 {
   "mcpServers": {
     "nunnarri-iot": {
       "command": "node",
-      "args": ["P:/AI-universal-IOT-mangement/mcp-server/src/index.js", "--transport=stdio"],
+      "args": [
+        "P:/AI-universal-IOT-mangement/mcp-server/src/index.js",
+        "--transport=stdio"
+      ],
       "env": {
         "USER_DATABASE_URL": "postgres://postgres:prabha0312@localhost:5432/user_db",
         "IOT_DATABASE_URL": "postgres://postgres:prabha0312@localhost:5432/nexus_iot_db",
@@ -186,74 +182,165 @@ Add this configuration to your AI client's MCP configuration (`claude_desktop_co
 }
 ```
 
-### Supported MCP Capabilities:
-- **20 Tools**: `list_devices`, `get_device`, `register_device`, `send_device_command`, `set_virtual_pin`, `get_virtual_pin`, `get_device_telemetry`, `publish_telemetry`, `get_device_logs`, `dispatch_ota_update`, `list_alert_rules`, `create_alert_rule`, `get_system_health`, `get_system_stats`, `analyze_anomalies`, etc.
-- **5 Resources**: `nunnarri://devices`, `nunnarri://system/health`, `nunnarri://system/stats`, `nunnarri://alerts/rules`, `nunnarri://alerts/recent`.
-- **3 Prompts**: `diagnose_iot_device`, `smart_actuator_copilot`, `iot_environmental_audit`.
+### 🛠️ Exposed MCP Capabilities (Tools, Resources & Prompts)
 
+#### 🧰 Tools (20 System Tools)
+- `list_devices`: List registered hardware devices with online status.
+- `get_device`: Fetch complete metadata and current pin state for a device.
+- `register_device`: Provision a new hardware node with generated API keys.
+- `send_device_command`: Send raw hardware control payloads to target nodes.
+- `set_virtual_pin`: Update a Virtual Pin (`V0`-`V255`) value on a device.
+- `get_virtual_pin`: Query current value of a target Virtual Pin.
+- `get_device_telemetry`: Fetch time-series historical sensor records.
+- `publish_telemetry`: Ingest telemetry data into the platform pipeline.
+- `dispatch_ota_update`: Trigger Over-The-Air firmware updates for hardware.
+- `analyze_anomalies`: Execute AI statistical anomaly detection over sensor data.
+- `get_system_health`: Inspect container metrics and database connectivity.
+- *And 9 more admin, log, and alert rule management tools...*
+
+#### 📚 Resources (5 Live Data Streams)
+- `nunnarri://devices`: Dynamic JSON stream of all hardware nodes.
+- `nunnarri://system/health`: Real-time system diagnostics report.
+- `nunnarri://system/stats`: Aggregate device count and network stats.
+- `nunnarri://alerts/rules`: Active threshold alert rule configurations.
+- `nunnarri://alerts/recent`: Real-time log of security & threshold alerts.
+
+#### 💬 Prompts (3 Autonomous Copilots)
+- `diagnose_iot_device`: Guided diagnostic workflow for offline hardware.
+- `smart_actuator_copilot`: Safety-checked wizard for high-power relay control.
+- `iot_environmental_audit`: Automated environmental data audit and summary.
 
 ---
 
-## 🔐 Authentication & GitHub OAuth Setup
+## ⚡ Hardware Firmware Integration (ESP8266 / ESP32)
 
-Nunnarri supports traditional email/password registration and one-click GitHub OAuth single sign-on:
-
-1. **Create GitHub OAuth App**:
-   - Go to [GitHub Developer Settings](https://github.com/settings/developers) -> **OAuth Apps** -> **New OAuth App**.
-   - **Application Name**: `Nunnarri IoT Gateway`
-   - **Homepage URL**: `http://localhost`
-   - **Authorization Callback URL**: `http://localhost/api/auth/github/callback`
-
-2. **Set Environment Variables**:
-   Update `backend/.env` (and `docker-compose.yml` for containerized setups):
-   ```env
-   GITHUB_CLIENT_ID=your_client_id_here
-   GITHUB_CLIENT_SECRET=your_client_secret_here
-   GITHUB_CALLBACK_URL=http://localhost/api/auth/github/callback
-   FRONTEND_URL=http://localhost
-   ```
-
----
-
-## 🔌 Microcontroller Hardware Connection (ESP8266 / ESP32)
-
-Upload [`esp8266_test_sketch.ino`](file:///home/harshar/Downloads/full-main/esp8266_test_sketch.ino) to your board using the Arduino IDE:
+Upload the production-ready C++ firmware sketch [`esp8266_test_sketch.ino`](esp8266_test_sketch.ino) using Arduino IDE:
 
 ```cpp
-// ESP8266 Firmware Configuration
-const char* ssid         = "YOUR_WIFI_SSID";
-const char* password     = "YOUR_WIFI_PASSWORD";
-const char* mqtt_server  = "YOUR_DOCKER_HOST_IP"; 
-const int   mqtt_port    = 1883;
-const char* device_token = "NUNNARRI_DEVICE_API_KEY";
+#include <ESP8266WiFi.h>
+#include <PubSubClient.h>
+#include <ArduinoJson.h>
 
-// Telemetry Topic: nunnarri/devices/{device_id}/telemetry
-// JSON Payload: {"vPin": "V1", "value": 24.5}
+// WiFi & Nunnarri IoT Gateway Configuration
+const char* ssid          = "YOUR_WIFI_SSID";
+const char* password      = "YOUR_WIFI_PASSWORD";
+const char* mqtt_server   = "192.168.1.100";  // Docker Host Machine IP
+const int   mqtt_port     = 1883;
+const char* device_id     = "esp8266_node_01";
+const char* device_token  = "NUNNARRI_DEVICE_API_KEY";
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) { delay(500); Serial.print("."); }
+  
+  client.setServer(mqtt_server, mqtt_port);
+  client.setCallback(mqttCallback);
+}
+
+void loop() {
+  if (!client.connected()) reconnectMQTT();
+  client.loop();
+
+  // Send Temperature Telemetry on Virtual Pin V1 every 5 seconds
+  StaticJsonDocument<200> doc;
+  doc["vPin"] = "V1";
+  doc["value"] = 24.5;
+  
+  char buffer[250];
+  serializeJson(doc, buffer);
+  client.publish("nunnarri/devices/esp8266_node_01/telemetry", buffer);
+  delay(5000);
+}
 ```
 
 ---
 
-## 🛠️ Troubleshooting & Common Docker Solutions
+## 🚀 Quick Start (Docker Deployment)
+
+### 📋 Prerequisites
+- [Docker Desktop](https://www.docker.com/) or Docker Engine (`>= 20.10`)
+- Docker Compose (`v2.x`)
+
+### ⚡ 1-Command Launch
+
+1. **Clone Repository**:
+   ```bash
+   git clone https://github.com/harshar007/AI-universal-IOT-mangement.git
+   cd AI-universal-IOT-mangement
+   ```
+
+2. **Setup Environment Configuration**:
+   ```bash
+   cp backend/.env.example backend/.env
+   ```
+
+3. **Build & Spin Up All Microservices**:
+   ```bash
+   docker compose up -d --build
+   ```
+
+4. **Verify Running Containers**:
+   ```bash
+   docker compose ps
+   ```
+
+5. **Open Endpoints**:
+   - 🌐 **Web Dashboard**: `http://localhost:9090`
+   - 🔌 **Backend REST API**: `http://localhost:5005`
+   - 🤖 **AI Backend API**: `http://localhost:5006`
+   - ⚡ **IoT WebSocket Gateway**: `ws://localhost:5002`
+   - 📡 **MQTT Broker**: `mqtt://localhost:1883`
+   - 🧩 **MCP Protocol Server**: `http://localhost:5007`
+
+---
+
+## 🗄️ Database Management & pgAdmin Setup
+
+Nunnarri utilizes isolated PostgreSQL instances for maximum security and performance:
+
+- **User Database (`user-db`)**: `postgres://postgres:prabha0312@localhost:5432/user_db`
+- **IoT Database (`iot-db`)**: `postgres://postgres:prabha0312@localhost:5432/nexus_iot_db`
+
+Detailed setup steps can be found in [`pgadmin_connection_guide.txt`](pgadmin_connection_guide.txt).
+
+---
+
+## 🔐 GitHub OAuth 2.0 Single Sign-On Setup
+
+1. Navigate to **GitHub Settings** -> **Developer Settings** -> **OAuth Apps** -> **New OAuth App**.
+2. Set **Homepage URL**: `http://localhost:9090`
+3. Set **Authorization Callback URL**: `http://localhost:9090/api/auth/github/callback`
+4. Copy `Client ID` & `Client Secret` into `backend/.env` and `docker-compose.yml`.
+
+---
+
+## 🛠️ Troubleshooting & FAQ
 
 > [!TIP]
-> **Issue 1: `Bind for 0.0.0.0:5432 failed: port is already allocated`**
-> - **Solution**: Stop local host PostgreSQL daemon: `sudo systemctl stop postgresql` then run `sudo docker compose up -d`.
+> **Q: Port 5432 or 1883 is already in use.**
+> - **Fix**: Stop local PostgreSQL or Mosquitto services running on your host machine before starting Docker: `sudo systemctl stop postgresql mosquitto`.
 
 > [!NOTE]
-> **Issue 2: `getaddrinfo EAI_AGAIN user-db`**
-> - **Solution**: Docker DNS startup timing window. Restart the backend container: `sudo docker compose restart backend`.
+> **Q: Web Dashboard shows blank screen after code edits.**
+> - **Fix**: Ensure lucide-react icons are properly imported in components, then rebuild frontend via `docker compose up -d --build frontend`.
 
 ---
 
-## 🤝 Open Source License & Vision
+## 🤝 License & Open Source Community
 
-This project is **100% Open Source** under the [MIT License](LICENSE). 
+This project is released under the **[MIT License](LICENSE)**.
 
-Building the future means giving every engineer, maker, and enterprise access to autonomous cyber-physical intelligence without artificial paywalls.
+- ⭐ **Star this repository** if you find Nunnarri useful for your IoT & AI projects!
+- 🔀 **Fork & Contribute**: Pull requests for new MCP tools, UI widgets, and hardware sketches are welcome.
 
-- **Fork & Star** the repository to support open-source IoT + AI!
-- Pull requests and contributions are welcome.
+<br/>
 
----
+<div align="center">
 
-<p align="center"><b>Built with ❤️ for the Global Open Source Cyber-Physical & AI Community</b></p>
+**Designed & Engineered with ❤️ for the Global Cyber-Physical & AI Open-Source Community**
+
+</div>
